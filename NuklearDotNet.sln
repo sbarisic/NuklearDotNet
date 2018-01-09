@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuklearDotNet", "NuklearDotNet\NuklearDotNet.csproj", "{BDB132A4-22A1-479D-A4D0-0A2B00021F16}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6EF251C3-0CF3-4E0C-907B-11BD3DEBA8E6} = {6EF251C3-0CF3-4E0C-907B-11BD3DEBA8E6}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Nuklear", "Nuklear\Nuklear.vcxproj", "{6EF251C3-0CF3-4E0C-907B-11BD3DEBA8E6}"
 EndProject
