@@ -15,8 +15,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Nuklear.cpp">
+    <ClInclude Include="..\nuklear_c\nuklear.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Nuklear.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Nuklear.def">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
