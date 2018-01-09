@@ -22,8 +22,8 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_draw_null_texture {
-		nk_handle texture;
-		nk_vec2 uv;
+		public nk_handle texture;
+		public nk_vec2 uv;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -378,6 +378,16 @@ namespace NuklearDotNet {
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_begin(nk_context* context, byte* title, nk_rect bounds, uint flags_nkflags);
+
+		//[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		//public static extern int nk_begin(nk_context* context, string title, nk_rect bounds, uint flags_nkflags);
+
+		public static int nk_begin(nk_context* context, string title, nk_rect bounds, uint flags_nkflags) {
+			IntPtr Str = Marshal.StringToHGlobalAnsi(title);
+			int Ret = nk_begin(context, (byte*)Str, bounds, flags_nkflags);
+			Marshal.FreeHGlobal(Str);
+			return Ret;
+		}
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_end(nk_context* context);

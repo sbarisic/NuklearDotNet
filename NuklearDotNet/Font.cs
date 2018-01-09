@@ -83,15 +83,15 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_font {
-		nk_font* next;
-		nk_user_font handle;
-		nk_baked_font info;
-		float scale;
-		nk_font_glyph* glyphs;
-		nk_font_glyph* fallback;
-		uint fallback_codepoint;
-		nk_handle texture;
-		nk_font_config* config;
+		public nk_font* next;
+		public nk_user_font handle;
+		public nk_baked_font info;
+		public float scale;
+		public nk_font_glyph* glyphs;
+		public nk_font_glyph* fallback;
+		public uint fallback_codepoint;
+		public nk_handle texture;
+		public nk_font_config* config;
 	}
 
 	public enum nk_font_atlas_format {
@@ -101,28 +101,28 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_font_atlas {
-		IntPtr pixel;
-		int tex_width;
-		int tex_height;
+		public IntPtr pixel;
+		public int tex_width;
+		public int tex_height;
 
-		nk_allocator permanent;
-		nk_allocator temporary;
+		public nk_allocator permanent;
+		public nk_allocator temporary;
 
-		nk_recti custom;
-		nk_cursor cursorArrow;
-		nk_cursor cursorText;
-		nk_cursor cursorMove;
-		nk_cursor cursorResizeV;
-		nk_cursor cursorResizeH;
-		nk_cursor cursorResizeTLDR;
-		nk_cursor cursorResizeTRDL;
+		public nk_recti custom;
+		public nk_cursor cursorArrow;
+		public nk_cursor cursorText;
+		public nk_cursor cursorMove;
+		public nk_cursor cursorResizeV;
+		public nk_cursor cursorResizeH;
+		public nk_cursor cursorResizeTLDR;
+		public nk_cursor cursorResizeTRDL;
 
-		int glyph_count;
-		nk_font_glyph* glyphs;
-		nk_font* default_font;
-		nk_font* fonts;
-		nk_font_config* config;
-		int font_num;
+		public int glyph_count;
+		public nk_font_glyph* glyphs;
+		public nk_font* default_font;
+		public nk_font* fonts;
+		public nk_font_config* config;
+		public int font_num;
 	}
 
 	// [DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]

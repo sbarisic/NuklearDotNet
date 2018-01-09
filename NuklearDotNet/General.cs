@@ -46,6 +46,13 @@ namespace NuklearDotNet {
 		float y;
 		float w;
 		float h;
+
+		public nk_rect(float X, float Y, float W, float H) {
+			this.x = X;
+			this.y = Y;
+			this.w = W;
+			this.h = H;
+		}
 	}
 
 

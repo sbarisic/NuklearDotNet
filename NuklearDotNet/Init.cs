@@ -16,11 +16,11 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_allocator {
-		nk_handle userdata;
+		public nk_handle userdata;
 		// nk_plugin_alloc_t alloc;
-		IntPtr alloc_nkpluginalloct;
+		public IntPtr alloc_nkpluginalloct;
 		// nk_plugin_free_t free;
-		IntPtr free_nkpluginfreet;
+		public IntPtr free_nkpluginfreet;
 	}
 
 	public enum nk_symbol_type {
@@ -406,16 +406,16 @@ namespace NuklearDotNet {
 	public static unsafe partial class Nuklear {
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_init_fixed(nk_context* context, IntPtr memory, IntPtr size, nk_user_font* userfont);
-		
+
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_init(nk_context* context, nk_allocator* allocator, nk_user_font* userfont);
-		
+
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_init_custom(nk_context* context, nk_buffer* cmds, nk_buffer* pool, nk_user_font* userfont);
-		
+
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_clear(nk_context* context);
-		
+
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_set_user_data(nk_context* context, nk_handle handle);
 
