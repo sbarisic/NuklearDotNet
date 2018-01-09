@@ -12,6 +12,9 @@ to build Nuklear.dll (x64) with all API functions exported and ready to be used 
 
 Updating should be as easy as updating the submodule and rebuilding the project.
 
+Contributions welcome.
+
 # TODO
 
-Demo application
+* Demo application
+* Higher level binding
