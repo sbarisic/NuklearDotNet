@@ -42,6 +42,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Init.cs" />
+    <Compile Include="Draw.cs" />
+    <Compile Include="Font.cs" />
+    <Compile Include="Input.cs" />
+    <Compile Include="Layout.cs" />
+    <Compile Include="Style.cs" />
+    <Compile Include="Widget.cs" />
+    <Compile Include="Text.cs" />
+    <Compile Include="General.cs" />
     <Compile Include="Nuklear.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
