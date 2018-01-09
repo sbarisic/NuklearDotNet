@@ -63,28 +63,28 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_buffer_marker {
-		int active;
-		IntPtr offset_nksize;
+		public int active;
+		public IntPtr offset_nksize;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_memory {
-		IntPtr ptr;
-		IntPtr size;
+		public IntPtr ptr;
+		public IntPtr size;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_buffer {
-		nk_buffer_marker marker0;
-		nk_buffer_marker marker1;
-		nk_allocator pool;
-		nk_allocation_type allocation_type;
-		nk_memory memory;
-		float grow_factor;
-		IntPtr allocated;
-		IntPtr needed;
-		IntPtr calls;
-		IntPtr size;
+		public nk_buffer_marker marker0;
+		public nk_buffer_marker marker1;
+		public nk_allocator pool;
+		public nk_allocation_type allocation_type;
+		public nk_memory memory;
+		public float grow_factor;
+		public IntPtr allocated;
+		public IntPtr needed;
+		public IntPtr calls;
+		public IntPtr size;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

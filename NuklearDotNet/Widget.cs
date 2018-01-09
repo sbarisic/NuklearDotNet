@@ -494,6 +494,9 @@ namespace NuklearDotNet {
 		public static extern int nk_button_label(nk_context* ctx, byte* title);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_button_label(nk_context* ctx, string title);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_button_color(nk_context* ctx, nk_color color);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]

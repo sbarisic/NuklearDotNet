@@ -47,6 +47,7 @@
     <Compile Include="Font.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Layout.cs" />
+    <Compile Include="Macros.cs" />
     <Compile Include="NuklearAPI.cs" />
     <Compile Include="Style.cs" />
     <Compile Include="Widget.cs" />

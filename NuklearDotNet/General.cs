@@ -42,10 +42,10 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_rect {
-		float x;
-		float y;
-		float w;
-		float h;
+		public float x;
+		public float y;
+		public float w;
+		public float h;
 
 		public nk_rect(float X, float Y, float W, float H) {
 			this.x = X;
@@ -76,9 +76,9 @@ namespace NuklearDotNet {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct nk_handle {
 		[FieldOffset(0)]
-		IntPtr ptr;
+		public IntPtr ptr;
 		[FieldOffset(0)]
-		int id;
+		public int id;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

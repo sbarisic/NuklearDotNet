@@ -28,16 +28,16 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_convert_config {
-		float global_alpha;
-		nk_anti_aliasing line_AA;
-		nk_anti_aliasing shape_AA;
-		uint circle_segment_count;
-		uint arc_segment_count;
-		uint curve_segment_count;
-		nk_draw_null_texture null_tex;
-		nk_draw_vertex_layout_element* vertex_layout;
-		IntPtr vertex_size;
-		IntPtr vertex_alignment;
+		public float global_alpha;
+		public nk_anti_aliasing line_AA;
+		public nk_anti_aliasing shape_AA;
+		public uint circle_segment_count;
+		public uint arc_segment_count;
+		public uint curve_segment_count;
+		public nk_draw_null_texture null_tex;
+		public nk_draw_vertex_layout_element* vertex_layout;
+		public IntPtr vertex_size;
+		public IntPtr vertex_alignment;
 	}
 
 	public enum nk_command_type {
@@ -64,9 +64,9 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command {
-		nk_command_type ctype;
-		IntPtr next_nksize;
-		nk_handle userdata;
+		public nk_command_type ctype;
+		public IntPtr next_nksize;
+		public nk_handle userdata;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -320,17 +320,26 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_draw_vertex_layout_element {
-		nk_draw_vertex_layout_attribute attribute;
-		nk_draw_vertex_layout_format format;
-		IntPtr offset_nksize;
+		public static readonly nk_draw_vertex_layout_element NK_VERTEX_LAYOUT_END = new nk_draw_vertex_layout_element(
+			nk_draw_vertex_layout_attribute.NK_VERTEX_ATTRIBUTE_COUNT, nk_draw_vertex_layout_format.NK_FORMAT_COUNT, IntPtr.Zero);
+
+		public nk_draw_vertex_layout_attribute attribute;
+		public nk_draw_vertex_layout_format format;
+		public IntPtr offset_nksize;
+
+		public nk_draw_vertex_layout_element(nk_draw_vertex_layout_attribute Attr, nk_draw_vertex_layout_format Fmt, IntPtr Offset) {
+			this.attribute = Attr;
+			this.format = Fmt;
+			this.offset_nksize = Offset;
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_draw_command {
-		uint elem_count;
-		nk_rect clip_rect;
-		nk_handle texture;
-		nk_handle userdata;
+		public uint elem_count;
+		public nk_rect clip_rect;
+		public nk_handle texture;
+		public nk_handle userdata;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -379,15 +388,8 @@ namespace NuklearDotNet {
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_begin(nk_context* context, byte* title, nk_rect bounds, uint flags_nkflags);
 
-		//[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		//public static extern int nk_begin(nk_context* context, string title, nk_rect bounds, uint flags_nkflags);
-
-		public static int nk_begin(nk_context* context, string title, nk_rect bounds, uint flags_nkflags) {
-			IntPtr Str = Marshal.StringToHGlobalAnsi(title);
-			int Ret = nk_begin(context, (byte*)Str, bounds, flags_nkflags);
-			Marshal.FreeHGlobal(Str);
-			return Ret;
-		}
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_begin(nk_context* context, string title, nk_rect bounds, uint flags_nkflags);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_end(nk_context* context);
