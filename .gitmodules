@@ -1,0 +1,3 @@
+[submodule "nuklear_c"]
+	path = nuklear_c
+	url = https://github.com/vurtun/nuklear
