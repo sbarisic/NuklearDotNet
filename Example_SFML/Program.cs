@@ -11,19 +11,16 @@ using NuklearDotNet;
 using System.Runtime.InteropServices;
 
 namespace Example_SFML {
-	unsafe class SFMLDevice : NuklearDevice {
+	unsafe class SFMLDevice : NuklearDeviceTex<Texture> {
 		List<Texture> Textures;
-		VertexArray VA;
 		RenderWindow RWind;
 
 		public SFMLDevice(RenderWindow RWind) {
-			VA = new VertexArray(PrimitiveType.Triangles);
 			Textures = new List<Texture>();
-			Textures.Add(null); // So indices start at 1
 			this.RWind = RWind;
 		}
 
-		public override int CreateTexture(int W, int H, IntPtr Data) {
+		public override Texture CreateTexture(int W, int H, IntPtr Data) {
 			Image I = new Image((uint)W, (uint)H);
 			for (int y = 0; y < H; y++)
 				for (int x = 0; x < W; x++) {
@@ -33,42 +30,23 @@ namespace Example_SFML {
 
 			Texture T = new Texture(I);
 			T.Smooth = true;
-			Textures.Add(T);
-
-			I.SaveToFile("Tex" + (Textures.Count - 1) + ".png");
-			return Textures.Count - 1;
+			return T;
 		}
 
-		public override void Render(nk_handle Userdata, nk_handle Texture, nk_rect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds) {
-			VA.Resize(Count);
+		public override void Render(nk_handle Userdata, Texture Texture, nk_rect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds) {
+			Vertex[] SfmlVerts = new Vertex[Count];
 
 			for (int i = 0; i < Count; i++) {
 				NkVertex V = Verts[Inds[Offset + i]];
-				VA[(uint)i] = new Vertex(new Vector2f(V.Position.X, V.Position.Y), new Color(V.Color.R, V.Color.G, V.Color.B, V.Color.A), new Vector2f(V.UV.X, V.UV.Y));
+				SfmlVerts[i] = new Vertex(new Vector2f(V.Position.X, V.Position.Y), new Color(V.Color.R, V.Color.G, V.Color.B, V.Color.A), new Vector2f(V.UV.X, V.UV.Y));
 			}
 
-			RenderStates State = RenderStates.Default;
-			State.Texture = Textures[Texture.id];
-			RWind.Draw(VA, State);
+			Texture.Bind(Texture);
+			RWind.Draw(SfmlVerts, PrimitiveType.Triangles);
 		}
 	}
 
 	unsafe class Program {
-		static NuklearEvent.MouseButton ConvertButton(Mouse.Button B) {
-			switch (B) {
-				case Mouse.Button.Left:
-					return NuklearEvent.MouseButton.Left;
-
-				case Mouse.Button.Right:
-					return NuklearEvent.MouseButton.Right;
-
-				case Mouse.Button.Middle:
-					return NuklearEvent.MouseButton.Middle;
-			}
-
-			return NuklearEvent.MouseButton.Left;
-		}
-
 		static void Main(string[] args) {
 			Console.Title = "Nuklear SFML .NET";
 
@@ -78,8 +56,8 @@ namespace Example_SFML {
 			RWind.Closed += (S, E) => RWind.Close();
 
 			SFMLDevice Dev = new SFMLDevice(RWind);
-			RWind.MouseButtonPressed += (S, E) => Dev.OnMouseButton(ConvertButton(E.Button), E.X, E.Y, true);
-			RWind.MouseButtonReleased += (S, E) => Dev.OnMouseButton(ConvertButton(E.Button), E.X, E.Y, false);
+			RWind.MouseButtonPressed += (S, E) => Dev.OnMouseButton((NuklearEvent.MouseButton)E.Button, E.X, E.Y, true);
+			RWind.MouseButtonReleased += (S, E) => Dev.OnMouseButton((NuklearEvent.MouseButton)E.Button, E.X, E.Y, false);
 			RWind.MouseMoved += (S, E) => Dev.OnMouseMove(E.X, E.Y);
 
 			NuklearAPI.Init(Dev);
@@ -88,19 +66,17 @@ namespace Example_SFML {
 				RWind.DispatchEvents();
 				RWind.Clear(ClearColor);
 
-				NuklearAPI.HandleInput();
+				NuklearAPI.Frame(() => {
+					nk_panel_flags F = nk_panel_flags.NK_WINDOW_BORDER | nk_panel_flags.NK_WINDOW_MOVABLE | nk_panel_flags.NK_WINDOW_MINIMIZABLE |
+						nk_panel_flags.NK_WINDOW_CLOSABLE | nk_panel_flags.NK_WINDOW_SCALABLE | nk_panel_flags.NK_WINDOW_TITLE;
 
-				nk_panel_flags F = nk_panel_flags.NK_WINDOW_BORDER | nk_panel_flags.NK_WINDOW_MOVABLE | nk_panel_flags.NK_WINDOW_MINIMIZABLE |
-					nk_panel_flags.NK_WINDOW_CLOSABLE | nk_panel_flags.NK_WINDOW_SCALABLE | nk_panel_flags.NK_WINDOW_TITLE;
+					NuklearAPI.Window("Hello Nuklear .NET!", 50, 50, 220, 220, F, () => {
+						NuklearAPI.LayoutRowStatic(30, 80, 1);
 
-				NuklearAPI.BeginEnd("Hello!", 50, 50, 220, 220, F, () => {
-					Nuklear.nk_layout_row_static(NuklearAPI.Ctx, 30, 80, 1);
-
-					if (NuklearAPI.ButtonLabel("Button"))
-						Console.WriteLine("Hello Button!");
+						if (NuklearAPI.ButtonLabel("Hello"))
+							Console.WriteLine("Hello Button!");
+					});
 				});
-
-				NuklearAPI.Render();
 				RWind.Display();
 			}
 

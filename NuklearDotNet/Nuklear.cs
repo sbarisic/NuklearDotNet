@@ -9,6 +9,6 @@ namespace NuklearDotNet {
 	public static unsafe partial class Nuklear {
 		const string DllName = "Nuklear";
 		const CallingConvention CConv = CallingConvention.Cdecl;
-		const CharSet CSet = CharSet.Auto;
+		const CharSet CSet = CharSet.Ansi;
 	}
 }
