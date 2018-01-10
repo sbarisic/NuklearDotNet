@@ -15,6 +15,14 @@ Updating should be as easy as updating the submodule and rebuilding the project.
 
 Contributions welcome.
 
+# Screenshots
+
+![alt text](https://raw.githubusercontent.com/cartman300/NuklearDotNet/master/screenshots/a.png "Hello World!")
+
+# Code samples
+
+* TODO
+
 # TODO
 
 * Demo application
