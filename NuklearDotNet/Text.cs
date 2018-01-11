@@ -8,34 +8,34 @@ using System.Threading.Tasks;
 namespace NuklearDotNet {
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_str {
-		nk_buffer buffer;
-		int len;
+		public nk_buffer buffer;
+		public int len;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_clipboard {
-		nk_handle userdata;
-		IntPtr pastefun_nkPluginPasteT;
-		IntPtr copyfun_nkPluginCopyT;
+		public nk_handle userdata;
+		public IntPtr pastefun_nkPluginPasteT;
+		public IntPtr copyfun_nkPluginCopyT;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_text_undo_record {
-		int iwhere;
-		short insert_length;
-		short delete_length;
-		short char_storage;
+		public int iwhere;
+		public short insert_length;
+		public short delete_length;
+		public short char_storage;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_text_undo_state {
 		// fixed nk_text_undo_record undo_rec[99];
-		fixed short undo_rec_nkTextUndoRecord[99 * 6]; // ...?
-		fixed uint undo_char[999];
-		short undo_point;
-		short redo_point;
-		short undo_char_point;
-		short redo_char_point;
+		public fixed short undo_rec_nkTextUndoRecord[99 * 6]; // ...?
+		public fixed uint undo_char[999];
+		public short undo_point;
+		public short redo_point;
+		public short undo_char_point;
+		public short redo_char_point;
 	}
 
 	public enum nk_text_edit_type {
@@ -51,23 +51,23 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_text_edit {
-		nk_clipboard clip;
-		nk_str str;
-		IntPtr filter_nkPluginFilterT;
-		nk_vec2 scrollbar;
+		public nk_clipboard clip;
+		public nk_str str;
+		public IntPtr filter_nkPluginFilterT;
+		public nk_vec2 scrollbar;
 
-		int cursor;
-		int select_start;
-		int select_end;
-		byte mode;
-		byte cursor_at_end_of_line;
-		byte initialized;
-		byte has_preferred_x;
-		byte single_line;
-		byte active;
-		byte padding1;
-		float preferred_x;
-		nk_text_undo_state undo;
+		public int cursor;
+		public int select_start;
+		public int select_end;
+		public byte mode;
+		public byte cursor_at_end_of_line;
+		public byte initialized;
+		public byte has_preferred_x;
+		public byte single_line;
+		public byte active;
+		public byte padding1;
+		public float preferred_x;
+		public nk_text_undo_state undo;
 	}
 
 	// [DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]

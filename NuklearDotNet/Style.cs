@@ -14,306 +14,306 @@ namespace NuklearDotNet {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct nk_style_item_data {
 		[FieldOffset(0)]
-		nk_image image;
+		public nk_image image;
 
 		[FieldOffset(0)]
-		nk_color color;
+		public nk_color color;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_item {
-		nk_style_item_type type;
-		nk_style_item_data data;
+		public nk_style_item_type type;
+		public nk_style_item_data data;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_text {
-		nk_color color;
-		nk_vec2 padding;
+		public nk_color color;
+		public nk_vec2 padding;
 	}
 
 	public unsafe delegate void nk_style_drawbeginend(nk_command_buffer* cbuf, nk_handle userdata);
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_button {
-		nk_style_item normal;
-		nk_style_item hover;
-		nk_style_item active;
-		nk_color border_color;
+		public nk_style_item normal;
+		public nk_style_item hover;
+		public nk_style_item active;
+		public nk_color border_color;
 
-		nk_color text_background;
-		nk_color text_normal;
-		nk_color text_hover;
-		nk_color text_active;
-		uint text_alignment_nkflags;
+		public nk_color text_background;
+		public nk_color text_normal;
+		public nk_color text_hover;
+		public nk_color text_active;
+		public uint text_alignment_nkflags;
 
-		float border;
-		float rounding;
-		nk_vec2 padding;
-		nk_vec2 image_padding;
-		nk_vec2 touch_padding;
+		public float border;
+		public float rounding;
+		public nk_vec2 padding;
+		public nk_vec2 image_padding;
+		public nk_vec2 touch_padding;
 
-		nk_handle userdata;
-		IntPtr draw_begin_nkStyleDrawBeginEnd;
-		IntPtr draw_end_nkStyleDrawBeginEnd;
+		public nk_handle userdata;
+		public IntPtr draw_begin_nkStyleDrawBeginEnd;
+		public IntPtr draw_end_nkStyleDrawBeginEnd;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_toggle {
-		nk_style_item normal;
-		nk_style_item hover;
-		nk_style_item active;
-		nk_color border_color;
+		public nk_style_item normal;
+		public nk_style_item hover;
+		public nk_style_item active;
+		public nk_color border_color;
 
-		nk_style_item cursor_normal;
-		nk_style_item cursor_hover;
+		public nk_style_item cursor_normal;
+		public nk_style_item cursor_hover;
 
-		nk_color text_normal;
-		nk_color text_hover;
-		nk_color text_active;
-		nk_color text_background;
-		uint text_alignment_nkflags;
+		public nk_color text_normal;
+		public nk_color text_hover;
+		public nk_color text_active;
+		public nk_color text_background;
+		public uint text_alignment_nkflags;
 
-		nk_vec2 padding;
-		nk_vec2 touch_padding;
-		float spacing;
-		float border;
+		public nk_vec2 padding;
+		public nk_vec2 touch_padding;
+		public float spacing;
+		public float border;
 
-		nk_handle userdata;
-		IntPtr draw_begin_nkStyleDrawBeginEnd;
-		IntPtr draw_end_nkStyleDrawBeginEnd;
+		public nk_handle userdata;
+		public IntPtr draw_begin_nkStyleDrawBeginEnd;
+		public IntPtr draw_end_nkStyleDrawBeginEnd;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_selectable {
-		nk_style_item normal;
-		nk_style_item hover;
-		nk_style_item pressed;
+		public nk_style_item normal;
+		public nk_style_item hover;
+		public nk_style_item pressed;
 
-		nk_style_item normal_active;
-		nk_style_item hover_active;
-		nk_style_item pressed_active;
+		public nk_style_item normal_active;
+		public nk_style_item hover_active;
+		public nk_style_item pressed_active;
 
-		nk_color text_normal;
-		nk_color text_hover;
-		nk_color text_pressed;
+		public nk_color text_normal;
+		public nk_color text_hover;
+		public nk_color text_pressed;
 
-		nk_color text_normal_active;
-		nk_color text_hover_active;
-		nk_color text_pressed_active;
-		nk_color text_background;
-		uint text_alignment_nkflags;
+		public nk_color text_normal_active;
+		public nk_color text_hover_active;
+		public nk_color text_pressed_active;
+		public nk_color text_background;
+		public uint text_alignment_nkflags;
 
-		float rounding;
-		nk_vec2 padding;
-		nk_vec2 touch_padding;
-		nk_vec2 image_padding;
+		public float rounding;
+		public nk_vec2 padding;
+		public nk_vec2 touch_padding;
+		public nk_vec2 image_padding;
 
-		nk_handle userdata;
-		IntPtr draw_begin_nkStyleDrawBeginEnd;
-		IntPtr draw_end_nkStyleDrawBeginEnd;
+		public nk_handle userdata;
+		public IntPtr draw_begin_nkStyleDrawBeginEnd;
+		public IntPtr draw_end_nkStyleDrawBeginEnd;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_slider {
-		nk_style_item normal;
-		nk_style_item hover;
-		nk_style_item active;
-		nk_color border_color;
+		public nk_style_item normal;
+		public nk_style_item hover;
+		public nk_style_item active;
+		public nk_color border_color;
 
-		nk_color bar_normal;
-		nk_color bar_hover;
-		nk_color bar_active;
-		nk_color bar_filled;
+		public nk_color bar_normal;
+		public nk_color bar_hover;
+		public nk_color bar_active;
+		public nk_color bar_filled;
 
-		nk_style_item cursor_normal;
-		nk_style_item cursor_hover;
-		nk_style_item cursor_active;
+		public nk_style_item cursor_normal;
+		public nk_style_item cursor_hover;
+		public nk_style_item cursor_active;
 
-		float border;
-		float rounding;
-		float bar_height;
-		nk_vec2 padding;
-		nk_vec2 spacing;
-		nk_vec2 cursor_size;
+		public float border;
+		public float rounding;
+		public float bar_height;
+		public nk_vec2 padding;
+		public nk_vec2 spacing;
+		public nk_vec2 cursor_size;
 
-		int show_buttons;
-		nk_style_button inc_button;
-		nk_style_button dec_button;
-		nk_symbol_type inc_symbol;
-		nk_symbol_type dec_symbol;
+		public int show_buttons;
+		public nk_style_button inc_button;
+		public nk_style_button dec_button;
+		public nk_symbol_type inc_symbol;
+		public nk_symbol_type dec_symbol;
 
-		nk_handle userdata;
-		IntPtr draw_begin_nkStyleDrawBeginEnd;
-		IntPtr draw_end_nkStyleDrawBeginEnd;
+		public nk_handle userdata;
+		public IntPtr draw_begin_nkStyleDrawBeginEnd;
+		public IntPtr draw_end_nkStyleDrawBeginEnd;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_progress {
-		nk_style_item normal;
-		nk_style_item hover;
-		nk_style_item active;
-		nk_color border_color;
+		public nk_style_item normal;
+		public nk_style_item hover;
+		public nk_style_item active;
+		public nk_color border_color;
 
-		nk_style_item cursor_normal;
-		nk_style_item cursor_hover;
-		nk_style_item cursor_active;
-		nk_color cursor_border_color;
+		public nk_style_item cursor_normal;
+		public nk_style_item cursor_hover;
+		public nk_style_item cursor_active;
+		public nk_color cursor_border_color;
 
-		float rounding;
-		float border;
-		float cursor_border;
-		float cursor_rounding;
-		nk_vec2 padding;
+		public float rounding;
+		public float border;
+		public float cursor_border;
+		public float cursor_rounding;
+		public nk_vec2 padding;
 
-		nk_handle userdata;
-		IntPtr draw_begin_nkStyleDrawBeginEnd;
-		IntPtr draw_end_nkStyleDrawBeginEnd;
+		public nk_handle userdata;
+		public IntPtr draw_begin_nkStyleDrawBeginEnd;
+		public IntPtr draw_end_nkStyleDrawBeginEnd;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_scrollbar {
-		nk_style_item normal;
-		nk_style_item hover;
-		nk_style_item active;
-		nk_color border_color;
+		public nk_style_item normal;
+		public nk_style_item hover;
+		public nk_style_item active;
+		public nk_color border_color;
 
-		nk_style_item cursor_normal;
-		nk_style_item cursor_hover;
-		nk_style_item cursor_active;
-		nk_color cursor_border_color;
+		public nk_style_item cursor_normal;
+		public nk_style_item cursor_hover;
+		public nk_style_item cursor_active;
+		public nk_color cursor_border_color;
 
-		float border;
-		float rounding;
-		float border_cursor;
-		float rounding_cursor;
-		nk_vec2 padding;
+		public float border;
+		public float rounding;
+		public float border_cursor;
+		public float rounding_cursor;
+		public nk_vec2 padding;
 
-		int show_buttons;
-		nk_style_button inc_button;
-		nk_style_button dec_button;
-		nk_symbol_type inc_symbol;
-		nk_symbol_type dec_symbol;
+		public int show_buttons;
+		public nk_style_button inc_button;
+		public nk_style_button dec_button;
+		public nk_symbol_type inc_symbol;
+		public nk_symbol_type dec_symbol;
 
-		nk_handle userdata;
-		IntPtr draw_begin_nkStyleDrawBeginEnd;
-		IntPtr draw_end_nkStyleDrawBeginEnd;
+		public nk_handle userdata;
+		public IntPtr draw_begin_nkStyleDrawBeginEnd;
+		public IntPtr draw_end_nkStyleDrawBeginEnd;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_edit {
-		nk_style_item normal;
-		nk_style_item hover;
-		nk_style_item active;
-		nk_color border_color;
-		nk_style_scrollbar scrollbar;
+		public nk_style_item normal;
+		public nk_style_item hover;
+		public nk_style_item active;
+		public nk_color border_color;
+		public nk_style_scrollbar scrollbar;
 
-		nk_color cursor_normal;
-		nk_color cursor_hover;
-		nk_color cursor_text_normal;
-		nk_color cursor_text_hover;
+		public nk_color cursor_normal;
+		public nk_color cursor_hover;
+		public nk_color cursor_text_normal;
+		public nk_color cursor_text_hover;
 
-		nk_color text_normal;
-		nk_color text_hover;
-		nk_color text_active;
+		public nk_color text_normal;
+		public nk_color text_hover;
+		public nk_color text_active;
 
-		nk_color selected_normal;
-		nk_color selected_hover;
-		nk_color selected_text_normal;
-		nk_color selected_text_hover;
+		public nk_color selected_normal;
+		public nk_color selected_hover;
+		public nk_color selected_text_normal;
+		public nk_color selected_text_hover;
 
-		float border;
-		float rounding;
-		float cursor_size;
-		nk_vec2 scrollbar_size;
-		nk_vec2 padding;
-		float row_padding;
+		public float border;
+		public float rounding;
+		public float cursor_size;
+		public nk_vec2 scrollbar_size;
+		public nk_vec2 padding;
+		public float row_padding;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_property {
-		nk_style_item normal;
-		nk_style_item hover;
-		nk_style_item active;
-		nk_color border_color;
+		public nk_style_item normal;
+		public nk_style_item hover;
+		public nk_style_item active;
+		public nk_color border_color;
 
-		nk_color label_normal;
-		nk_color label_hover;
-		nk_color label_active;
+		public nk_color label_normal;
+		public nk_color label_hover;
+		public nk_color label_active;
 
-		nk_symbol_type sym_left;
-		nk_symbol_type sym_right;
+		public nk_symbol_type sym_left;
+		public nk_symbol_type sym_right;
 
-		float border;
-		float rounding;
-		nk_vec2 padding;
+		public float border;
+		public float rounding;
+		public nk_vec2 padding;
 
-		nk_style_edit edit;
-		nk_style_button inc_button;
-		nk_style_button dec_button;
+		public nk_style_edit edit;
+		public nk_style_button inc_button;
+		public nk_style_button dec_button;
 
-		nk_handle userdata;
-		IntPtr draw_begin_nkStyleDrawBeginEnd;
-		IntPtr draw_end_nkStyleDrawBeginEnd;
+		public nk_handle userdata;
+		public IntPtr draw_begin_nkStyleDrawBeginEnd;
+		public IntPtr draw_end_nkStyleDrawBeginEnd;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_chart {
-		nk_style_item background;
-		nk_color border_color;
-		nk_color selected_color;
-		nk_color color;
+		public nk_style_item background;
+		public nk_color border_color;
+		public nk_color selected_color;
+		public nk_color color;
 
-		float border;
-		float rounding;
-		nk_vec2 padding;
+		public float border;
+		public float rounding;
+		public nk_vec2 padding;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_combo {
-		nk_style_item normal;
-		nk_style_item hover;
-		nk_style_item active;
-		nk_color border_color;
+		public nk_style_item normal;
+		public nk_style_item hover;
+		public nk_style_item active;
+		public nk_color border_color;
 
-		nk_color label_normal;
-		nk_color label_hover;
-		nk_color label_active;
+		public nk_color label_normal;
+		public nk_color label_hover;
+		public nk_color label_active;
 
-		nk_color symbol_normal;
-		nk_color symbol_hover;
-		nk_color symbol_active;
+		public nk_color symbol_normal;
+		public nk_color symbol_hover;
+		public nk_color symbol_active;
 
-		nk_style_button button;
-		nk_symbol_type sym_normal;
-		nk_symbol_type sym_hover;
-		nk_symbol_type sym_active;
+		public nk_style_button button;
+		public nk_symbol_type sym_normal;
+		public nk_symbol_type sym_hover;
+		public nk_symbol_type sym_active;
 
-		float border;
-		float rounding;
-		nk_vec2 content_padding;
-		nk_vec2 button_padding;
-		nk_vec2 spacing;
+		public float border;
+		public float rounding;
+		public nk_vec2 content_padding;
+		public nk_vec2 button_padding;
+		public nk_vec2 spacing;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_tab {
-		nk_style_item background;
-		nk_color border_color;
-		nk_color text;
+		public nk_style_item background;
+		public nk_color border_color;
+		public nk_color text;
 
-		nk_style_button tab_maximize_button;
-		nk_style_button tab_minimize_button;
-		nk_style_button node_maximize_button;
-		nk_style_button node_minimize_button;
-		nk_symbol_type sym_minimize;
-		nk_symbol_type sym_maximize;
+		public nk_style_button tab_maximize_button;
+		public nk_style_button tab_minimize_button;
+		public nk_style_button node_maximize_button;
+		public nk_style_button node_minimize_button;
+		public nk_symbol_type sym_minimize;
+		public nk_symbol_type sym_maximize;
 
-		float border;
-		float rounding;
-		float indent;
-		nk_vec2 padding;
-		nk_vec2 spacing;
+		public float border;
+		public float rounding;
+		public float indent;
+		public nk_vec2 padding;
+		public nk_vec2 spacing;
 	}
 
 	public enum nk_style_header_align {
@@ -323,98 +323,98 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_window_header {
-		nk_style_item normal;
-		nk_style_item hover;
-		nk_style_item active;
+		public nk_style_item normal;
+		public nk_style_item hover;
+		public nk_style_item active;
 
-		nk_style_button close_button;
-		nk_style_button minimize_button;
-		nk_symbol_type close_symbol;
-		nk_symbol_type minimize_symbol;
-		nk_symbol_type maximize_symbol;
+		public nk_style_button close_button;
+		public nk_style_button minimize_button;
+		public nk_symbol_type close_symbol;
+		public nk_symbol_type minimize_symbol;
+		public nk_symbol_type maximize_symbol;
 
-		nk_color label_normal;
-		nk_color label_hover;
-		nk_color label_active;
+		public nk_color label_normal;
+		public nk_color label_hover;
+		public nk_color label_active;
 
-		nk_style_header_align align;
-		nk_vec2 padding;
-		nk_vec2 label_padding;
-		nk_vec2 spacing;
+		public nk_style_header_align align;
+		public nk_vec2 padding;
+		public nk_vec2 label_padding;
+		public nk_vec2 spacing;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_window {
-		nk_style_window_header header;
-		nk_style_item fixed_background;
-		nk_color background;
+		public nk_style_window_header header;
+		public nk_style_item fixed_background;
+		public nk_color background;
 
-		nk_color border_color;
-		nk_color popup_border_color;
-		nk_color combo_border_color;
-		nk_color contextual_border_color;
-		nk_color menu_border_color;
-		nk_color group_border_color;
-		nk_color tooltip_border_color;
-		nk_style_item scaler;
+		public nk_color border_color;
+		public nk_color popup_border_color;
+		public nk_color combo_border_color;
+		public nk_color contextual_border_color;
+		public nk_color menu_border_color;
+		public nk_color group_border_color;
+		public nk_color tooltip_border_color;
+		public nk_style_item scaler;
 
-		float border;
-		float combo_border;
-		float contextual_border;
-		float menu_border;
-		float group_border;
-		float tooltip_border;
-		float popup_border;
-		float min_row_height_padding;
+		public float border;
+		public float combo_border;
+		public float contextual_border;
+		public float menu_border;
+		public float group_border;
+		public float tooltip_border;
+		public float popup_border;
+		public float min_row_height_padding;
 
-		float rounding;
-		nk_vec2 spacing;
-		nk_vec2 scrollbar_size;
-		nk_vec2 min_size;
+		public float rounding;
+		public nk_vec2 spacing;
+		public nk_vec2 scrollbar_size;
+		public nk_vec2 min_size;
 
-		nk_vec2 padding;
-		nk_vec2 group_padding;
-		nk_vec2 popup_padding;
-		nk_vec2 combo_padding;
-		nk_vec2 contextual_padding;
-		nk_vec2 menu_padding;
-		nk_vec2 tooltip_padding;
+		public nk_vec2 padding;
+		public nk_vec2 group_padding;
+		public nk_vec2 popup_padding;
+		public nk_vec2 combo_padding;
+		public nk_vec2 contextual_padding;
+		public nk_vec2 menu_padding;
+		public nk_vec2 tooltip_padding;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_style {
-		nk_user_font* font;
+		public nk_user_font* font;
 
 		/* fixed nk_cursor* cursors[(int)(nk_style_cursor.NK_CURSOR_COUNT)]; */
-		nk_cursor* cursorArrow;
-		nk_cursor* cursorText;
-		nk_cursor* cursorMove;
-		nk_cursor* cursorResizeV;
-		nk_cursor* cursorResizeH;
-		nk_cursor* cursorResizeTLDR;
-		nk_cursor* cursorResizeTRDL;
+		public nk_cursor* cursorArrow;
+		public nk_cursor* cursorText;
+		public nk_cursor* cursorMove;
+		public nk_cursor* cursorResizeV;
+		public nk_cursor* cursorResizeH;
+		public nk_cursor* cursorResizeTLDR;
+		public nk_cursor* cursorResizeTRDL;
 
-		nk_cursor* cursor_active;
-		nk_cursor* cursor_last;
-		int cursor_visible;
+		public nk_cursor* cursor_active;
+		public nk_cursor* cursor_last;
+		public int cursor_visible;
 
-		nk_style_text text;
-		nk_style_button button;
-		nk_style_button contextual_button;
-		nk_style_button menu_button;
-		nk_style_toggle option;
-		nk_style_toggle checkbox;
-		nk_style_selectable selectable;
-		nk_style_slider slider;
-		nk_style_progress progress;
-		nk_style_property property;
-		nk_style_edit edit;
-		nk_style_chart chart;
-		nk_style_scrollbar scrollh;
-		nk_style_scrollbar scrollb;
-		nk_style_tab tab;
-		nk_style_combo combo;
-		nk_style_window window;
+		public nk_style_text text;
+		public nk_style_button button;
+		public nk_style_button contextual_button;
+		public nk_style_button menu_button;
+		public nk_style_toggle option;
+		public nk_style_toggle checkbox;
+		public nk_style_selectable selectable;
+		public nk_style_slider slider;
+		public nk_style_progress progress;
+		public nk_style_property property;
+		public nk_style_edit edit;
+		public nk_style_chart chart;
+		public nk_style_scrollbar scrollh;
+		public nk_style_scrollbar scrollb;
+		public nk_style_tab tab;
+		public nk_style_combo combo;
+		public nk_style_window window;
 	}
 
 	public enum nk_style_colors {
