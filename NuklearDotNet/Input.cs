@@ -52,46 +52,46 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_mouse_button {
-		int down;
-		uint clicked;
-		nk_vec2 clicked_pos;
+		public int down;
+		public uint clicked;
+		public nk_vec2 clicked_pos;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_mouse {
 		/* fixed nk_mouse_button buttons[(int)(nk_buttons.NK_BUTTON_MAX)]; */
-		nk_mouse_button buttonLeft;
-		nk_mouse_button buttonMiddle;
-		nk_mouse_button buttonRight;
-		nk_mouse_button buttonDouble;
+		public nk_mouse_button buttonLeft;
+		public nk_mouse_button buttonMiddle;
+		public nk_mouse_button buttonRight;
+		public nk_mouse_button buttonDouble;
 
-		nk_vec2 pos;
-		nk_vec2 prev;
-		nk_vec2 delta;
-		nk_vec2 scroll_delta;
+		public nk_vec2 pos;
+		public nk_vec2 prev;
+		public nk_vec2 delta;
+		public nk_vec2 scroll_delta;
 
-		byte grab;
-		byte grabbed;
-		byte ungrab;
+		public byte grab;
+		public byte grabbed;
+		public byte ungrab;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_key {
-		int down;
-		uint clicked;
+		public int down;
+		public uint clicked;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_keyboard {
-		fixed uint keysCastTwoOfMeToOneNkKey[2 * (int)(nk_keys.NK_KEY_MAX)];
-		fixed byte text[16];
-		int text_len;
+		public fixed uint keysCastTwoOfMeToOneNkKey[2 * (int)(nk_keys.NK_KEY_MAX)];
+		public fixed byte text[16];
+		public int text_len;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_input {
-		nk_keyboard keyboard;
-		nk_mouse mouse;
+		public nk_keyboard keyboard;
+		public nk_mouse mouse;
 	}
 
 	// [DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]

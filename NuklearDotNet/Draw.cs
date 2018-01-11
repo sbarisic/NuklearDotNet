@@ -71,193 +71,193 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command_scissor {
-		nk_command header;
-		short x;
-		short y;
-		ushort w;
-		ushort h;
+		public nk_command header;
+		public short x;
+		public short y;
+		public ushort w;
+		public ushort h;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command_line {
-		nk_command header;
-		ushort line_thickness;
-		nk_vec2i begin;
-		nk_vec2i end;
-		nk_color color;
+		public nk_command header;
+		public ushort line_thickness;
+		public nk_vec2i begin;
+		public nk_vec2i end;
+		public nk_color color;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command_curve {
-		nk_command header;
-		ushort line_thickness;
-		nk_vec2i begin;
-		nk_vec2i end;
-		nk_vec2i ctrlA;
-		nk_vec2i ctrlB;
-		nk_color color;
+		public nk_command header;
+		public ushort line_thickness;
+		public nk_vec2i begin;
+		public nk_vec2i end;
+		public nk_vec2i ctrlA;
+		public nk_vec2i ctrlB;
+		public nk_color color;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command_rect {
-		nk_command header;
-		ushort rounding;
-		ushort line_thickness;
-		short x;
-		short y;
-		ushort w;
-		ushort h;
-		nk_color color;
+		public nk_command header;
+		public ushort rounding;
+		public ushort line_thickness;
+		public short x;
+		public short y;
+		public ushort w;
+		public ushort h;
+		public nk_color color;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command_rect_filled {
-		nk_command header;
-		ushort rounding;
-		short x;
-		short y;
-		ushort w;
-		ushort h;
-		nk_color color;
+		public nk_command header;
+		public ushort rounding;
+		public short x;
+		public short y;
+		public ushort w;
+		public ushort h;
+		public nk_color color;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command_rect_multi_color {
-		nk_command header;
-		short x;
-		short y;
-		ushort w;
-		ushort h;
-		nk_color left;
-		nk_color top;
-		nk_color bottom;
-		nk_color right;
+		public nk_command header;
+		public short x;
+		public short y;
+		public ushort w;
+		public ushort h;
+		public nk_color left;
+		public nk_color top;
+		public nk_color bottom;
+		public nk_color right;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command_triangle {
-		nk_command header;
-		ushort line_thickness;
-		nk_vec2i a;
-		nk_vec2i b;
-		nk_vec2i c;
-		nk_color color;
+		public nk_command header;
+		public ushort line_thickness;
+		public nk_vec2i a;
+		public nk_vec2i b;
+		public nk_vec2i c;
+		public nk_color color;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command_triangle_filled {
-		nk_command header;
-		nk_vec2i a;
-		nk_vec2i b;
-		nk_vec2i c;
-		nk_color color;
+		public nk_command header;
+		public nk_vec2i a;
+		public nk_vec2i b;
+		public nk_vec2i c;
+		public nk_color color;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command_circle {
-		nk_command header;
-		short x;
-		short y;
-		ushort line_thickness;
-		ushort w;
-		ushort h;
-		nk_color color;
+		public nk_command header;
+		public short x;
+		public short y;
+		public ushort line_thickness;
+		public ushort w;
+		public ushort h;
+		public nk_color color;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command_circle_filled {
-		nk_command header;
-		short x;
-		short y;
-		ushort w;
-		ushort h;
-		nk_color color;
+		public nk_command header;
+		public short x;
+		public short y;
+		public ushort w;
+		public ushort h;
+		public nk_color color;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_command_arc {
-		nk_command header;
-		short cx;
-		short cy;
-		ushort r;
-		ushort line_thickness;
-		fixed float a[2];
-		nk_color color;
+		public nk_command header;
+		public short cx;
+		public short cy;
+		public ushort r;
+		public ushort line_thickness;
+		public fixed float a[2];
+		public nk_color color;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_command_arc_filled {
-		nk_command header;
-		short cx;
-		short cy;
-		ushort r;
-		fixed float a[2];
-		nk_color color;
+		public nk_command header;
+		public short cx;
+		public short cy;
+		public ushort r;
+		public fixed float a[2];
+		public nk_color color;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_command_polygon {
-		nk_command header;
-		nk_color color;
-		ushort line_thickness;
-		ushort point_count;
-		nk_vec2i firstPoint;  /* (fixed?) struct nk_vec2i points[1]; /* ????? * */
+		public nk_command header;
+		public nk_color color;
+		public ushort line_thickness;
+		public ushort point_count;
+		public nk_vec2i firstPoint;  /* (fixed?) struct nk_vec2i points[1]; /* ????? * */
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_command_polygon_filled {
-		nk_command header;
-		nk_color color;
-		ushort point_count;
-		nk_vec2i firstPoint;
+		public nk_command header;
+		public nk_color color;
+		public ushort point_count;
+		public nk_vec2i firstPoint;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command_polyline {
-		nk_command header;
-		nk_color color;
-		ushort line_thickness;
-		ushort point_count;
-		nk_vec2i firstPoint;
+		public nk_command header;
+		public nk_color color;
+		public ushort line_thickness;
+		public ushort point_count;
+		public nk_vec2i firstPoint;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command_image {
-		nk_command header;
-		short x;
-		short y;
-		ushort w;
-		ushort h;
-		nk_image img;
-		nk_color col;
+		public nk_command header;
+		public short x;
+		public short y;
+		public ushort w;
+		public ushort h;
+		public nk_image img;
+		public nk_color col;
 	}
 
 	public delegate void nk_command_custom_callback(IntPtr canvas, short x, short y, ushort w, ushort h, nk_handle callback_data);
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command_custom {
-		nk_command header;
-		short x;
-		short y;
-		ushort w;
-		ushort h;
-		nk_handle callback_data;
-		nk_command_custom_callback callback;
+		public nk_command header;
+		public short x;
+		public short y;
+		public ushort w;
+		public ushort h;
+		public nk_handle callback_data;
+		public nk_command_custom_callback callback;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_command_text {
-		nk_command header;
-		nk_user_font* font;
-		nk_color background;
-		nk_color foreground;
-		short x;
-		short y;
-		ushort w;
-		ushort h;
-		float height;
-		int length;
-		byte stringFirstByte;
+		public nk_command header;
+		public nk_user_font* font;
+		public nk_color background;
+		public nk_color foreground;
+		public short x;
+		public short y;
+		public ushort w;
+		public ushort h;
+		public float height;
+		public int length;
+		public byte stringFirstByte;
 	}
 
 	public enum nk_command_clipping {
@@ -267,13 +267,13 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_command_buffer {
-		nk_buffer* baseBuf;
-		nk_rect clip;
-		int use_clipping;
-		nk_handle userdata;
-		IntPtr begin_nksize;
-		IntPtr end_nksize;
-		IntPtr last_nksize;
+		public nk_buffer* baseBuf;
+		public nk_rect clip;
+		public int use_clipping;
+		public nk_handle userdata;
+		public IntPtr begin_nksize;
+		public IntPtr end_nksize;
+		public IntPtr last_nksize;
 	}
 
 	/* nk_draw_index -> nk_ushort */
@@ -344,26 +344,26 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_draw_list {
-		nk_rect clip_rect;
-		fixed long circle_vtx_CastMeToVec2[12];
-		nk_convert_config config;
+		public nk_rect clip_rect;
+		public fixed long circle_vtx_CastMeToVec2[12];
+		public nk_convert_config config;
 
-		nk_buffer* buffer;
-		nk_buffer* vertices;
-		nk_buffer* elements;
+		public nk_buffer* buffer;
+		public nk_buffer* vertices;
+		public nk_buffer* elements;
 
-		uint element_count;
-		uint vertex_count;
-		uint cmd_count;
-		IntPtr cmd_offset_nksize;
+		public uint element_count;
+		public uint vertex_count;
+		public uint cmd_count;
+		public IntPtr cmd_offset_nksize;
 
-		uint path_count;
-		uint path_offset;
+		public uint path_count;
+		public uint path_offset;
 
-		nk_anti_aliasing line_AA;
-		nk_anti_aliasing shape_AA;
+		public nk_anti_aliasing line_AA;
+		public nk_anti_aliasing shape_AA;
 
-		nk_handle userdata;
+		public nk_handle userdata;
 	}
 
 	public static unsafe partial class Nuklear {

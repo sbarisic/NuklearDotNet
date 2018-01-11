@@ -13,30 +13,30 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_color {
-		byte r;
-		byte g;
-		byte b;
-		byte a;
+		public byte r;
+		public byte g;
+		public byte b;
+		public byte a;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_colorf {
-		float r;
-		float g;
-		float b;
-		float a;
+		public float r;
+		public float g;
+		public float b;
+		public float a;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_vec2 {
-		float x;
-		float y;
+		public float x;
+		public float y;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_vec2i {
-		short x;
-		short y;
+		public short x;
+		public short y;
 	}
 
 
@@ -58,19 +58,19 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_recti {
-		short x;
-		short y;
-		short w;
-		short h;
+		public short x;
+		public short y;
+		public short w;
+		public short h;
 	}
 
 	[StructLayout(LayoutKind.Explicit)]
 	public unsafe struct nk_glyph {
 		[FieldOffset(0)]
-		fixed byte bytes[4];
+		public fixed byte bytes[4];
 
 		[FieldOffset(0)]
-		int glyph;
+		public int glyph;
 	}
 
 	[StructLayout(LayoutKind.Explicit)]
@@ -83,23 +83,23 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_image {
-		nk_handle handle;
-		ushort w;
-		ushort h;
-		fixed ushort region[4];
+		public nk_handle handle;
+		public ushort w;
+		public ushort h;
+		public fixed ushort region[4];
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_cursor {
-		nk_image img;
-		nk_vec2 size;
-		nk_vec2 offset;
+		public nk_image img;
+		public nk_vec2 size;
+		public nk_vec2 offset;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_scroll {
-		uint x;
-		uint y;
+		public uint x;
+		public uint y;
 	}
 
 	/* ... */

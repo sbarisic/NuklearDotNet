@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 namespace NuklearDotNet {
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_user_font_glyph {
-		nk_vec2 u;
-		nk_vec2 v;
-		nk_vec2 offset;
-		float width;
-		float height;
-		float xadvance;
+		public nk_vec2 u;
+		public nk_vec2 v;
+		public nk_vec2 offset;
+		public float width;
+		public float height;
+		public float xadvance;
 	}
 
 	public unsafe delegate float nk_text_width_f(nk_handle handle, float h, byte* s, int len);
@@ -21,11 +21,11 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_user_font {
-		nk_handle userdata;
-		float height;
-		IntPtr widthfun_nkTextWidthF;
-		IntPtr queryfun_nkQueryFontGlyphF;
-		nk_handle texture;
+		public nk_handle userdata;
+		public float height;
+		public IntPtr widthfun_nkTextWidthF;
+		public IntPtr queryfun_nkQueryFontGlyphF;
+		public nk_handle texture;
 	}
 
 	public enum nk_font_coord_type {
@@ -35,50 +35,50 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_baked_font {
-		float height;
-		float ascent;
-		float descent;
-		uint glyph_offset;
-		uint glyph_count;
-		uint* ranges;
+		public float height;
+		public float ascent;
+		public float descent;
+		public uint glyph_offset;
+		public uint glyph_count;
+		public uint* ranges;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_font_config {
-		nk_font_config* next;
-		IntPtr ttf_blob;
-		IntPtr ttf_size;
-		byte ttf_data_owned_by_atlas;
-		byte merge_mode;
-		byte pixel_snap;
-		byte oversample_v;
-		byte oversample_h;
+		public nk_font_config* next;
+		public IntPtr ttf_blob;
+		public IntPtr ttf_size;
+		public byte ttf_data_owned_by_atlas;
+		public byte merge_mode;
+		public byte pixel_snap;
+		public byte oversample_v;
+		public byte oversample_h;
 		fixed byte padding[3];
-		float size;
-		nk_font_coord_type coord_type;
-		nk_vec2 spacing;
-		uint* range;
-		nk_baked_font* font;
-		uint fallback_glyph;
+		public float size;
+		public nk_font_coord_type coord_type;
+		public nk_vec2 spacing;
+		public uint* range;
+		public nk_baked_font* font;
+		public uint fallback_glyph;
 
-		nk_font_config* n;
-		nk_font_config* p;
+		public nk_font_config* n;
+		public nk_font_config* p;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_font_glyph {
-		uint codepoint;
-		float xadvance;
-		float x0;
-		float y0;
-		float x1;
-		float y1;
-		float w;
-		float h;
-		float u0;
-		float v0;
-		float u1;
-		float v1;
+		public uint codepoint;
+		public float xadvance;
+		public float x0;
+		public float y0;
+		public float x1;
+		public float y1;
+		public float w;
+		public float h;
+		public float u0;
+		public float v0;
+		public float u1;
+		public float v1;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

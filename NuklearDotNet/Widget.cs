@@ -40,28 +40,28 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_chart_slot {
-		nk_chart_type type;
-		nk_color color;
-		nk_color highlight;
-		float min;
-		float max;
-		float range;
-		int count;
-		nk_vec2 last;
-		int index;
+		public nk_chart_type type;
+		public nk_color color;
+		public nk_color highlight;
+		public float min;
+		public float max;
+		public float range;
+		public int count;
+		public nk_vec2 last;
+		public int index;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_chart {
-		int slot;
-		float x;
-		float y;
-		float w;
-		float h;
-		nk_chart_slot slot0;
-		nk_chart_slot slot1;
-		nk_chart_slot slot2;
-		nk_chart_slot slot3;
+		public int slot;
+		public float x;
+		public float y;
+		public float w;
+		public float h;
+		public nk_chart_slot slot0;
+		public nk_chart_slot slot1;
+		public nk_chart_slot slot2;
+		public nk_chart_slot slot3;
 	}
 
 	public enum nk_panel_row_layout_type {
@@ -79,59 +79,59 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_row_layout {
-		nk_panel_row_layout_type type;
-		int index;
-		float height;
-		float min_height;
-		int columns;
-		float* ratio;
-		float item_width;
-		float item_height;
-		float item_offset;
-		float filled;
-		nk_rect item;
-		int tree_depth;
-		fixed float templates[16];
+		public nk_panel_row_layout_type type;
+		public int index;
+		public float height;
+		public float min_height;
+		public int columns;
+		public float* ratio;
+		public float item_width;
+		public float item_height;
+		public float item_offset;
+		public float filled;
+		public nk_rect item;
+		public int tree_depth;
+		public fixed float templates[16];
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_popup_buffer {
-		IntPtr begin_nksize;
-		IntPtr parent_nksize;
-		IntPtr last_nksize;
-		IntPtr end_nksize;
-		int active;
+		public IntPtr begin_nksize;
+		public IntPtr parent_nksize;
+		public IntPtr last_nksize;
+		public IntPtr end_nksize;
+		public int active;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_menu_state {
-		float x;
-		float y;
-		float w;
-		float h;
-		nk_scroll offset;
+		public float x;
+		public float y;
+		public float w;
+		public float h;
+		public nk_scroll offset;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_panel {
-		nk_panel_type type;
-		uint flags_nkflags;
-		nk_rect bounds;
-		uint* offset_x;
-		uint* offset_y;
-		float at_x;
-		float at_y;
-		float max_x;
-		float footer_height;
-		float header_height;
-		float border;
-		uint has_scrolling;
-		nk_rect clip;
-		nk_menu_state menu;
-		nk_row_layout row;
-		nk_chart chart;
-		nk_command_buffer* buffer;
-		nk_panel* parent;
+		public nk_panel_type type;
+		public uint flags_nkflags;
+		public nk_rect bounds;
+		public uint* offset_x;
+		public uint* offset_y;
+		public float at_x;
+		public float at_y;
+		public float max_x;
+		public float footer_height;
+		public float header_height;
+		public float border;
+		public uint has_scrolling;
+		public nk_rect clip;
+		public nk_menu_state menu;
+		public nk_row_layout row;
+		public nk_chart chart;
+		public nk_command_buffer* buffer;
+		public nk_panel* parent;
 	}
 
 	[Flags]
@@ -148,84 +148,84 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_popup_state {
-		nk_window* win;
-		nk_panel_type type;
-		nk_popup_buffer buf;
-		uint name_nkhash;
-		int active;
-		uint combo_count;
-		uint con_count;
-		uint con_old;
-		uint active_con;
-		nk_rect header;
+		public nk_window* win;
+		public nk_panel_type type;
+		public nk_popup_buffer buf;
+		public uint name_nkhash;
+		public int active;
+		public uint combo_count;
+		public uint con_count;
+		public uint con_old;
+		public uint active_con;
+		public nk_rect header;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_edit_state {
-		uint name_nkhash;
-		uint seq;
-		uint old;
-		int active;
-		int prev;
-		int cursor;
-		int sel_start;
-		int sel_end;
-		nk_scroll scrollbar;
-		byte mode;
-		byte single_line;
+		public uint name_nkhash;
+		public uint seq;
+		public uint old;
+		public int active;
+		public int prev;
+		public int cursor;
+		public int sel_start;
+		public int sel_end;
+		public nk_scroll scrollbar;
+		public byte mode;
+		public byte single_line;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_property_state {
-		int active;
-		int prev;
-		fixed byte buffer[64];
-		int length;
-		int cursor;
-		int select_start;
-		int select_end;
-		uint name_nkhash;
-		uint seq;
-		uint old;
-		int state;
+		public int active;
+		public int prev;
+		public fixed byte buffer[64];
+		public int length;
+		public int cursor;
+		public int select_start;
+		public int select_end;
+		public uint name_nkhash;
+		public uint seq;
+		public uint old;
+		public int state;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_window {
-		uint seq;
-		uint name_nkhash;
-		fixed byte name_string[64];
-		uint flags_nkflags;
+		public uint seq;
+		public uint name_nkhash;
+		public fixed byte name_string[64];
+		public uint flags_nkflags;
 
-		nk_rect bounds;
-		nk_scroll scrollbar;
-		nk_command_buffer buffer;
-		nk_panel* layout;
-		float scrollbar_hiding_timer;
+		public nk_rect bounds;
+		public nk_scroll scrollbar;
+		public nk_command_buffer buffer;
+		public nk_panel* layout;
+		public float scrollbar_hiding_timer;
 
-		nk_property_state property;
-		nk_popup_state popup;
-		nk_edit_state edit;
-		uint scrolled;
+		public nk_property_state property;
+		public nk_popup_state popup;
+		public nk_edit_state edit;
+		public uint scrolled;
 
-		nk_table* tables;
-		uint table_count;
+		public nk_table* tables;
+		public uint table_count;
 
-		nk_window* next;
-		nk_window* prev;
-		nk_window* parent;
+		public nk_window* next;
+		public nk_window* prev;
+		public nk_window* parent;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_list_view {
-		int begin;
-		int end;
-		int count;
+		public int begin;
+		public int end;
+		public int count;
 
-		int total_height;
-		nk_context* ctx;
-		uint* scroll_pointer;
-		uint scroll_value;
+		public int total_height;
+		public nk_context* ctx;
+		public uint* scroll_pointer;
+		public uint scroll_value;
 	}
 
 	public enum nk_widget_layout_states {
