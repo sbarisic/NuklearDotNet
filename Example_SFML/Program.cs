@@ -12,11 +12,9 @@ using System.Runtime.InteropServices;
 
 namespace Example_SFML {
 	unsafe class SFMLDevice : NuklearDeviceTex<Texture> {
-		List<Texture> Textures;
 		RenderWindow RWind;
 
 		public SFMLDevice(RenderWindow RWind) {
-			Textures = new List<Texture>();
 			this.RWind = RWind;
 		}
 
