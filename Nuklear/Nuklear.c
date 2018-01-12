@@ -10,6 +10,7 @@
 
 #define NK_INPUT_MAX 512
 
+
 // Crash on assertion failure, it is captured as an exception in .NET
 #define NK_ASSERT(ex) do { if(!(ex)) { *(int*)0 = 0; } } while(0)
 
