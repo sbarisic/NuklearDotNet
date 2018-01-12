@@ -1,4 +1,3 @@
-#define NK_IMPLEMENTATION
 
 #define NK_ZERO_COMMAND_MEMORY
 #define NK_BUTTON_TRIGGER_ON_RELEASE
@@ -15,4 +14,3 @@
 #define NK_ASSERT(ex) do { if(!(ex)) { *(int*)0 = 0; } } while(0)
 
 #include <nuklear.h>
-
