@@ -9,6 +9,7 @@ using SFML.Window;
 using SFML.System;
 using NuklearDotNet;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace Example_SFML {
 	unsafe class SFMLDevice : NuklearDeviceTex<Texture> {
@@ -78,6 +79,7 @@ namespace Example_SFML {
 
 		static void Main(string[] args) {
 			Console.Title = "Nuklear SFML .NET";
+			Stopwatch SWatch = Stopwatch.StartNew();
 
 			VideoMode VMode = new VideoMode(1366, 768);
 			RenderWindow RWind = new RenderWindow(VMode, Console.Title, Styles.Close);
@@ -98,16 +100,27 @@ namespace Example_SFML {
 			NuklearCalculator CalcA = new NuklearCalculator("Calc A", 50, 50);
 			NuklearCalculator CalcB = new NuklearCalculator("Calc B", 300, 50);
 
+			float Dt = 0.1f;
+
 			while (RWind.IsOpen) {
 				RWind.DispatchEvents();
 				RWind.Clear(ClearColor);
 
+				NuklearAPI.SetDeltaTime(Dt);
 				NuklearAPI.Frame(() => {
-					CalcA.Calculator();
-					CalcB.Calculator();
-					TestWindow(300, 300);
+					if (CalcA.Open)
+						CalcA.Calculator();
+
+					if (CalcB.Open)
+						CalcB.Calculator();
+
+					TestWindow(400, 350);
 				});
+
 				RWind.Display();
+
+				Dt = SWatch.ElapsedMilliseconds / 1000.0f;
+				SWatch.Restart();
 			}
 
 			Environment.Exit(0);
@@ -115,14 +128,17 @@ namespace Example_SFML {
 
 		static void TestWindow(float X, float Y) {
 			nk_panel_flags Flags = nk_panel_flags.NK_WINDOW_BORDER | nk_panel_flags.NK_WINDOW_MOVABLE | nk_panel_flags.NK_WINDOW_TITLE
-				| nk_panel_flags.NK_WINDOW_MINIMIZABLE | nk_panel_flags.NK_WINDOW_SCALABLE;
+				| nk_panel_flags.NK_WINDOW_MINIMIZABLE | nk_panel_flags.NK_WINDOW_SCALABLE | nk_panel_flags.NK_WINDOW_SCROLL_AUTO_HIDE;
 
 			NuklearAPI.Window("Test Window", X, Y, 200, 200, Flags, () => {
-				NuklearAPI.LayoutRowDynamic(35, 1);
+				NuklearAPI.LayoutRowDynamic(35);
 
 				for (int i = 0; i < 5; i++)
 					if (NuklearAPI.ButtonLabel("Some Button " + i))
 						Console.WriteLine("You pressed button " + i);
+
+				if (NuklearAPI.ButtonLabel("Exit"))
+					Environment.Exit(0);
 			});
 		}
 
@@ -134,6 +150,7 @@ namespace Example_SFML {
 				B
 			}
 
+			public bool Open = true;
 			public bool Set;
 			public float A, B;
 			public char Prev, Op;
@@ -168,7 +185,8 @@ namespace Example_SFML {
 			public void Calculator() {
 				const string Numbers = "789456123";
 				const string Ops = "+-*/";
-				const nk_panel_flags F = nk_panel_flags.NK_WINDOW_BORDER | nk_panel_flags.NK_WINDOW_MOVABLE | nk_panel_flags.NK_WINDOW_NO_SCROLLBAR | nk_panel_flags.NK_WINDOW_TITLE;
+				const nk_panel_flags F = nk_panel_flags.NK_WINDOW_BORDER | nk_panel_flags.NK_WINDOW_MOVABLE | nk_panel_flags.NK_WINDOW_NO_SCROLLBAR | nk_panel_flags.NK_WINDOW_TITLE
+					| nk_panel_flags.NK_WINDOW_CLOSABLE | nk_panel_flags.NK_WINDOW_MINIMIZABLE;
 
 				bool Solve = false;
 				string BufferStr;
@@ -254,6 +272,9 @@ namespace Example_SFML {
 						Set = false;
 					}
 				});
+
+				if (NuklearAPI.WindowIsClosed(Name) || NuklearAPI.WindowIsHidden(Name))
+					Open = false;
 			}
 		}
 	}
