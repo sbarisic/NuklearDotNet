@@ -1,7 +1,6 @@
 LIBRARY Nuklear
 EXPORTS
 
-nk_init_default
 nk_init_fixed
 nk_init
 nk_init_custom
@@ -390,7 +389,6 @@ nk_font_chinese_glyph_ranges
 nk_font_cyrillic_glyph_ranges
 nk_font_korean_glyph_ranges
 
-nk_font_atlas_init_default
 nk_font_atlas_init
 nk_font_atlas_init_custom
 nk_font_atlas_begin
@@ -406,7 +404,6 @@ nk_font_find_glyph
 nk_font_atlas_cleanup
 nk_font_atlas_clear
 
-nk_buffer_init_default
 nk_buffer_init
 nk_buffer_init_fixed
 nk_buffer_info
@@ -419,7 +416,6 @@ nk_buffer_memory
 nk_buffer_memory_const
 nk_buffer_total
 
-nk_str_init_default
 nk_str_init
 nk_str_init_fixed
 nk_str_clear
@@ -466,7 +462,6 @@ nk_filter_hex
 nk_filter_oct
 nk_filter_binary
 
-nk_textedit_init_default
 nk_textedit_init
 nk_textedit_init_fixed
 nk_textedit_free
