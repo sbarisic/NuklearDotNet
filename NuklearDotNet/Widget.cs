@@ -344,10 +344,19 @@ namespace NuklearDotNet {
 		public static extern int nk_window_is_collapsed(nk_context* ctx, byte* name);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_window_is_collapsed(nk_context* ctx, string name);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_window_is_closed(nk_context* ctx, byte* name);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_window_is_closed(nk_context* ctx, string name);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_window_is_hidden(nk_context* ctx, byte* name);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_window_is_hidden(nk_context* ctx, string name);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_window_is_active(nk_context* ctx, byte* name);

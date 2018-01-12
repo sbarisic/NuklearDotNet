@@ -392,6 +392,9 @@ namespace NuklearDotNet {
 		public static extern int nk_begin(nk_context* context, string title, nk_rect bounds, uint flags_nkflags);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_begin_titled(nk_context* context, string name, string title, nk_rect bounds, uint flags_nkflags);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_end(nk_context* context);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
