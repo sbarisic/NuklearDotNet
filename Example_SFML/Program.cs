@@ -15,15 +15,16 @@ using System.Threading;
 namespace Example_SFML {
 	// Because SFML _still does not have a fucking Scissor function, what the *fuck*_
 	static class GayGL {
+		const string LibName = "opengl32";
 		public const int GL_SCISSOR_TEST = 0xC11;
 
-		[DllImport("Opengl32")]
+		[DllImport(LibName)]
 		public static extern void glEnable(int Cap);
 
-		[DllImport("Opengl32")]
+		[DllImport(LibName)]
 		public static extern void glDisable(int Cap);
 
-		[DllImport("Opengl32")]
+		[DllImport(LibName)]
 		public static extern void glScissor(int X, int Y, int W, int H);
 
 		public static void glScissor2(int WindH, int X, int Y, int W, int H) {
@@ -58,7 +59,7 @@ namespace Example_SFML {
 				NkVertex V = Verts[Inds[Offset + i]];
 				SfmlVerts[i] = new Vertex(new Vector2f(V.Position.X, V.Position.Y), new Color(V.Color.R, V.Color.G, V.Color.B, V.Color.A), new Vector2f(V.UV.X, V.UV.Y));
 			}
-			
+
 			Texture.Bind(Texture);
 
 			GayGL.glEnable(GayGL.GL_SCISSOR_TEST);
