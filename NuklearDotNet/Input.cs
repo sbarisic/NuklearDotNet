@@ -82,9 +82,10 @@ namespace NuklearDotNet {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public unsafe struct nk_keyboard {
+	public unsafe struct nk_keyboard { // TODO: Hax
 		public fixed uint keysCastTwoOfMeToOneNkKey[2 * (int)(nk_keys.NK_KEY_MAX)];
-		public fixed byte text[16];
+		//public fixed nk_key keys[(uint)nk_keys.NK_KEY_MAX];
+		public fixed byte text[Nuklear.NK_INPUT_MAX];
 		public int text_len;
 	}
 
