@@ -23,6 +23,18 @@ namespace NuklearDotNet {
 
 		static NuklearDevice Dev;
 
+		static IntPtr ManagedAlloc(IntPtr Size) {
+			return Marshal.AllocHGlobal(Size);
+		}
+
+		static IntPtr ManagedAlloc(int Size) {
+			return ManagedAlloc(new IntPtr(Size));
+		}
+
+		static void ManagedFree(IntPtr Mem) {
+			Marshal.FreeHGlobal(Mem);
+		}
+
 		public static void Init(NuklearDevice Device) {
 			if (Initialized)
 				return;
@@ -31,13 +43,13 @@ namespace NuklearDotNet {
 			Dev = Device;
 
 			// TODO: Free these later
-			Ctx = (nk_context*)Marshal.AllocHGlobal(sizeof(nk_context));
-			Allocator = (nk_allocator*)Marshal.AllocHGlobal(sizeof(nk_allocator));
-			FontAtlas = (nk_font_atlas*)Marshal.AllocHGlobal(sizeof(nk_font_atlas));
-			NullTexture = (nk_draw_null_texture*)Marshal.AllocHGlobal(sizeof(nk_draw_null_texture));
-			ConvertCfg = (nk_convert_config*)Marshal.AllocHGlobal(sizeof(nk_convert_config));
+			Ctx = (nk_context*)ManagedAlloc(sizeof(nk_context));
+			Allocator = (nk_allocator*)ManagedAlloc(sizeof(nk_allocator));
+			FontAtlas = (nk_font_atlas*)ManagedAlloc(sizeof(nk_font_atlas));
+			NullTexture = (nk_draw_null_texture*)ManagedAlloc(sizeof(nk_draw_null_texture));
+			ConvertCfg = (nk_convert_config*)ManagedAlloc(sizeof(nk_convert_config));
 
-			VertexLayout = (nk_draw_vertex_layout_element*)Marshal.AllocHGlobal(sizeof(nk_draw_vertex_layout_element) * 4);
+			VertexLayout = (nk_draw_vertex_layout_element*)ManagedAlloc(sizeof(nk_draw_vertex_layout_element) * 4);
 			VertexLayout[0] = new nk_draw_vertex_layout_element(nk_draw_vertex_layout_attribute.NK_VERTEX_POSITION, nk_draw_vertex_layout_format.NK_FORMAT_FLOAT,
 				Marshal.OffsetOf(typeof(NkVertex), nameof(NkVertex.Position)));
 			VertexLayout[1] = new nk_draw_vertex_layout_element(nk_draw_vertex_layout_attribute.NK_VERTEX_TEXCOORD, nk_draw_vertex_layout_format.NK_FORMAT_FLOAT,
@@ -46,8 +58,8 @@ namespace NuklearDotNet {
 				Marshal.OffsetOf(typeof(NkVertex), nameof(NkVertex.Color)));
 			VertexLayout[3] = nk_draw_vertex_layout_element.NK_VERTEX_LAYOUT_END;
 
-			Alloc = (Handle, Old, Size) => Marshal.AllocHGlobal(Size);
-			Free = (Handle, Old) => Marshal.FreeHGlobal(Old);
+			Alloc = (Handle, Old, Size) => ManagedAlloc(Size);
+			Free = (Handle, Old) => ManagedFree(Old);
 
 			Allocator->alloc_nkpluginalloct = Marshal.GetFunctionPointerForDelegate(Alloc);
 			Allocator->free_nkpluginfreet = Marshal.GetFunctionPointerForDelegate(Free);
@@ -162,11 +174,30 @@ namespace NuklearDotNet {
 			Render();
 		}
 
-		public static void Window(string Title, float X, float Y, float W, float H, nk_panel_flags Flags, Action A) {
-			if (Nuklear.nk_begin(Ctx, Title, new nk_rect(X, Y, W, H), (uint)Flags) != 0)
-				A?.Invoke();
-			Nuklear.nk_end(Ctx);
+		public static void SetDeltaTime(float Delta) {
+			if (Ctx != null)
+				Ctx->delta_time_Seconds = Delta;
 		}
+
+		public static bool Window(string Name, string Title, float X, float Y, float W, float H, nk_panel_flags Flags, Action A) {
+			bool Res = true;
+
+			if (Nuklear.nk_begin_titled(Ctx, Name, Title, new nk_rect(X, Y, W, H), (uint)Flags) != 0)
+				A?.Invoke();
+			else
+				Res = false;
+
+			Nuklear.nk_end(Ctx);
+			return Res;
+		}
+
+		public static bool Window(string Title, float X, float Y, float W, float H, nk_panel_flags Flags, Action A) => Window(Title, Title, X, Y, W, H, Flags, A);
+
+		public static bool WindowIsClosed(string Name) => Nuklear.nk_window_is_closed(Ctx, Name) != 0;
+
+		public static bool WindowIsHidden(string Name) => Nuklear.nk_window_is_hidden(Ctx, Name) != 0;
+
+		public static bool WindowIsCollapsed(string Name) => Nuklear.nk_window_is_collapsed(Ctx, Name) != 0;
 
 		public static bool ButtonLabel(string Label) {
 			return Nuklear.nk_button_label(Ctx, Label) != 0;
@@ -182,7 +213,7 @@ namespace NuklearDotNet {
 			Nuklear.nk_layout_row_static(Ctx, Height, ItemWidth, Cols);
 		}
 
-		public static void LayoutRowDynamic(float Height, int Cols) {
+		public static void LayoutRowDynamic(float Height = 0, int Cols = 1) {
 			Nuklear.nk_layout_row_dynamic(Ctx, Height, Cols);
 		}
 
