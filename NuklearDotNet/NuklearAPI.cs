@@ -100,6 +100,19 @@ namespace NuklearDotNet {
 						Nuklear.nk_input_motion(Ctx, E.X, E.Y);
 						break;
 
+					case NuklearEvent.EventType.Scroll:
+						Nuklear.nk_input_scroll(Ctx, new nk_vec2() { x = E.ScrollX, y = E.ScrollY });
+						break;
+
+					case NuklearEvent.EventType.Text:
+						for (int i = 0; i < E.Text.Length; i++)
+							Nuklear.nk_input_unicode(Ctx, E.Text[i]);
+						break;
+
+					case NuklearEvent.EventType.KeyboardKey:
+						Nuklear.nk_input_key(Ctx, E.Key, E.Down ? 1 : 0);
+						break;
+
 					default:
 						throw new NotImplementedException();
 				}
@@ -159,8 +172,23 @@ namespace NuklearDotNet {
 			return Nuklear.nk_button_label(Ctx, Label) != 0;
 		}
 
+		public static bool ButtonText(string Text) {
+			return Nuklear.nk_button_text(Ctx, Text);
+		}
+
+		public static bool ButtonText(char Char) => ButtonText(Char.ToString());
+
 		public static void LayoutRowStatic(float Height, int ItemWidth, int Cols) {
 			Nuklear.nk_layout_row_static(Ctx, Height, ItemWidth, Cols);
+		}
+
+		public static void LayoutRowDynamic(float Height, int Cols) {
+			Nuklear.nk_layout_row_dynamic(Ctx, Height, Cols);
+		}
+
+		public static uint EditString(nk_edit_types EditType, StringBuilder Buffer, ref int Len, nk_plugin_filter_t Filter = null) {
+			fixed (int* LenPtr = &Len)
+				return Nuklear.nk_edit_string(Ctx, (uint)EditType, Buffer, LenPtr, Buffer.MaxCapacity, Filter);
 		}
 	}
 
@@ -184,18 +212,23 @@ namespace NuklearDotNet {
 	public struct NuklearEvent {
 		public enum EventType {
 			MouseButton,
-			MouseMove
+			MouseMove,
+			Scroll,
+			Text,
+			KeyboardKey,
 		}
 
 		public enum MouseButton {
 			Left, Middle, Right
 		}
 
-		public MouseButton MButton;
 		public EventType EvtType;
-		public int X;
-		public int Y;
+		public MouseButton MButton;
+		public nk_keys Key;
+		public int X, Y;
 		public bool Down;
+		public float ScrollX, ScrollY;
+		public string Text;
 	}
 
 	public unsafe abstract class NuklearDevice {
@@ -220,6 +253,18 @@ namespace NuklearDotNet {
 
 		public void OnMouseMove(int X, int Y) {
 			Events.Enqueue(new NuklearEvent() { EvtType = NuklearEvent.EventType.MouseMove, X = X, Y = Y });
+		}
+
+		public void OnScroll(float ScrollX, float ScrollY) {
+			Events.Enqueue(new NuklearEvent() { EvtType = NuklearEvent.EventType.Scroll, ScrollX = ScrollX, ScrollY = ScrollY });
+		}
+
+		public void OnText(string Txt) {
+			Events.Enqueue(new NuklearEvent() { EvtType = NuklearEvent.EventType.Text, Text = Txt });
+		}
+
+		public void OnKey(nk_keys Key, bool Down) {
+			Events.Enqueue(new NuklearEvent() { EvtType = NuklearEvent.EventType.KeyboardKey, Key = Key, Down = Down });
 		}
 	}
 

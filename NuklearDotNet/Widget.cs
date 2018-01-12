@@ -491,6 +491,11 @@ namespace NuklearDotNet {
 		public static extern int nk_button_text(nk_context* ctx, byte* title, int len);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_button_text(nk_context* ctx, string title, int len);
+
+		public static bool nk_button_text(nk_context* ctx, string title) => nk_button_text(ctx, title, title.Length) != 0;
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_button_label(nk_context* ctx, byte* title);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
@@ -654,6 +659,9 @@ namespace NuklearDotNet {
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern uint nk_edit_string(nk_context* ctx, uint flags_nkflags, byte* buffer, int* len, int max, nk_plugin_filter_t filterfun);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern uint nk_edit_string(nk_context* ctx, uint flags_nkflags, StringBuilder buffer, int* len, int max, nk_plugin_filter_t filterfun);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern uint nk_edit_string_zero_terminated(nk_context* ctx, uint flags_nkflags, byte* buffer, int max, nk_plugin_filter_t filterfun);
