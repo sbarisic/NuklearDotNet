@@ -339,11 +339,11 @@ namespace NuklearDotNet {
 	[StructLayout(LayoutKind.Explicit)]
 	public unsafe struct nk_page_data {
 		[FieldOffset(0)]
-		public nk_table tbl;
-		[FieldOffset(0)]
 		public nk_panel pan;
 		[FieldOffset(0)]
 		public nk_window win;
+		[FieldOffset(0)]
+		public nk_table tbl;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

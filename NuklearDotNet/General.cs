@@ -76,9 +76,9 @@ namespace NuklearDotNet {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct nk_handle {
 		[FieldOffset(0)]
-		public IntPtr ptr;
-		[FieldOffset(0)]
 		public int id;
+		[FieldOffset(0)]
+		public IntPtr ptr;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
