@@ -14,10 +14,10 @@ namespace NuklearDotNet {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct nk_style_item_data {
 		[FieldOffset(0)]
-		public nk_image image;
+		public nk_color color;
 
 		[FieldOffset(0)]
-		public nk_color color;
+		public nk_image image;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
