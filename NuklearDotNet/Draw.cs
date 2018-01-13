@@ -268,7 +268,7 @@ namespace NuklearDotNet {
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_command_buffer {
 		public nk_buffer* baseBuf;
-		public nk_rect clip;
+		public NkRect clip;
 		public int use_clipping;
 		public nk_handle userdata;
 		public IntPtr begin_nksize;
@@ -337,14 +337,14 @@ namespace NuklearDotNet {
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_draw_command {
 		public uint elem_count;
-		public nk_rect clip_rect;
+		public NkRect clip_rect;
 		public nk_handle texture;
 		public nk_handle userdata;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_draw_list {
-		public nk_rect clip_rect;
+		public NkRect clip_rect;
 		public fixed long circle_vtx_CastMeToVec2[12];
 		public nk_convert_config config;
 
@@ -386,13 +386,13 @@ namespace NuklearDotNet {
 		public static extern nk_draw_command* nk__draw_next(nk_draw_command* drawc, nk_buffer* buf, nk_context* context);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_begin(nk_context* context, byte* title, nk_rect bounds, uint flags_nkflags);
+		public static extern int nk_begin(nk_context* context, byte* title, NkRect bounds, uint flags_nkflags);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_begin(nk_context* context, string title, nk_rect bounds, uint flags_nkflags);
+		public static extern int nk_begin(nk_context* context, string title, NkRect bounds, uint flags_nkflags);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_begin_titled(nk_context* context, string name, string title, nk_rect bounds, uint flags_nkflags);
+		public static extern int nk_begin_titled(nk_context* context, string name, string title, NkRect bounds, uint flags_nkflags);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_end(nk_context* context);
@@ -404,10 +404,10 @@ namespace NuklearDotNet {
 		public static extern void nk_stroke_curve(nk_command_buffer* cbuf, float x, float y, float x1, float y1, float xa, float ya, float xb, float yb, float line_thickness, nk_color col);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_stroke_rect(nk_command_buffer* cbuf, nk_rect r, float rounding, float line_thickness, nk_color col);
+		public static extern void nk_stroke_rect(nk_command_buffer* cbuf, NkRect r, float rounding, float line_thickness, nk_color col);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_stroke_circle(nk_command_buffer* cbuf, nk_rect r, float line_thickness, nk_color col);
+		public static extern void nk_stroke_circle(nk_command_buffer* cbuf, NkRect r, float line_thickness, nk_color col);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_stroke_arc(nk_command_buffer* cbuf, float cx, float cy, float radius, float a_min, float a_max, float line_thickness, nk_color col);
@@ -422,13 +422,13 @@ namespace NuklearDotNet {
 		public static extern void nk_stroke_polygon(nk_command_buffer* cbuf, float* points, int point_count, float line_thickness, nk_color col);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_fill_rect(nk_command_buffer* cbuf, nk_rect r, float rounding, nk_color col);
+		public static extern void nk_fill_rect(nk_command_buffer* cbuf, NkRect r, float rounding, nk_color col);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_fill_rect_multi_color(nk_command_buffer* cbuf, nk_rect r, nk_color left, nk_color top, nk_color right, nk_color bottom);
+		public static extern void nk_fill_rect_multi_color(nk_command_buffer* cbuf, NkRect r, nk_color left, nk_color top, nk_color right, nk_color bottom);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_fill_circle(nk_command_buffer* cbuf, nk_rect r, nk_color col);
+		public static extern void nk_fill_circle(nk_command_buffer* cbuf, NkRect r, nk_color col);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_fill_arc(nk_command_buffer* cbuf, float cx, float cy, float radius, float a_min, float a_max, nk_color col);
@@ -440,16 +440,16 @@ namespace NuklearDotNet {
 		public static extern void nk_fill_polygon(nk_command_buffer* cbuf, float* pts, int point_count, nk_color col);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_draw_image(nk_command_buffer* cbuf, nk_rect r, nk_image* img, nk_color col);
+		public static extern void nk_draw_image(nk_command_buffer* cbuf, NkRect r, nk_image* img, nk_color col);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_draw_text(nk_command_buffer* cbuf, nk_rect r, byte* text, int len, nk_user_font* userfont, nk_color col, nk_color col2);
+		public static extern void nk_draw_text(nk_command_buffer* cbuf, NkRect r, byte* text, int len, nk_user_font* userfont, nk_color col, nk_color col2);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_push_scissor(nk_command_buffer* cbuf, nk_rect r);
+		public static extern void nk_push_scissor(nk_command_buffer* cbuf, NkRect r);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_push_custom(nk_command_buffer* cbuf, nk_rect r, nk_command_custom_callback cb, nk_handle userdata);
+		public static extern void nk_push_custom(nk_command_buffer* cbuf, NkRect r, nk_command_custom_callback cb, nk_handle userdata);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_draw_list_init(nk_draw_list* dl);
@@ -497,7 +497,7 @@ namespace NuklearDotNet {
 		public static extern void nk_draw_list_stroke_line(nk_draw_list* dl, nk_vec2 a, nk_vec2 b, nk_color col, float thickness);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_draw_list_stroke_rect(nk_draw_list* dl, nk_rect rect, nk_color col, float rounding, float thickness);
+		public static extern void nk_draw_list_stroke_rect(nk_draw_list* dl, NkRect rect, nk_color col, float rounding, float thickness);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_draw_list_stroke_triangle(nk_draw_list* dl, nk_vec2 a, nk_vec2 b, nk_vec2 c, nk_color col, float thickness);
@@ -512,10 +512,10 @@ namespace NuklearDotNet {
 		public static extern void nk_draw_list_stroke_poly_line(nk_draw_list* dl, nk_vec2* pnts, uint cnt, nk_color col, nk_draw_list_stroke stroke, float thickness, nk_anti_aliasing aa);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_draw_list_fill_rect(nk_draw_list* dl, nk_rect rect, nk_color col, float rounding);
+		public static extern void nk_draw_list_fill_rect(nk_draw_list* dl, NkRect rect, nk_color col, float rounding);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_draw_list_fill_rect_multi_color(nk_draw_list* dl, nk_rect rect, nk_color left, nk_color top, nk_color right, nk_color bottom);
+		public static extern void nk_draw_list_fill_rect_multi_color(nk_draw_list* dl, NkRect rect, nk_color left, nk_color top, nk_color right, nk_color bottom);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_draw_list_fill_triangle(nk_draw_list* dl, nk_vec2 a, nk_vec2 b, nk_vec2 c, nk_color col);
@@ -527,10 +527,10 @@ namespace NuklearDotNet {
 		public static extern void nk_draw_list_fill_poly_convex(nk_draw_list* dl, nk_vec2* points, uint count, nk_color col, nk_anti_aliasing aa);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_draw_list_add_image(nk_draw_list* dl, nk_image texture, nk_rect rect, nk_color col);
+		public static extern void nk_draw_list_add_image(nk_draw_list* dl, nk_image texture, NkRect rect, nk_color col);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_draw_list_add_text(nk_draw_list* dl, nk_user_font* userfont, nk_rect rect, byte* text, int len, float font_height, nk_color col);
+		public static extern void nk_draw_list_add_text(nk_draw_list* dl, nk_user_font* userfont, NkRect rect, byte* text, int len, float font_height, nk_color col);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_draw_list_push_userdata(nk_draw_list* dl, nk_handle userdata);

@@ -11,6 +11,7 @@ using NuklearDotNet;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Threading;
+using System.Reflection;
 
 namespace Example_SFML {
 	// Because SFML _still does not have a fucking Scissor function, what the *fuck*_
@@ -52,7 +53,7 @@ namespace Example_SFML {
 			return T;
 		}
 
-		public override void Render(nk_handle Userdata, Texture Texture, nk_rect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds) {
+		public override void Render(nk_handle Userdata, Texture Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds) {
 			Vertex[] SfmlVerts = new Vertex[Count];
 
 			for (int i = 0; i < Count; i++) {
@@ -63,7 +64,7 @@ namespace Example_SFML {
 			Texture.Bind(Texture);
 
 			GayGL.glEnable(GayGL.GL_SCISSOR_TEST);
-			GayGL.glScissor2((int)RWind.Size.Y, (int)ClipRect.x, (int)ClipRect.y, (int)ClipRect.w, (int)ClipRect.h);
+			GayGL.glScissor2((int)RWind.Size.Y, (int)ClipRect.X, (int)ClipRect.Y, (int)ClipRect.W, (int)ClipRect.H);
 			RWind.Draw(SfmlVerts, PrimitiveType.Triangles);
 			GayGL.glDisable(GayGL.GL_SCISSOR_TEST);
 		}
@@ -72,57 +73,65 @@ namespace Example_SFML {
 	class Program {
 		static void OnKey(SFMLDevice Dev, KeyEventArgs E, bool Down) {
 			if (E.Code == Keyboard.Key.LShift || E.Code == Keyboard.Key.RShift)
-				Dev.OnKey(nk_keys.NK_KEY_SHIFT, Down);
+				Dev.OnKey(NkKeys.Shift, Down);
 			else if (E.Code == Keyboard.Key.LControl || E.Code == Keyboard.Key.RControl)
-				Dev.OnKey(nk_keys.NK_KEY_CTRL, Down);
+				Dev.OnKey(NkKeys.Ctrl, Down);
 			else if (E.Code == Keyboard.Key.Delete)
-				Dev.OnKey(nk_keys.NK_KEY_DEL, Down);
+				Dev.OnKey(NkKeys.Del, Down);
 			else if (E.Code == Keyboard.Key.Return)
-				Dev.OnKey(nk_keys.NK_KEY_ENTER, Down);
+				Dev.OnKey(NkKeys.Enter, Down);
 			else if (E.Code == Keyboard.Key.Tab)
-				Dev.OnKey(nk_keys.NK_KEY_TAB, Down);
+				Dev.OnKey(NkKeys.Tab, Down);
 			else if (E.Code == Keyboard.Key.BackSpace)
-				Dev.OnKey(nk_keys.NK_KEY_BACKSPACE, Down);
+				Dev.OnKey(NkKeys.Backspace, Down);
 			else if (E.Code == Keyboard.Key.Up)
-				Dev.OnKey(nk_keys.NK_KEY_UP, Down);
+				Dev.OnKey(NkKeys.Up, Down);
 			else if (E.Code == Keyboard.Key.Down)
-				Dev.OnKey(nk_keys.NK_KEY_DOWN, Down);
+				Dev.OnKey(NkKeys.Down, Down);
 			else if (E.Code == Keyboard.Key.Left)
-				Dev.OnKey(nk_keys.NK_KEY_LEFT, Down);
+				Dev.OnKey(NkKeys.Left, Down);
 			else if (E.Code == Keyboard.Key.Right)
-				Dev.OnKey(nk_keys.NK_KEY_RIGHT, Down);
+				Dev.OnKey(NkKeys.Right, Down);
 			else if (E.Code == Keyboard.Key.Home)
-				Dev.OnKey(nk_keys.NK_KEY_SCROLL_START, Down);
+				Dev.OnKey(NkKeys.ScrollStart, Down);
 			else if (E.Code == Keyboard.Key.End)
-				Dev.OnKey(nk_keys.NK_KEY_SCROLL_END, Down);
+				Dev.OnKey(NkKeys.ScrollEnd, Down);
 			else if (E.Code == Keyboard.Key.PageDown)
-				Dev.OnKey(nk_keys.NK_KEY_SCROLL_DOWN, Down);
+				Dev.OnKey(NkKeys.ScrollDown, Down);
 			else if (E.Code == Keyboard.Key.PageUp)
-				Dev.OnKey(nk_keys.NK_KEY_SCROLL_UP, Down);
+				Dev.OnKey(NkKeys.ScrollUp, Down);
 		}
 
 		static void Main(string[] args) {
 			Console.Title = "Nuklear SFML .NET";
-			Stopwatch SWatch = Stopwatch.StartNew();
 
-			VideoMode VMode = new VideoMode(1366, 768);
-			RenderWindow RWind = new RenderWindow(VMode, Console.Title, Styles.Close);
+			Stopwatch SWatch = Stopwatch.StartNew();
 			Color ClearColor = new Color(50, 50, 50);
-			RWind.Closed += (S, E) => RWind.Close();
+			VideoMode VMode = new VideoMode(1366, 768);
+
+			RenderWindow RWind = new RenderWindow(VMode, Console.Title, Styles.Close);
+			RWind.SetKeyRepeatEnabled(true);
 
 			SFMLDevice Dev = new SFMLDevice(RWind);
+			RWind.Closed += (S, E) => RWind.Close();
 			RWind.MouseButtonPressed += (S, E) => Dev.OnMouseButton((NuklearEvent.MouseButton)E.Button, E.X, E.Y, true);
 			RWind.MouseButtonReleased += (S, E) => Dev.OnMouseButton((NuklearEvent.MouseButton)E.Button, E.X, E.Y, false);
 			RWind.MouseMoved += (S, E) => Dev.OnMouseMove(E.X, E.Y);
 			RWind.MouseWheelMoved += (S, E) => Dev.OnScroll(0, E.Delta);
-			RWind.TextEntered += (S, E) => Dev.OnText(E.Unicode);
 			RWind.KeyPressed += (S, E) => OnKey(Dev, E, true);
 			RWind.KeyReleased += (S, E) => OnKey(Dev, E, false);
+			RWind.TextEntered += (S, E) => Dev.OnText(E.Unicode);
 
 			NuklearAPI.Init(Dev);
 
 			NuklearCalculator CalcA = new NuklearCalculator("Calc A", 50, 50);
 			NuklearCalculator CalcB = new NuklearCalculator("Calc B", 300, 50);
+
+			StringBuilder ConsoleBuffer = new StringBuilder();
+			StringBuilder InputBuffer = new StringBuilder();
+
+			for (int i = 0; i < 30; i++)
+				ConsoleBuffer.AppendLine("LINE NUMBER " + i);
 
 			float Dt = 0.1f;
 
@@ -139,6 +148,7 @@ namespace Example_SFML {
 						CalcB.Calculator();
 
 					TestWindow(400, 350);
+					ConsoleThing(450, 200, ConsoleBuffer, InputBuffer);
 				});
 
 				RWind.Display();
@@ -152,8 +162,7 @@ namespace Example_SFML {
 		}
 
 		static void TestWindow(float X, float Y) {
-			nk_panel_flags Flags = nk_panel_flags.NK_WINDOW_BORDER | nk_panel_flags.NK_WINDOW_MOVABLE | nk_panel_flags.NK_WINDOW_TITLE
-				| nk_panel_flags.NK_WINDOW_MINIMIZABLE | nk_panel_flags.NK_WINDOW_SCALABLE | nk_panel_flags.NK_WINDOW_SCROLL_AUTO_HIDE;
+			const NkPanelFlags Flags = NkPanelFlags.BorderTitle | NkPanelFlags.MovableScalable | NkPanelFlags.Minimizable | NkPanelFlags.ScrollAutoHide;
 
 			NuklearAPI.Window("Test Window", X, Y, 200, 200, Flags, () => {
 				NuklearAPI.LayoutRowDynamic(35);
@@ -164,6 +173,25 @@ namespace Example_SFML {
 
 				if (NuklearAPI.ButtonLabel("Exit"))
 					Environment.Exit(0);
+			});
+		}
+
+		static void ConsoleThing(int X, int Y, StringBuilder OutBuffer, StringBuilder InBuffer) {
+			const NkPanelFlags Flags = NkPanelFlags.BorderTitle | NkPanelFlags.MovableScalable | NkPanelFlags.Minimizable;
+
+			NuklearAPI.Window("Console", X, Y, 300, 300, Flags, () => {
+				NkRect Bounds = NuklearAPI.WindowGetBounds();
+				NuklearAPI.LayoutRowDynamic(Bounds.H - 85);
+				NuklearAPI.EditString(NkEditTypes.Editor | (NkEditTypes)(NkEditFlags.GotoEndOnActivate), OutBuffer);
+
+				NuklearAPI.LayoutRowDynamic();
+				if (NuklearAPI.EditString(NkEditTypes.Field, InBuffer).HasFlag(NkEditEvents.Active) && NuklearAPI.IsKeyPressed(NkKeys.Enter)) {
+					string Txt = InBuffer.ToString().Trim();
+					InBuffer.Clear();
+
+					if (Txt.Length > 0)
+						OutBuffer.AppendLine(Txt);
+				}
 			});
 		}
 
@@ -210,8 +238,8 @@ namespace Example_SFML {
 			public void Calculator() {
 				const string Numbers = "789456123";
 				const string Ops = "+-*/";
-				const nk_panel_flags F = nk_panel_flags.NK_WINDOW_BORDER | nk_panel_flags.NK_WINDOW_MOVABLE | nk_panel_flags.NK_WINDOW_NO_SCROLLBAR | nk_panel_flags.NK_WINDOW_TITLE
-					| nk_panel_flags.NK_WINDOW_CLOSABLE | nk_panel_flags.NK_WINDOW_MINIMIZABLE;
+				const NkPanelFlags F = NkPanelFlags.Border | NkPanelFlags.Movable | NkPanelFlags.NoScrollbar | NkPanelFlags.Title
+					| NkPanelFlags.Closable | NkPanelFlags.Minimizable;
 
 				bool Solve = false;
 				string BufferStr;
@@ -221,9 +249,8 @@ namespace Example_SFML {
 
 					Buffer.Clear();
 					Buffer.AppendFormat("{0:0.00}", Current);
-					int Len = Buffer.Length;
 
-					NuklearAPI.EditString(nk_edit_types.NK_EDIT_SIMPLE, Buffer, ref Len, (ref nk_text_edit TextBox, uint Rune) => {
+					NuklearAPI.EditString(NkEditTypes.Simple, Buffer, (ref nk_text_edit TextBox, uint Rune) => {
 						char C = (char)Rune;
 
 						if (char.IsNumber(C))

@@ -117,8 +117,11 @@ namespace NuklearDotNet {
 						break;
 
 					case NuklearEvent.EventType.Text:
-						for (int i = 0; i < E.Text.Length; i++)
-							Nuklear.nk_input_unicode(Ctx, E.Text[i]);
+						for (int i = 0; i < E.Text.Length; i++) {
+							if (!char.IsControl(E.Text[i]))
+								Nuklear.nk_input_unicode(Ctx, E.Text[i]);
+						}
+
 						break;
 
 					case NuklearEvent.EventType.KeyboardKey:
@@ -179,10 +182,10 @@ namespace NuklearDotNet {
 				Ctx->delta_time_Seconds = Delta;
 		}
 
-		public static bool Window(string Name, string Title, float X, float Y, float W, float H, nk_panel_flags Flags, Action A) {
+		public static bool Window(string Name, string Title, float X, float Y, float W, float H, NkPanelFlags Flags, Action A) {
 			bool Res = true;
 
-			if (Nuklear.nk_begin_titled(Ctx, Name, Title, new nk_rect(X, Y, W, H), (uint)Flags) != 0)
+			if (Nuklear.nk_begin_titled(Ctx, Name, Title, new NkRect(X, Y, W, H), (uint)Flags) != 0)
 				A?.Invoke();
 			else
 				Res = false;
@@ -191,7 +194,7 @@ namespace NuklearDotNet {
 			return Res;
 		}
 
-		public static bool Window(string Title, float X, float Y, float W, float H, nk_panel_flags Flags, Action A) => Window(Title, Title, X, Y, W, H, Flags, A);
+		public static bool Window(string Title, float X, float Y, float W, float H, NkPanelFlags Flags, Action A) => Window(Title, Title, X, Y, W, H, Flags, A);
 
 		public static bool WindowIsClosed(string Name) => Nuklear.nk_window_is_closed(Ctx, Name) != 0;
 
@@ -217,9 +220,21 @@ namespace NuklearDotNet {
 			Nuklear.nk_layout_row_dynamic(Ctx, Height, Cols);
 		}
 
-		public static uint EditString(nk_edit_types EditType, StringBuilder Buffer, ref int Len, nk_plugin_filter_t Filter = null) {
-			fixed (int* LenPtr = &Len)
-				return Nuklear.nk_edit_string(Ctx, (uint)EditType, Buffer, LenPtr, Buffer.MaxCapacity, Filter);
+		public static NkRect WindowGetBounds() {
+			return Nuklear.nk_window_get_bounds(Ctx);
+		}
+
+		public static NkEditEvents EditString(NkEditTypes EditType, StringBuilder Buffer, nk_plugin_filter_t Filter) {
+			return (NkEditEvents)Nuklear.nk_edit_string_zero_terminated(Ctx, (uint)EditType, Buffer, Buffer.MaxCapacity, Filter);
+		}
+
+		public static NkEditEvents EditString(NkEditTypes EditType, StringBuilder Buffer) {
+			return EditString(EditType, Buffer, (ref nk_text_edit TextBox, uint Rune) => 1);
+		}
+
+		public static bool IsKeyPressed(NkKeys Key) {
+			//Nuklear.nk_input_is_key_pressed()
+			return Nuklear.nk_input_is_key_pressed(&Ctx->input, Key) != 0;
 		}
 	}
 
@@ -255,7 +270,7 @@ namespace NuklearDotNet {
 
 		public EventType EvtType;
 		public MouseButton MButton;
-		public nk_keys Key;
+		public NkKeys Key;
 		public int X, Y;
 		public bool Down;
 		public float ScrollX, ScrollY;
@@ -265,7 +280,7 @@ namespace NuklearDotNet {
 	public unsafe abstract class NuklearDevice {
 		internal Queue<NuklearEvent> Events;
 
-		public abstract void Render(nk_handle Userdata, int Texture, nk_rect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds);
+		public abstract void Render(nk_handle Userdata, int Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds);
 		public abstract int CreateTextureHandle(int W, int H, IntPtr Data);
 
 		public NuklearDevice() {
@@ -294,7 +309,7 @@ namespace NuklearDotNet {
 			Events.Enqueue(new NuklearEvent() { EvtType = NuklearEvent.EventType.Text, Text = Txt });
 		}
 
-		public void OnKey(nk_keys Key, bool Down) {
+		public void OnKey(NkKeys Key, bool Down) {
 			Events.Enqueue(new NuklearEvent() { EvtType = NuklearEvent.EventType.KeyboardKey, Key = Key, Down = Down });
 		}
 	}
@@ -312,10 +327,10 @@ namespace NuklearDotNet {
 			return Textures.Count - 1;
 		}
 
-		public sealed override void Render(nk_handle Userdata, int Texture, nk_rect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds) =>
+		public sealed override void Render(nk_handle Userdata, int Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds) =>
 			Render(Userdata, Textures[Texture], ClipRect, Offset, Count, Verts, Inds);
 
 		public abstract T CreateTexture(int W, int H, IntPtr Data);
-		public abstract void Render(nk_handle Userdata, T Texture, nk_rect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds);
+		public abstract void Render(nk_handle Userdata, T Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds);
 	}
 }

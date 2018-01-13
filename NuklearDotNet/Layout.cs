@@ -15,7 +15,7 @@ namespace NuklearDotNet {
 		public static extern void nk_layout_reset_min_row_height(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_rect nk_layout_widget_bounds(nk_context* ctx);
+		public static extern NkRect nk_layout_widget_bounds(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern float nk_layout_ratio_from_pixel(nk_context* ctx, float pixel_width);
@@ -57,13 +57,13 @@ namespace NuklearDotNet {
 		public static extern void nk_layout_space_begin(nk_context* ctx, nk_layout_format fmt, float height, int widget_count);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_layout_space_push(nk_context* ctx, nk_rect rect);
+		public static extern void nk_layout_space_push(nk_context* ctx, NkRect rect);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_layout_space_end(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_rect nk_layout_space_bounds(nk_context* ctx);
+		public static extern NkRect nk_layout_space_bounds(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern nk_vec2 nk_layout_space_to_screen(nk_context* ctx, nk_vec2 v);
@@ -72,9 +72,9 @@ namespace NuklearDotNet {
 		public static extern nk_vec2 nk_layout_space_to_local(nk_context* ctx, nk_vec2 v);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_rect nk_layout_space_rect_to_screen(nk_context* ctx, nk_rect r);
+		public static extern NkRect nk_layout_space_rect_to_screen(nk_context* ctx, NkRect r);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_rect nk_layout_space_rect_to_local(nk_context* ctx, nk_rect r);
+		public static extern NkRect nk_layout_space_rect_to_local(nk_context* ctx, NkRect r);
 	}
 }

@@ -6,39 +6,39 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NuklearDotNet {
-	public enum nk_keys {
-		NK_KEY_NONE,
-		NK_KEY_SHIFT,
-		NK_KEY_CTRL,
-		NK_KEY_DEL,
-		NK_KEY_ENTER,
-		NK_KEY_TAB,
-		NK_KEY_BACKSPACE,
-		NK_KEY_COPY,
-		NK_KEY_CUT,
-		NK_KEY_PASTE,
-		NK_KEY_UP,
-		NK_KEY_DOWN,
-		NK_KEY_LEFT,
-		NK_KEY_RIGHT,
+	public enum NkKeys {
+		None,
+		Shift,
+		Ctrl,
+		Del,
+		Enter,
+		Tab,
+		Backspace,
+		Copy,
+		Cut,
+		Paste,
+		Up,
+		Down,
+		Left,
+		Right,
 
-		NK_KEY_TEXT_INSERT_MODE,
-		NK_KEY_TEXT_REPLACE_MODE,
-		NK_KEY_TEXT_RESET_MODE,
-		NK_KEY_TEXT_LINE_START,
-		NK_KEY_TEXT_LINE_END,
-		NK_KEY_TEXT_START,
-		NK_KEY_TEXT_END,
-		NK_KEY_TEXT_UNDO,
-		NK_KEY_TEXT_REDO,
-		NK_KEY_TEXT_SELECT_ALL,
-		NK_KEY_TEXT_WORD_LEFT,
-		NK_KEY_TEXT_WORD_RIGHT,
+		InserMode,
+		ReplaceMode,
+		ResetMode,
+		LineStart,
+		LineEnd,
+		TextStart,
+		TextEnd,
+		TextUndo,
+		TextRedo,
+		TextSelectAll,
+		TextWordLeft,
+		TextWordRight,
 
-		NK_KEY_SCROLL_START,
-		NK_KEY_SCROLL_END,
-		NK_KEY_SCROLL_DOWN,
-		NK_KEY_SCROLL_UP,
+		ScrollStart,
+		ScrollEnd,
+		ScrollDown,
+		ScrollUp,
 		NK_KEY_MAX
 	}
 
@@ -83,7 +83,7 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_keyboard { // TODO: Hax
-		public fixed uint keysCastTwoOfMeToOneNkKey[2 * (int)(nk_keys.NK_KEY_MAX)];
+		public fixed uint keysCastTwoOfMeToOneNkKey[2 * (int)(NkKeys.NK_KEY_MAX)];
 		//public fixed nk_key keys[(uint)nk_keys.NK_KEY_MAX];
 		public fixed byte text[Nuklear.NK_INPUT_MAX];
 		public int text_len;
@@ -104,7 +104,7 @@ namespace NuklearDotNet {
 		public static extern void nk_input_motion(nk_context* context, int x, int y);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_input_key(nk_context* context, nk_keys keys, int down);
+		public static extern void nk_input_key(nk_context* context, NkKeys keys, int down);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_input_button(nk_context* context, nk_buttons buttons, int x, int y, int down);
@@ -128,28 +128,28 @@ namespace NuklearDotNet {
 		public static extern int nk_input_has_mouse_click(nk_input* inp, nk_buttons buttons);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_input_has_mouse_click_in_rect(nk_input* inp, nk_buttons buttons, nk_rect r);
+		public static extern int nk_input_has_mouse_click_in_rect(nk_input* inp, nk_buttons buttons, NkRect r);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_input_has_mouse_click_down_in_rect(nk_input* inp, nk_buttons buttons, nk_rect r, int down);
+		public static extern int nk_input_has_mouse_click_down_in_rect(nk_input* inp, nk_buttons buttons, NkRect r, int down);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_input_is_mouse_click_in_rect(nk_input* inp, nk_buttons buttons, nk_rect r);
+		public static extern int nk_input_is_mouse_click_in_rect(nk_input* inp, nk_buttons buttons, NkRect r);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_input_is_mouse_click_down_in_rect(nk_input* inp, nk_buttons id, nk_rect b, int down);
+		public static extern int nk_input_is_mouse_click_down_in_rect(nk_input* inp, nk_buttons id, NkRect b, int down);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_input_any_mouse_click_in_rect(nk_input* inp, nk_rect r);
+		public static extern int nk_input_any_mouse_click_in_rect(nk_input* inp, NkRect r);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_input_is_mouse_prev_hovering_rect(nk_input* inp, nk_rect r);
+		public static extern int nk_input_is_mouse_prev_hovering_rect(nk_input* inp, NkRect r);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_input_is_mouse_hovering_rect(nk_input* inp, nk_rect r);
+		public static extern int nk_input_is_mouse_hovering_rect(nk_input* inp, NkRect r);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_input_mouse_clicked(nk_input* inp, nk_buttons buttons, nk_rect r);
+		public static extern int nk_input_mouse_clicked(nk_input* inp, nk_buttons buttons, NkRect r);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_input_is_mouse_down(nk_input* inp, nk_buttons buttons);
@@ -161,12 +161,12 @@ namespace NuklearDotNet {
 		public static extern int nk_input_is_mouse_released(nk_input* inp, nk_buttons buttons);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_input_is_key_pressed(nk_input* inp, nk_keys keys);
+		public static extern int nk_input_is_key_pressed(nk_input* inp, NkKeys keys);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_input_is_key_released(nk_input* inp, nk_keys keys);
+		public static extern int nk_input_is_key_released(nk_input* inp, NkKeys keys);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_input_is_key_down(nk_input* inp, nk_keys keys);
+		public static extern int nk_input_is_key_down(nk_input* inp, NkKeys keys);
 	}
 }

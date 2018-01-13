@@ -7,18 +7,22 @@ using System.Threading.Tasks;
 
 namespace NuklearDotNet {
 	[Flags]
-	public enum nk_panel_flags {
-		NK_WINDOW_BORDER = (1 << (0)),
-		NK_WINDOW_MOVABLE = (1 << (1)),
-		NK_WINDOW_SCALABLE = (1 << (2)),
-		NK_WINDOW_CLOSABLE = (1 << (3)),
-		NK_WINDOW_MINIMIZABLE = (1 << (4)),
-		NK_WINDOW_NO_SCROLLBAR = (1 << (5)),
-		NK_WINDOW_TITLE = (1 << (6)),
-		NK_WINDOW_SCROLL_AUTO_HIDE = (1 << (7)),
-		NK_WINDOW_BACKGROUND = (1 << (8)),
-		NK_WINDOW_SCALE_LEFT = (1 << (9)),
-		NK_WINDOW_NO_INPUT = (1 << (10))
+	public enum NkPanelFlags { // nk_panel_flags, NK_WINDOW_*
+		Border = (1 << (0)),
+		Movable = (1 << (1)),
+		Scalable = (1 << (2)),
+		Closable = (1 << (3)),
+		Minimizable = (1 << (4)),
+		NoScrollbar = (1 << (5)),
+		Title = (1 << (6)),
+		ScrollAutoHide = (1 << (7)),
+		Background = (1 << (8)),
+		ScaleLeft = (1 << (9)),
+		NoInput = (1 << (10)),
+
+		BorderTitle = Border | Title,
+		ClosableMinimizable = Closable | Minimizable,
+		MovableScalable = Movable | Scalable
 	}
 
 	[Flags]
@@ -89,7 +93,7 @@ namespace NuklearDotNet {
 		public float item_height;
 		public float item_offset;
 		public float filled;
-		public nk_rect item;
+		public NkRect item;
 		public int tree_depth;
 		public fixed float templates[16];
 	}
@@ -116,7 +120,7 @@ namespace NuklearDotNet {
 	public unsafe struct nk_panel {
 		public nk_panel_type type;
 		public uint flags_nkflags;
-		public nk_rect bounds;
+		public NkRect bounds;
 		public uint* offset_x;
 		public uint* offset_y;
 		public float at_x;
@@ -126,7 +130,7 @@ namespace NuklearDotNet {
 		public float header_height;
 		public float border;
 		public uint has_scrolling;
-		public nk_rect clip;
+		public NkRect clip;
 		public nk_menu_state menu;
 		public nk_row_layout row;
 		public nk_chart chart;
@@ -139,7 +143,7 @@ namespace NuklearDotNet {
 		NK_WINDOW_PRIVATE = (1 << (11)),
 		NK_WINDOW_DYNAMIC = NK_WINDOW_PRIVATE,
 		NK_WINDOW_ROM = (1 << (12)),
-		NK_WINDOW_NOT_INTERACTIVE = NK_WINDOW_ROM | nk_panel_flags.NK_WINDOW_NO_INPUT,
+		NK_WINDOW_NOT_INTERACTIVE = NK_WINDOW_ROM | NkPanelFlags.NoInput,
 		NK_WINDOW_HIDDEN = (1 << (13)),
 		NK_WINDOW_CLOSED = (1 << (14)),
 		NK_WINDOW_MINIMIZED = (1 << (15)),
@@ -157,7 +161,7 @@ namespace NuklearDotNet {
 		public uint con_count;
 		public uint con_old;
 		public uint active_con;
-		public nk_rect header;
+		public NkRect header;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -197,7 +201,7 @@ namespace NuklearDotNet {
 		public fixed byte name_string[64];
 		public uint flags_nkflags;
 
-		public nk_rect bounds;
+		public NkRect bounds;
 		public nk_scroll scrollbar;
 		public nk_command_buffer buffer;
 		public nk_panel* layout;
@@ -263,36 +267,37 @@ namespace NuklearDotNet {
 	}
 
 	[Flags]
-	public enum nk_edit_flags {
-		NK_EDIT_DEFAULT = 0,
-		NK_EDIT_READ_ONLY = (1 << (0)),
-		NK_EDIT_AUTO_SELECT = (1 << (1)),
-		NK_EDIT_SIG_ENTER = (1 << (2)),
-		NK_EDIT_ALLOW_TAB = (1 << (3)),
-		NK_EDIT_NO_CURSOR = (1 << (4)),
-		NK_EDIT_SELECTABLE = (1 << (5)),
-		NK_EDIT_CLIPBOARD = (1 << (6)),
-		NK_EDIT_CTRL_ENTER_NEWLINE = (1 << (7)),
-		NK_EDIT_NO_HORIZONTAL_SCROLL = (1 << (8)),
-		NK_EDIT_ALWAYS_INSERT_MODE = (1 << (9)),
-		NK_EDIT_MULTILINE = (1 << (10)),
-		NK_EDIT_GOTO_END_ON_ACTIVATE = (1 << (11))
+	public enum NkEditFlags { // nk_edit_flags
+		Default = 0,
+		ReadOnly = (1 << (0)),
+		AutoSelect = (1 << (1)),
+		SigEnter = (1 << (2)),
+		AllowTab = (1 << (3)),
+		NoCursor = (1 << (4)),
+		Selectable = (1 << (5)),
+		Clipboard = (1 << (6)),
+		CtrlEnterNewLine = (1 << (7)),
+		NoHorizontalScroll = (1 << (8)),
+		AlwaysInsertMode = (1 << (9)),
+		Multiline = (1 << (10)),
+		GotoEndOnActivate = (1 << (11))
 	}
 
-	public enum nk_edit_types {
-		NK_EDIT_SIMPLE = nk_edit_flags.NK_EDIT_ALWAYS_INSERT_MODE,
-		NK_EDIT_FIELD = NK_EDIT_SIMPLE | nk_edit_flags.NK_EDIT_SELECTABLE | nk_edit_flags.NK_EDIT_CLIPBOARD,
-		NK_EDIT_BOX = nk_edit_flags.NK_EDIT_ALWAYS_INSERT_MODE | nk_edit_flags.NK_EDIT_SELECTABLE | nk_edit_flags.NK_EDIT_MULTILINE | nk_edit_flags.NK_EDIT_ALLOW_TAB | nk_edit_flags.NK_EDIT_CLIPBOARD,
-		NK_EDIT_EDITOR = nk_edit_flags.NK_EDIT_SELECTABLE | nk_edit_flags.NK_EDIT_MULTILINE | nk_edit_flags.NK_EDIT_ALLOW_TAB | nk_edit_flags.NK_EDIT_CLIPBOARD
+	public enum NkEditTypes { // nk_edit_types
+		Simple = NkEditFlags.AlwaysInsertMode,
+		Field = Simple | NkEditFlags.Selectable | NkEditFlags.Clipboard,
+		Box = NkEditFlags.AlwaysInsertMode | NkEditFlags.Selectable | NkEditFlags.Multiline | NkEditFlags.AllowTab | NkEditFlags.Clipboard,
+		Editor = NkEditFlags.Selectable | NkEditFlags.Multiline | NkEditFlags.AllowTab | NkEditFlags.Clipboard,
+		ReadOnlyEditor = NkEditFlags.Selectable | NkEditFlags.Multiline | NkEditFlags.AllowTab | NkEditFlags.Clipboard | NkEditFlags.ReadOnly
 	}
 
 	[Flags]
-	public enum nk_edit_events {
-		NK_EDIT_ACTIVE = (1 << (0)),
-		NK_EDIT_INACTIVE = (1 << (1)),
-		NK_EDIT_ACTIVATED = (1 << (2)),
-		NK_EDIT_DEACTIVATED = (1 << (3)),
-		NK_EDIT_COMMITED = (1 << (4))
+	public enum NkEditEvents {
+		Active = (1 << (0)),
+		Inactive = (1 << (1)),
+		Activated = (1 << (2)),
+		Deactivated = (1 << (3)),
+		Commited = (1 << (4))
 	}
 
 	public delegate float nk_value_getter_fun(IntPtr user, int index);
@@ -305,7 +310,7 @@ namespace NuklearDotNet {
 		public static extern nk_window* nk_window_find(nk_context* ctx, byte* name);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_rect nk_window_get_bounds(nk_context* ctx);
+		public static extern NkRect nk_window_get_bounds(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern nk_vec2 nk_window_get_position(nk_context* ctx);
@@ -323,7 +328,7 @@ namespace NuklearDotNet {
 		public static extern nk_panel* nk_window_get_panel(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_rect nk_window_get_content_region(nk_context* ctx);
+		public static extern NkRect nk_window_get_content_region(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern nk_vec2 nk_window_get_content_region_min(nk_context* ctx);
@@ -371,7 +376,7 @@ namespace NuklearDotNet {
 		public static extern int nk_item_is_any_active(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_window_set_bounds(nk_context* ctx, byte* name, nk_rect bounds);
+		public static extern void nk_window_set_bounds(nk_context* ctx, byte* name, NkRect bounds);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_window_set_position(nk_context* ctx, byte* name, nk_vec2 pos);
@@ -437,13 +442,13 @@ namespace NuklearDotNet {
 		public static extern void nk_tree_state_pop(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_widget_layout_states nk_widget(nk_rect* r, nk_context* ctx);
+		public static extern nk_widget_layout_states nk_widget(NkRect* r, nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_widget_layout_states nk_widget_fitting(nk_rect* r, nk_context* ctx, nk_vec2 v);
+		public static extern nk_widget_layout_states nk_widget_fitting(NkRect* r, nk_context* ctx, nk_vec2 v);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_rect nk_widget_bounds(nk_context* ctx);
+		public static extern NkRect nk_widget_bounds(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern nk_vec2 nk_widget_position(nk_context* ctx);
@@ -676,6 +681,9 @@ namespace NuklearDotNet {
 		public static extern uint nk_edit_string_zero_terminated(nk_context* ctx, uint flags_nkflags, byte* buffer, int max, nk_plugin_filter_t filterfun);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern uint nk_edit_string_zero_terminated(nk_context* ctx, uint flags_nkflags, StringBuilder buffer, int max, nk_plugin_filter_t filterfun);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern uint nk_edit_buffer(nk_context* ctx, uint flags_nkflags, nk_text_edit* textedit, nk_plugin_filter_t filterfun);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
@@ -712,7 +720,7 @@ namespace NuklearDotNet {
 		public static extern void nk_plot_function(nk_context* ctx, nk_chart_type chatype, IntPtr userdata, nk_value_getter_fun getterfun, int count, int offset);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_popup_begin(nk_context* ctx, nk_popup_type type, byte* s, uint flags_nkflags, nk_rect bounds);
+		public static extern int nk_popup_begin(nk_context* ctx, nk_popup_type type, byte* s, uint flags_nkflags, NkRect bounds);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_popup_close(nk_context* ctx);
@@ -796,7 +804,7 @@ namespace NuklearDotNet {
 		public static extern void nk_combo_end(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_contextual_begin(nk_context* ctx, uint flags_nkflags, nk_vec2 v, nk_rect trigger_bounds);
+		public static extern int nk_contextual_begin(nk_context* ctx, uint flags_nkflags, nk_vec2 v, NkRect trigger_bounds);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_contextual_item_text(nk_context* ctx, byte* s, int i, uint align_nkflags);

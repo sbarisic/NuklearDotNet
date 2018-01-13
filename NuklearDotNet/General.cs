@@ -41,17 +41,17 @@ namespace NuklearDotNet {
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	public struct nk_rect {
-		public float x;
-		public float y;
-		public float w;
-		public float h;
+	public struct NkRect { // nk_rect
+		public float X;
+		public float Y;
+		public float W;
+		public float H;
 
-		public nk_rect(float X, float Y, float W, float H) {
-			this.x = X;
-			this.y = Y;
-			this.w = W;
-			this.h = H;
+		public NkRect(float X, float Y, float W, float H) {
+			this.X = X;
+			this.Y = Y;
+			this.W = W;
+			this.H = H;
 		}
 	}
 
@@ -187,19 +187,19 @@ namespace NuklearDotNet {
 		public static extern int nk_image_is_subimage(nk_image* img);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_image nk_subimage_ptr(IntPtr ptr, ushort w, ushort h, nk_rect sub_region);
+		public static extern nk_image nk_subimage_ptr(IntPtr ptr, ushort w, ushort h, NkRect sub_region);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_image nk_subimage_id(int id, ushort w, ushort h, nk_rect sub_region);
+		public static extern nk_image nk_subimage_id(int id, ushort w, ushort h, NkRect sub_region);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_image nk_subimage_handle(nk_handle handle, ushort w, ushort h, nk_rect sub_region);
+		public static extern nk_image nk_subimage_handle(nk_handle handle, ushort w, ushort h, NkRect sub_region);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern uint nk_murmur_hash(IntPtr key, int len, uint seed);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_triangle_from_direction(nk_vec2* result, nk_rect r, float pad_x, float pad_y, nk_heading heading);
+		public static extern void nk_triangle_from_direction(nk_vec2* result, NkRect r, float pad_x, float pad_y, nk_heading heading);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern nk_vec2 nk_vec2i(int x, int y);
@@ -211,24 +211,24 @@ namespace NuklearDotNet {
 		public static extern nk_vec2 nk_vec2iv(int* xy);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_rect nk_get_null_rect();
+		public static extern NkRect nk_get_null_rect();
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_rect nk_recti(int x, int y, int w, int h);
+		public static extern NkRect nk_recti(int x, int y, int w, int h);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_rect nk_recta(nk_vec2 pos, nk_vec2 size);
+		public static extern NkRect nk_recta(nk_vec2 pos, nk_vec2 size);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_rect nk_rectv(float* xywh);
+		public static extern NkRect nk_rectv(float* xywh);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_rect nk_rectiv(int* xywh);
+		public static extern NkRect nk_rectiv(int* xywh);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_vec2 nk_rect_pos(nk_rect r);
+		public static extern nk_vec2 nk_rect_pos(NkRect r);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_vec2 nk_rect_size(nk_rect r);
+		public static extern nk_vec2 nk_rect_size(NkRect r);
 	}
 }
