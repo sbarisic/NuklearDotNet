@@ -144,7 +144,7 @@ namespace Example_SFML {
 			RWind.TextEntered += (S, E) => Dev.OnText(E.Unicode);
 
 			NuklearAPI NuklearAPI = new NuklearAPI(Dev);
-
+			
 			NuklearCalculator CalcA = new NuklearCalculator(NuklearAPI, "Calc A", 50, 50);
 			NuklearCalculator CalcB = new NuklearCalculator(NuklearAPI, "Calc B", 300, 50);
 

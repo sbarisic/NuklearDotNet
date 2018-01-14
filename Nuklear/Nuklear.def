@@ -81,6 +81,7 @@ nk_layout_space_rect_to_screen
 nk_layout_space_rect_to_local
 
 nk_group_begin
+nk_group_begin_titled
 nk_group_end
 nk_group_scrolled_offset_begin
 nk_group_scrolled_begin

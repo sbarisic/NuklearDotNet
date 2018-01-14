@@ -406,6 +406,15 @@ namespace NuklearDotNet {
 		public static extern int nk_group_begin(nk_context* ctx, byte* title, uint nkflags);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_group_begin(nk_context* ctx, string title, uint nkflags);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_group_begin_titled(nk_context* ctx, byte* id, byte* title, uint nkflags);
+		
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_group_begin_titled(nk_context* ctx, string id, string title, uint nkflags);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_group_scrolled_offset_begin(nk_context* ctx, uint* x_offset, uint* y_offset, byte* s, uint nkflags);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
