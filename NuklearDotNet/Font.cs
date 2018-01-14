@@ -16,16 +16,16 @@ namespace NuklearDotNet {
 		public float xadvance;
 	}
 
-	public unsafe delegate float nk_text_width_f(nk_handle handle, float h, byte* s, int len);
-	public unsafe delegate void nk_query_font_glyph_f(nk_handle handle, float font_height, nk_user_font_glyph* glyph, uint codepoint, uint next_codepoint);
+	public unsafe delegate float nk_text_width_f(NkHandle handle, float h, byte* s, int len);
+	public unsafe delegate void nk_query_font_glyph_f(NkHandle handle, float font_height, nk_user_font_glyph* glyph, uint codepoint, uint next_codepoint);
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_user_font {
-		public nk_handle userdata;
+		public NkHandle userdata;
 		public float height;
 		public IntPtr widthfun_nkTextWidthF;
 		public IntPtr queryfun_nkQueryFontGlyphF;
-		public nk_handle texture;
+		public NkHandle texture;
 	}
 
 	public enum nk_font_coord_type {
@@ -90,7 +90,7 @@ namespace NuklearDotNet {
 		public nk_font_glyph* glyphs;
 		public nk_font_glyph* fallback;
 		public uint fallback_codepoint;
-		public nk_handle texture;
+		public NkHandle texture;
 		public nk_font_config* config;
 	}
 
@@ -170,7 +170,7 @@ namespace NuklearDotNet {
 		public static extern IntPtr nk_font_atlas_bake(nk_font_atlas* atlas, int* width, int* height, nk_font_atlas_format afmt);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_font_atlas_end(nk_font_atlas* atlas, nk_handle tex, nk_draw_null_texture* drawnulltex);
+		public static extern void nk_font_atlas_end(nk_font_atlas* atlas, NkHandle tex, nk_draw_null_texture* drawnulltex);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern nk_font_glyph* nk_font_find_glyph(nk_font* font, uint unicode);

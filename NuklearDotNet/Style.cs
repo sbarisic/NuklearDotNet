@@ -32,7 +32,7 @@ namespace NuklearDotNet {
 		public nk_vec2 padding;
 	}
 
-	public unsafe delegate void nk_style_drawbeginend(nk_command_buffer* cbuf, nk_handle userdata);
+	public unsafe delegate void nk_style_drawbeginend(nk_command_buffer* cbuf, NkHandle userdata);
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_button {
@@ -53,7 +53,7 @@ namespace NuklearDotNet {
 		public nk_vec2 image_padding;
 		public nk_vec2 touch_padding;
 
-		public nk_handle userdata;
+		public NkHandle userdata;
 		public IntPtr draw_begin_nkStyleDrawBeginEnd;
 		public IntPtr draw_end_nkStyleDrawBeginEnd;
 	}
@@ -79,7 +79,7 @@ namespace NuklearDotNet {
 		public float spacing;
 		public float border;
 
-		public nk_handle userdata;
+		public NkHandle userdata;
 		public IntPtr draw_begin_nkStyleDrawBeginEnd;
 		public IntPtr draw_end_nkStyleDrawBeginEnd;
 	}
@@ -109,7 +109,7 @@ namespace NuklearDotNet {
 		public nk_vec2 touch_padding;
 		public nk_vec2 image_padding;
 
-		public nk_handle userdata;
+		public NkHandle userdata;
 		public IntPtr draw_begin_nkStyleDrawBeginEnd;
 		public IntPtr draw_end_nkStyleDrawBeginEnd;
 	}
@@ -143,7 +143,7 @@ namespace NuklearDotNet {
 		public nk_symbol_type inc_symbol;
 		public nk_symbol_type dec_symbol;
 
-		public nk_handle userdata;
+		public NkHandle userdata;
 		public IntPtr draw_begin_nkStyleDrawBeginEnd;
 		public IntPtr draw_end_nkStyleDrawBeginEnd;
 	}
@@ -166,7 +166,7 @@ namespace NuklearDotNet {
 		public float cursor_rounding;
 		public nk_vec2 padding;
 
-		public nk_handle userdata;
+		public NkHandle userdata;
 		public IntPtr draw_begin_nkStyleDrawBeginEnd;
 		public IntPtr draw_end_nkStyleDrawBeginEnd;
 	}
@@ -195,7 +195,7 @@ namespace NuklearDotNet {
 		public nk_symbol_type inc_symbol;
 		public nk_symbol_type dec_symbol;
 
-		public nk_handle userdata;
+		public NkHandle userdata;
 		public IntPtr draw_begin_nkStyleDrawBeginEnd;
 		public IntPtr draw_end_nkStyleDrawBeginEnd;
 	}
@@ -252,7 +252,7 @@ namespace NuklearDotNet {
 		public nk_style_button inc_button;
 		public nk_style_button dec_button;
 
-		public nk_handle userdata;
+		public NkHandle userdata;
 		public IntPtr draw_begin_nkStyleDrawBeginEnd;
 		public IntPtr draw_end_nkStyleDrawBeginEnd;
 	}

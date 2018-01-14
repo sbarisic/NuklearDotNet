@@ -6,17 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NuklearDotNet {
-	public delegate IntPtr nk_plugin_alloc_t(nk_handle handle, IntPtr old, IntPtr nk_size);
-	public delegate void nk_plugin_free_t(nk_handle handle, IntPtr old);
+	public delegate IntPtr nk_plugin_alloc_t(NkHandle handle, IntPtr old, IntPtr nk_size);
+	public delegate void nk_plugin_free_t(NkHandle handle, IntPtr old);
 	public delegate int nk_plugin_filter_t(ref nk_text_edit edit, uint unicode_rune);
-	public delegate void nk_plugin_paste_t(nk_handle handle, ref nk_text_edit edit);
-	public unsafe delegate void nk_plugin_copy_t(nk_handle handle, byte* str, int len);
+	public delegate void nk_plugin_paste_t(NkHandle handle, ref nk_text_edit edit);
+	public unsafe delegate void nk_plugin_copy_t(NkHandle handle, byte* str, int len);
 
 	/* ... */
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_allocator {
-		public nk_handle userdata;
+		public NkHandle userdata;
 		// nk_plugin_alloc_t alloc;
 		public IntPtr alloc_nkpluginalloct;
 		// nk_plugin_free_t free;
@@ -385,7 +385,7 @@ namespace NuklearDotNet {
 
 		public nk_draw_list draw_list;
 
-		public nk_handle userdata;
+		public NkHandle userdata;
 
 		public nk_text_edit text_edit;
 
@@ -417,7 +417,7 @@ namespace NuklearDotNet {
 		public static extern void nk_clear(nk_context* context);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_set_user_data(nk_context* context, nk_handle handle);
+		public static extern void nk_set_user_data(nk_context* context, NkHandle handle);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_buffer_init(nk_buffer* buffer, nk_allocator* allocator, IntPtr size);

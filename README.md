@@ -21,9 +21,80 @@ Contributions welcome.
 
 # Code samples
 
-* TODO
+The custom device class implements actual drawing functions,
+it has to inherit from at least NuklearDevice.
+NuklearDeviceTex<T> allows you to specify your custom texture class which
+replaces the internal texture handle integers, just for convenience. You can return
+your own texture handle integers in NuklearDevice and handle textures manually.
+
+Optionally it can implement the IFrameBuffered interface which calls the Render
+function only when the GUI actually changes. It it supposed to be rendered to a framebuffer
+which is in turn rendered to the screen every frame in RenderFinal
+
+```cs
+class Device : NuklearDeviceTex<Texture>, IFrameBuffered {
+	public override Texture CreateTexture(int W, int H, IntPtr Data) {
+		// Create a texture from raw image data
+		return null;
+	}
+
+	void IFrameBuffered.BeginBuffering() {
+		// Begin rendering to framebuffer
+	}
+
+	public override void Render(NkHandle Userdata, Texture Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds) {
+		// Render to either framebuffer or screen
+		// If IFrameBuffered isn't implemented, it's called every frame, else only when the GUI actually changes
+	}
+
+	void IFrameBuffered.EndBuffering() {
+		// End rendering to frame buffer
+	}
+
+	void IFrameBuffered.RenderFinal() {
+		// Called each frame, render to screen finally
+	}
+}
+```
+
+Sending events; just call these when you capture the events from your input API. It's irrelevant when they're called.
+They are internally queued and dispatched to Nuklear on every frame.
+
+
+```cs
+	Device.OnMouseButton(Button, X, Y, Down)
+	Device.OnMouseMove(X, Y)
+	Device.OnScroll(X, Y)
+	Device.OnText(Text)
+	Device.OnKey(Key, Down)
+```
+
+Using the GUI, note that the while loop represents an OnRender function in your renderer code. At the end of the Frame
+call, the actual rendering functions are dispatched.
+
+```cs
+NuklearAPI.Init(Device);
+
+while (true) {
+
+	// Optional
+	NuklearAPI.SetDeltaTime(Dt);
+	
+	NuklearAPI.Frame(() => {
+		NuklearAPI.Window("Test Window", 100, 100, 200, 200, Flags, () => {
+			NuklearAPI.LayoutRowDynamic(35);
+			
+			if (NuklearAPI.ButtonLabel("Some Button"))
+				Console.WriteLine("You pressed Some Button!");
+		});
+	});
+
+}
+
+```
 
 # TODO
 
 * Demo application
 * Higher level binding
+* Support for multiple contexts, want to draw a GUI and some example on a 3D in-game screen at the same time?

@@ -14,7 +14,7 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_clipboard {
-		public nk_handle userdata;
+		public NkHandle userdata;
 		public IntPtr pastefun_nkPluginPasteT;
 		public IntPtr copyfun_nkPluginCopyT;
 	}

@@ -27,6 +27,7 @@ namespace NuklearDotNet {
 		static NuklearDevice Dev;
 		static IFrameBuffered FrameBuffered;
 
+		// TODO: Support swapping this, native memcmp is the fastest so it's used here
 		[DllImport("msvcrt", EntryPoint = "memcmp", CallingConvention = CallingConvention.Cdecl)]
 		static extern int MemCmp(IntPtr A, IntPtr B, IntPtr Count);
 
@@ -316,7 +317,7 @@ namespace NuklearDotNet {
 	public unsafe abstract class NuklearDevice {
 		internal Queue<NuklearEvent> Events;
 
-		public abstract void Render(nk_handle Userdata, int Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds);
+		public abstract void Render(NkHandle Userdata, int Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds);
 		public abstract int CreateTextureHandle(int W, int H, IntPtr Data);
 
 		public NuklearDevice() {
@@ -363,10 +364,10 @@ namespace NuklearDotNet {
 			return Textures.Count - 1;
 		}
 
-		public sealed override void Render(nk_handle Userdata, int Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds) =>
+		public sealed override void Render(NkHandle Userdata, int Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds) =>
 			Render(Userdata, Textures[Texture], ClipRect, Offset, Count, Verts, Inds);
 
 		public abstract T CreateTexture(int W, int H, IntPtr Data);
-		public abstract void Render(nk_handle Userdata, T Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds);
+		public abstract void Render(NkHandle Userdata, T Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds);
 	}
 }

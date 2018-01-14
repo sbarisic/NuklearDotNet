@@ -74,7 +74,7 @@ namespace NuklearDotNet {
 	}
 
 	[StructLayout(LayoutKind.Explicit)]
-	public struct nk_handle {
+	public struct NkHandle {
 		[FieldOffset(0)]
 		public int id;
 		[FieldOffset(0)]
@@ -83,7 +83,7 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct nk_image {
-		public nk_handle handle;
+		public NkHandle handle;
 		public ushort w;
 		public ushort h;
 		public fixed ushort region[4];
@@ -169,13 +169,13 @@ namespace NuklearDotNet {
 
 	public static unsafe partial class Nuklear {
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_handle nk_handle_ptr(IntPtr ptr);
+		public static extern NkHandle nk_handle_ptr(IntPtr ptr);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_handle nk_handle_id(int id);
+		public static extern NkHandle nk_handle_id(int id);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_image nk_image_handle(nk_handle handle);
+		public static extern nk_image nk_image_handle(NkHandle handle);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern nk_image nk_image_ptr(IntPtr ptr);
@@ -193,7 +193,7 @@ namespace NuklearDotNet {
 		public static extern nk_image nk_subimage_id(int id, ushort w, ushort h, NkRect sub_region);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_image nk_subimage_handle(nk_handle handle, ushort w, ushort h, NkRect sub_region);
+		public static extern nk_image nk_subimage_handle(NkHandle handle, ushort w, ushort h, NkRect sub_region);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern uint nk_murmur_hash(IntPtr key, int len, uint seed);

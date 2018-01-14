@@ -60,11 +60,10 @@ namespace Example_SFML {
 		}
 
 		public void BeginBuffering() {
-			Console.WriteLine("Dirty! Redrawing");
 			RT.Clear(Color.Transparent);
 		}
 
-		public override void Render(nk_handle Userdata, Texture Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds) {
+		public override void Render(NkHandle Userdata, Texture Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds) {
 			Vertex[] SfmlVerts = new Vertex[Count];
 
 			for (int i = 0; i < Count; i++) {

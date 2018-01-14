@@ -22,7 +22,7 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_draw_null_texture {
-		public nk_handle texture;
+		public NkHandle texture;
 		public nk_vec2 uv;
 	}
 
@@ -66,7 +66,7 @@ namespace NuklearDotNet {
 	public struct nk_command {
 		public nk_command_type ctype;
 		public IntPtr next_nksize;
-		public nk_handle userdata;
+		public NkHandle userdata;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -232,7 +232,7 @@ namespace NuklearDotNet {
 		public nk_color col;
 	}
 
-	public delegate void nk_command_custom_callback(IntPtr canvas, short x, short y, ushort w, ushort h, nk_handle callback_data);
+	public delegate void nk_command_custom_callback(IntPtr canvas, short x, short y, ushort w, ushort h, NkHandle callback_data);
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_command_custom {
@@ -241,7 +241,7 @@ namespace NuklearDotNet {
 		public short y;
 		public ushort w;
 		public ushort h;
-		public nk_handle callback_data;
+		public NkHandle callback_data;
 		public nk_command_custom_callback callback;
 	}
 
@@ -270,7 +270,7 @@ namespace NuklearDotNet {
 		public nk_buffer* baseBuf;
 		public NkRect clip;
 		public int use_clipping;
-		public nk_handle userdata;
+		public NkHandle userdata;
 		public IntPtr begin_nksize;
 		public IntPtr end_nksize;
 		public IntPtr last_nksize;
@@ -338,8 +338,8 @@ namespace NuklearDotNet {
 	public struct nk_draw_command {
 		public uint elem_count;
 		public NkRect clip_rect;
-		public nk_handle texture;
-		public nk_handle userdata;
+		public NkHandle texture;
+		public NkHandle userdata;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -363,7 +363,7 @@ namespace NuklearDotNet {
 		public nk_anti_aliasing line_AA;
 		public nk_anti_aliasing shape_AA;
 
-		public nk_handle userdata;
+		public NkHandle userdata;
 	}
 
 	public static unsafe partial class Nuklear {
@@ -449,7 +449,7 @@ namespace NuklearDotNet {
 		public static extern void nk_push_scissor(nk_command_buffer* cbuf, NkRect r);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_push_custom(nk_command_buffer* cbuf, NkRect r, nk_command_custom_callback cb, nk_handle userdata);
+		public static extern void nk_push_custom(nk_command_buffer* cbuf, NkRect r, nk_command_custom_callback cb, NkHandle userdata);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_draw_list_init(nk_draw_list* dl);
@@ -533,6 +533,6 @@ namespace NuklearDotNet {
 		public static extern void nk_draw_list_add_text(nk_draw_list* dl, nk_user_font* userfont, NkRect rect, byte* text, int len, float font_height, nk_color col);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_draw_list_push_userdata(nk_draw_list* dl, nk_handle userdata);
+		public static extern void nk_draw_list_push_userdata(nk_draw_list* dl, NkHandle userdata);
 	}
 }
