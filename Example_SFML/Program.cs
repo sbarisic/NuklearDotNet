@@ -33,11 +33,17 @@ namespace Example_SFML {
 		}
 	}
 
-	unsafe class SFMLDevice : NuklearDeviceTex<Texture> {
+	unsafe class SFMLDevice : NuklearDeviceTex<Texture>, IFrameBuffered {
 		RenderWindow RWind;
+
+		RenderTexture RT;
+		Sprite RenderSprite;
 
 		public SFMLDevice(RenderWindow RWind) {
 			this.RWind = RWind;
+
+			RT = new RenderTexture(RWind.Size.X, RWind.Size.Y);
+			RenderSprite = new Sprite(RT.Texture);
 		}
 
 		public override Texture CreateTexture(int W, int H, IntPtr Data) {
@@ -53,6 +59,11 @@ namespace Example_SFML {
 			return T;
 		}
 
+		public void BeginBuffering() {
+			Console.WriteLine("Dirty! Redrawing");
+			RT.Clear(Color.Transparent);
+		}
+
 		public override void Render(nk_handle Userdata, Texture Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds) {
 			Vertex[] SfmlVerts = new Vertex[Count];
 
@@ -65,8 +76,19 @@ namespace Example_SFML {
 
 			GayGL.glEnable(GayGL.GL_SCISSOR_TEST);
 			GayGL.glScissor2((int)RWind.Size.Y, (int)ClipRect.X, (int)ClipRect.Y, (int)ClipRect.W, (int)ClipRect.H);
-			RWind.Draw(SfmlVerts, PrimitiveType.Triangles);
+
+			//RWind.Draw(SfmlVerts, PrimitiveType.Triangles);
+			RT.Draw(SfmlVerts, PrimitiveType.Triangles);
+
 			GayGL.glDisable(GayGL.GL_SCISSOR_TEST);
+		}
+
+		public void EndBuffering() {
+			RT.Display();
+		}
+
+		public void RenderFinal() {
+			RWind.Draw(RenderSprite);
 		}
 	}
 

@@ -17,11 +17,18 @@ namespace NuklearDotNet {
 		static nk_draw_null_texture* NullTexture;
 		static nk_convert_config* ConvertCfg;
 
+		static nk_buffer* Commands, Vertices, Indices;
+		static byte[] LastMemory;
+
 		static nk_draw_vertex_layout_element* VertexLayout;
 		static nk_plugin_alloc_t Alloc;
 		static nk_plugin_free_t Free;
 
 		static NuklearDevice Dev;
+		static IFrameBuffered FrameBuffered;
+
+		[DllImport("msvcrt", EntryPoint = "memcmp", CallingConvention = CallingConvention.Cdecl)]
+		static extern int MemCmp(IntPtr A, IntPtr B, IntPtr Count);
 
 		static IntPtr ManagedAlloc(IntPtr Size) {
 			return Marshal.AllocHGlobal(Size);
@@ -35,53 +42,7 @@ namespace NuklearDotNet {
 			Marshal.FreeHGlobal(Mem);
 		}
 
-		public static void Init(NuklearDevice Device) {
-			if (Initialized)
-				return;
-
-			Initialized = true;
-			Dev = Device;
-
-			// TODO: Free these later
-			Ctx = (nk_context*)ManagedAlloc(sizeof(nk_context));
-			Allocator = (nk_allocator*)ManagedAlloc(sizeof(nk_allocator));
-			FontAtlas = (nk_font_atlas*)ManagedAlloc(sizeof(nk_font_atlas));
-			NullTexture = (nk_draw_null_texture*)ManagedAlloc(sizeof(nk_draw_null_texture));
-			ConvertCfg = (nk_convert_config*)ManagedAlloc(sizeof(nk_convert_config));
-
-			VertexLayout = (nk_draw_vertex_layout_element*)ManagedAlloc(sizeof(nk_draw_vertex_layout_element) * 4);
-			VertexLayout[0] = new nk_draw_vertex_layout_element(nk_draw_vertex_layout_attribute.NK_VERTEX_POSITION, nk_draw_vertex_layout_format.NK_FORMAT_FLOAT,
-				Marshal.OffsetOf(typeof(NkVertex), nameof(NkVertex.Position)));
-			VertexLayout[1] = new nk_draw_vertex_layout_element(nk_draw_vertex_layout_attribute.NK_VERTEX_TEXCOORD, nk_draw_vertex_layout_format.NK_FORMAT_FLOAT,
-				Marshal.OffsetOf(typeof(NkVertex), nameof(NkVertex.UV)));
-			VertexLayout[2] = new nk_draw_vertex_layout_element(nk_draw_vertex_layout_attribute.NK_VERTEX_COLOR, nk_draw_vertex_layout_format.NK_FORMAT_R8G8B8A8,
-				Marshal.OffsetOf(typeof(NkVertex), nameof(NkVertex.Color)));
-			VertexLayout[3] = nk_draw_vertex_layout_element.NK_VERTEX_LAYOUT_END;
-
-			Alloc = (Handle, Old, Size) => ManagedAlloc(Size);
-			Free = (Handle, Old) => ManagedFree(Old);
-
-			Allocator->alloc_nkpluginalloct = Marshal.GetFunctionPointerForDelegate(Alloc);
-			Allocator->free_nkpluginfreet = Marshal.GetFunctionPointerForDelegate(Free);
-
-			Nuklear.nk_init(Ctx, Allocator, null);
-
-			Dev.Init();
-			FontStash(Dev.FontStash);
-
-			ConvertCfg->shape_AA = nk_anti_aliasing.NK_ANTI_ALIASING_ON;
-			ConvertCfg->line_AA = nk_anti_aliasing.NK_ANTI_ALIASING_ON;
-			ConvertCfg->vertex_layout = VertexLayout;
-			ConvertCfg->vertex_size = new IntPtr(sizeof(NkVertex));
-			ConvertCfg->vertex_alignment = new IntPtr(1);
-			ConvertCfg->circle_segment_count = 22;
-			ConvertCfg->curve_segment_count = 22;
-			ConvertCfg->arc_segment_count = 22;
-			ConvertCfg->global_alpha = 1.0f;
-			ConvertCfg->null_tex = *NullTexture;
-		}
-
-		public static void FontStash(FontStashAction A = null) {
+		static void FontStash(FontStashAction A = null) {
 			Nuklear.nk_font_atlas_init(FontAtlas, Allocator);
 			Nuklear.nk_font_atlas_begin(FontAtlas);
 
@@ -97,7 +58,8 @@ namespace NuklearDotNet {
 				Nuklear.nk_style_set_font(Ctx, &FontAtlas->default_font->handle);
 		}
 
-		public static void HandleInput() {
+
+		static void HandleInput() {
 			Nuklear.nk_input_begin(Ctx);
 
 			while (Dev.Events.Count > 0) {
@@ -136,39 +98,107 @@ namespace NuklearDotNet {
 			Nuklear.nk_input_end(Ctx);
 		}
 
-		public static void Render() {
-			nk_buffer Cmds, Verts, Idx;
-			Nuklear.nk_buffer_init(&Cmds, Allocator, new IntPtr(4 * 1024));
-			Nuklear.nk_buffer_init(&Verts, Allocator, new IntPtr(4 * 1024));
-			Nuklear.nk_buffer_init(&Idx, Allocator, new IntPtr(4 * 1024));
-			nk_convert_result R = (nk_convert_result)Nuklear.nk_convert(Ctx, &Cmds, &Verts, &Idx, ConvertCfg);
+		static void Render() {
+			bool Dirty = true;
 
-			if (R != nk_convert_result.NK_CONVERT_SUCCESS)
-				throw new Exception(R.ToString());
+			if (FrameBuffered != null) {
+				IntPtr MemoryBuffer = Nuklear.nk_buffer_memory(&Ctx->memory);
+				if (LastMemory == null || LastMemory.Length < (int)Ctx->memory.allocated)
+					LastMemory = new byte[(int)Ctx->memory.allocated];
 
-			NkVertex[] NkVerts = new NkVertex[(int)Verts.needed / sizeof(NkVertex)];
-			NkVertex* VertsPtr = (NkVertex*)Verts.memory.ptr;
-			for (int i = 0; i < NkVerts.Length; i++)
-				NkVerts[i] = VertsPtr[i];
+				Dirty = false;
+				fixed (byte* LastMemoryPtr = LastMemory)
+					if (MemCmp(new IntPtr(LastMemoryPtr), MemoryBuffer, Ctx->memory.allocated) != 0) {
+						Dirty = true;
+						Marshal.Copy(MemoryBuffer, LastMemory, 0, (int)Ctx->memory.allocated);
+					}
+			}
 
-			ushort[] NkIndices = new ushort[(int)Idx.needed / sizeof(ushort)];
-			ushort* IndicesPtr = (ushort*)Idx.memory.ptr;
-			for (int i = 0; i < NkIndices.Length; i++)
-				NkIndices[i] = IndicesPtr[i];
+			if (Dirty) {
+				NkConvertResult R = (NkConvertResult)Nuklear.nk_convert(Ctx, Commands, Vertices, Indices, ConvertCfg);
+				if (R != NkConvertResult.Success)
+					throw new Exception(R.ToString());
 
-			uint Offset = 0;
-			Nuklear.nk_draw_foreach(Ctx, &Cmds, (Cmd) => {
-				if (Cmd->elem_count == 0)
-					return;
+				NkVertex[] NkVerts = new NkVertex[(int)Vertices->needed / sizeof(NkVertex)];
+				NkVertex* VertsPtr = (NkVertex*)Vertices->memory.ptr;
+				for (int i = 0; i < NkVerts.Length; i++)
+					NkVerts[i] = VertsPtr[i];
 
-				Dev.Render(Cmd->userdata, Cmd->texture.id, Cmd->clip_rect, Offset, Cmd->elem_count, NkVerts, NkIndices);
-				Offset += Cmd->elem_count;
-			});
+				ushort[] NkIndices = new ushort[(int)Indices->needed / sizeof(ushort)];
+				ushort* IndicesPtr = (ushort*)Indices->memory.ptr;
+				for (int i = 0; i < NkIndices.Length; i++)
+					NkIndices[i] = IndicesPtr[i];
 
-			Nuklear.nk_buffer_free(&Cmds);
-			Nuklear.nk_buffer_free(&Verts);
-			Nuklear.nk_buffer_free(&Idx);
+				FrameBuffered?.BeginBuffering();
+
+				uint Offset = 0;
+				Nuklear.nk_draw_foreach(Ctx, Commands, (Cmd) => {
+					if (Cmd->elem_count == 0)
+						return;
+
+					Dev.Render(Cmd->userdata, Cmd->texture.id, Cmd->clip_rect, Offset, Cmd->elem_count, NkVerts, NkIndices);
+					Offset += Cmd->elem_count;
+				});
+
+				FrameBuffered?.EndBuffering();
+			}
+
 			Nuklear.nk_clear(Ctx);
+			FrameBuffered?.RenderFinal();
+		}
+
+		public static void Init(NuklearDevice Device) {
+			if (Initialized)
+				return;
+
+			Initialized = true;
+			Dev = Device;
+			FrameBuffered = Device as IFrameBuffered;
+
+			// TODO: Free these later
+			Ctx = (nk_context*)ManagedAlloc(sizeof(nk_context));
+			Allocator = (nk_allocator*)ManagedAlloc(sizeof(nk_allocator));
+			FontAtlas = (nk_font_atlas*)ManagedAlloc(sizeof(nk_font_atlas));
+			NullTexture = (nk_draw_null_texture*)ManagedAlloc(sizeof(nk_draw_null_texture));
+			ConvertCfg = (nk_convert_config*)ManagedAlloc(sizeof(nk_convert_config));
+			Commands = (nk_buffer*)ManagedAlloc(sizeof(nk_buffer));
+			Vertices = (nk_buffer*)ManagedAlloc(sizeof(nk_buffer));
+			Indices = (nk_buffer*)ManagedAlloc(sizeof(nk_buffer));
+
+			VertexLayout = (nk_draw_vertex_layout_element*)ManagedAlloc(sizeof(nk_draw_vertex_layout_element) * 4);
+			VertexLayout[0] = new nk_draw_vertex_layout_element(nk_draw_vertex_layout_attribute.NK_VERTEX_POSITION, nk_draw_vertex_layout_format.NK_FORMAT_FLOAT,
+				Marshal.OffsetOf(typeof(NkVertex), nameof(NkVertex.Position)));
+			VertexLayout[1] = new nk_draw_vertex_layout_element(nk_draw_vertex_layout_attribute.NK_VERTEX_TEXCOORD, nk_draw_vertex_layout_format.NK_FORMAT_FLOAT,
+				Marshal.OffsetOf(typeof(NkVertex), nameof(NkVertex.UV)));
+			VertexLayout[2] = new nk_draw_vertex_layout_element(nk_draw_vertex_layout_attribute.NK_VERTEX_COLOR, nk_draw_vertex_layout_format.NK_FORMAT_R8G8B8A8,
+				Marshal.OffsetOf(typeof(NkVertex), nameof(NkVertex.Color)));
+			VertexLayout[3] = nk_draw_vertex_layout_element.NK_VERTEX_LAYOUT_END;
+
+			Alloc = (Handle, Old, Size) => ManagedAlloc(Size);
+			Free = (Handle, Old) => ManagedFree(Old);
+
+			Allocator->alloc_nkpluginalloct = Marshal.GetFunctionPointerForDelegate(Alloc);
+			Allocator->free_nkpluginfreet = Marshal.GetFunctionPointerForDelegate(Free);
+
+			Nuklear.nk_init(Ctx, Allocator, null);
+
+			Dev.Init();
+			FontStash(Dev.FontStash);
+
+			ConvertCfg->shape_AA = nk_anti_aliasing.NK_ANTI_ALIASING_ON;
+			ConvertCfg->line_AA = nk_anti_aliasing.NK_ANTI_ALIASING_ON;
+			ConvertCfg->vertex_layout = VertexLayout;
+			ConvertCfg->vertex_size = new IntPtr(sizeof(NkVertex));
+			ConvertCfg->vertex_alignment = new IntPtr(1);
+			ConvertCfg->circle_segment_count = 22;
+			ConvertCfg->curve_segment_count = 22;
+			ConvertCfg->arc_segment_count = 22;
+			ConvertCfg->global_alpha = 1.0f;
+			ConvertCfg->null_tex = *NullTexture;
+
+			Nuklear.nk_buffer_init(Commands, Allocator, new IntPtr(4 * 1024));
+			Nuklear.nk_buffer_init(Vertices, Allocator, new IntPtr(4 * 1024));
+			Nuklear.nk_buffer_init(Indices, Allocator, new IntPtr(4 * 1024));
 		}
 
 		public static void Frame(Action A) {
@@ -275,6 +305,12 @@ namespace NuklearDotNet {
 		public bool Down;
 		public float ScrollX, ScrollY;
 		public string Text;
+	}
+
+	public interface IFrameBuffered {
+		void BeginBuffering();
+		void EndBuffering();
+		void RenderFinal();
 	}
 
 	public unsafe abstract class NuklearDevice {

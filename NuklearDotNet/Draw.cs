@@ -12,12 +12,12 @@ namespace NuklearDotNet {
 	}
 
 	[Flags]
-	public enum nk_convert_result {
-		NK_CONVERT_SUCCESS = 0,
-		NK_CONVERT_INVALID_PARAM = 1,
-		NK_CONVERT_COMMAND_BUFFER_FULL = (1 << (1)),
-		NK_CONVERT_VERTEX_BUFFER_FULL = (1 << (2)),
-		NK_CONVERT_ELEMENT_BUFFER_FULL = (1 << (3))
+	public enum NkConvertResult { // nk_convert_result, NK_CONVERT_*
+		Success = 0,
+		InvalidParam = 1,
+		CommandBufferFull = (1 << (1)),
+		VertexBufferFull = (1 << (2)),
+		ElementBufferFull = (1 << (3))
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
