@@ -158,7 +158,7 @@ namespace Example_SFML {
 
 			while (RWind.IsOpen) {
 				RWind.DispatchEvents();
-				RWind.Clear(Color.Blue);
+				RWind.Clear(ClearColor);
 
 				NuklearAPI.SetDeltaTime(Dt);
 				NuklearAPI.Frame(() => {
@@ -176,7 +176,6 @@ namespace Example_SFML {
 
 				Dt = SWatch.ElapsedMilliseconds / 1000.0f;
 				SWatch.Restart();
-				Thread.Sleep(10);
 			}
 
 			Environment.Exit(0);

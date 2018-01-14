@@ -92,6 +92,9 @@ namespace NuklearDotNet {
 							Nuklear.nk_input_key(Ctx, E.Key, E.Down ? 1 : 0);
 							break;
 
+						case NuklearEvent.EventType.ForceUpdate:
+							break;
+
 						default:
 							throw new NotImplementedException();
 					}
@@ -297,6 +300,7 @@ namespace NuklearDotNet {
 			Scroll,
 			Text,
 			KeyboardKey,
+			ForceUpdate
 		}
 
 		public enum MouseButton {
@@ -326,6 +330,7 @@ namespace NuklearDotNet {
 
 		public NuklearDevice() {
 			Events = new Queue<NuklearEvent>();
+			ForceUpdate();
 		}
 
 		public virtual void Init() {
@@ -352,6 +357,10 @@ namespace NuklearDotNet {
 
 		public void OnKey(NkKeys Key, bool Down) {
 			Events.Enqueue(new NuklearEvent() { EvtType = NuklearEvent.EventType.KeyboardKey, Key = Key, Down = Down });
+		}
+
+		public void ForceUpdate() {
+			Events.Enqueue(new NuklearEvent() { EvtType = NuklearEvent.EventType.ForceUpdate });
 		}
 	}
 
