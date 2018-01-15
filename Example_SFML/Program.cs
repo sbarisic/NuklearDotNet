@@ -63,7 +63,15 @@ namespace Example_SFML {
 			RT.Clear(Color.Transparent);
 		}
 
-		public override void Render(NkHandle Userdata, Texture Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds) {
+		NkVertex[] Verts;
+		ushort[] Inds;
+
+		public override void SetBuffer(NkVertex[] VertexBuffer, ushort[] IndexBuffer) {
+			Verts = VertexBuffer;
+			Inds = IndexBuffer;
+		}
+
+		public override void Render(NkHandle Userdata, Texture Texture, NkRect ClipRect, uint Offset, uint Count) {
 			Vertex[] SfmlVerts = new Vertex[Count];
 
 			for (int i = 0; i < Count; i++) {
@@ -143,10 +151,10 @@ namespace Example_SFML {
 			RWind.KeyReleased += (S, E) => OnKey(Dev, E, false);
 			RWind.TextEntered += (S, E) => Dev.OnText(E.Unicode);
 
-			NuklearAPI NuklearAPI = new NuklearAPI(Dev);
-			
-			NuklearCalculator CalcA = new NuklearCalculator(NuklearAPI, "Calc A", 50, 50);
-			NuklearCalculator CalcB = new NuklearCalculator(NuklearAPI, "Calc B", 300, 50);
+			NuklearAPI.Init(Dev);
+
+			NuklearCalculator CalcA = new NuklearCalculator("Calc A", 50, 50);
+			NuklearCalculator CalcB = new NuklearCalculator("Calc B", 300, 50);
 
 			StringBuilder ConsoleBuffer = new StringBuilder();
 			StringBuilder InputBuffer = new StringBuilder();
@@ -168,8 +176,8 @@ namespace Example_SFML {
 					if (CalcB.Open)
 						CalcB.Calculator();
 
-					TestWindow(NuklearAPI, 400, 350);
-					ConsoleThing(NuklearAPI, 450, 200, ConsoleBuffer, InputBuffer);
+					TestWindow(400, 350);
+					ConsoleThing(450, 200, ConsoleBuffer, InputBuffer);
 				});
 
 				RWind.Display();
@@ -181,7 +189,7 @@ namespace Example_SFML {
 			Environment.Exit(0);
 		}
 
-		static void TestWindow(NuklearAPI NuklearAPI, float X, float Y) {
+		static void TestWindow(float X, float Y) {
 			const NkPanelFlags Flags = NkPanelFlags.BorderTitle | NkPanelFlags.MovableScalable | NkPanelFlags.Minimizable | NkPanelFlags.ScrollAutoHide;
 
 			NuklearAPI.Window("Test Window", X, Y, 200, 200, Flags, () => {
@@ -196,7 +204,7 @@ namespace Example_SFML {
 			});
 		}
 
-		static void ConsoleThing(NuklearAPI NuklearAPI, int X, int Y, StringBuilder OutBuffer, StringBuilder InBuffer) {
+		static void ConsoleThing(int X, int Y, StringBuilder OutBuffer, StringBuilder InBuffer) {
 			const NkPanelFlags Flags = NkPanelFlags.BorderTitle | NkPanelFlags.MovableScalable | NkPanelFlags.Minimizable;
 
 			NuklearAPI.Window("Console", X, Y, 300, 300, Flags, () => {
@@ -246,12 +254,10 @@ namespace Example_SFML {
 			StringBuilder Buffer;
 			string Name;
 			float X, Y;
-			NuklearAPI NuklearAPI;
 
-			public NuklearCalculator(NuklearAPI NuklearAPI, string Name, float X, float Y) {
+			public NuklearCalculator(string Name, float X, float Y) {
 				Buffer = new StringBuilder(255);
 
-				this.NuklearAPI = NuklearAPI;
 				this.Name = Name;
 				this.X = X;
 				this.Y = Y;
