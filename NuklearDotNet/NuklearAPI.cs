@@ -29,8 +29,15 @@ namespace NuklearDotNet {
 		[DllImport("msvcrt", EntryPoint = "memcmp", CallingConvention = CallingConvention.Cdecl)]
 		static extern int MemCmp(IntPtr A, IntPtr B, IntPtr Count);
 
-		static IntPtr ManagedAlloc(IntPtr Size) {
-			return Marshal.AllocHGlobal(Size);
+		static IntPtr ManagedAlloc(IntPtr Size, bool ClearMem = true) {
+			IntPtr Mem = Marshal.AllocHGlobal(Size);
+
+			if (ClearMem) {
+				for (int i = 0; i < (int)Size; i++)
+					Marshal.WriteByte(Mem, i, 0);
+			}
+
+			return Mem;
 		}
 
 		static IntPtr ManagedAlloc(int Size) {
@@ -133,8 +140,13 @@ namespace NuklearDotNet {
 
 					NkVertex[] NkVerts = new NkVertex[(int)Vertices->needed / sizeof(NkVertex)];
 					NkVertex* VertsPtr = (NkVertex*)Vertices->memory.ptr;
-					for (int i = 0; i < NkVerts.Length; i++)
+
+					for (int i = 0; i < NkVerts.Length; i++) {
+						//NkVertex* V = &VertsPtr[i];
+						//NkVerts[i] = new NkVertex() { Position = new NkVector2f() { X = (int)V->Position.X, Y = (int)V->Position.Y }, Color = V->Color, UV = V->UV };
+
 						NkVerts[i] = VertsPtr[i];
+					}
 
 					ushort[] NkIndices = new ushort[(int)Indices->needed / sizeof(ushort)];
 					ushort* IndicesPtr = (ushort*)Indices->memory.ptr;
@@ -164,7 +176,6 @@ namespace NuklearDotNet {
 
 		//public  NuklearAPI(NuklearDevice Device) {
 		public static void Init(NuklearDevice Device) {
-
 			Dev = Device;
 			FrameBuffered = Device as IFrameBuffered;
 
@@ -285,11 +296,19 @@ namespace NuklearDotNet {
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public struct NkVector2f {
 		public float X, Y;
+
+		public override string ToString() {
+			return string.Format("({0}, {1})", X, Y);
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public struct NkColor {
 		public byte R, G, B, A;
+
+		public override string ToString() {
+			return string.Format("({0}, {1}, {2}, {3})", R, G, B, A);
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -297,6 +316,10 @@ namespace NuklearDotNet {
 		public NkVector2f Position;
 		public NkVector2f UV;
 		public NkColor Color;
+
+		public override string ToString() {
+			return string.Format("Position: {0}; UV: {1}; Color: {2}", Position, UV, Color);
+		}
 	}
 
 	public struct NuklearEvent {
