@@ -121,16 +121,23 @@ namespace NuklearDotNet {
 					Dirty = false;
 
 					IntPtr MemoryBuffer = Nuklear.nk_buffer_memory(&Ctx->memory);
-					if (LastMemory == null || LastMemory.Length < (int)Ctx->memory.allocated) {
-						LastMemory = new byte[(int)Ctx->memory.allocated];
+					if ((int)Ctx->memory.allocated == 0)
 						Dirty = true;
+
+					if (!Dirty) {
+						if (LastMemory == null || LastMemory.Length < (int)Ctx->memory.allocated) {
+							LastMemory = new byte[(int)Ctx->memory.allocated];
+							Dirty = true;
+						}
 					}
 
-					fixed (byte* LastMemoryPtr = LastMemory)
-						if (MemCmp(new IntPtr(LastMemoryPtr), MemoryBuffer, Ctx->memory.allocated) != 0) {
-							Dirty = true;
-							Marshal.Copy(MemoryBuffer, LastMemory, 0, (int)Ctx->memory.allocated);
-						}
+					if (!Dirty) {
+						fixed (byte* LastMemoryPtr = LastMemory)
+							if (MemCmp(new IntPtr(LastMemoryPtr), MemoryBuffer, Ctx->memory.allocated) != 0) {
+								Dirty = true;
+								Marshal.Copy(MemoryBuffer, LastMemory, 0, (int)Ctx->memory.allocated);
+							}
+					}
 				}
 
 				if (Dirty) {
