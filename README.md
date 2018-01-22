@@ -44,10 +44,15 @@ class Device : NuklearDeviceTex<Texture>, IFrameBuffered {
 	void IFrameBuffered.BeginBuffering() {
 		// Begin rendering to framebuffer
 	}
+	
+	public override void SetBuffer(NkVertex[] VertexBuffer, ushort[] IndexBuffer) {
+		// Called once before Render, upload your vertex buffer and index buffer here
+	}
 
-	public override void Render(NkHandle Userdata, Texture Texture, NkRect ClipRect, uint Offset, uint Count, NkVertex[] Verts, ushort[] Inds) {
+	public override void Render(NkHandle Userdata, Texture Texture, NkRect ClipRect, uint Offset, uint Count) {
 		// Render to either framebuffer or screen
 		// If IFrameBuffered isn't implemented, it's called every frame, else only when the GUI actually changes
+		// Called multiple times per frame, uses the vertex and index buffer that has been sent to SetBuffer
 	}
 
 	void IFrameBuffered.EndBuffering() {
