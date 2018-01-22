@@ -23,9 +23,18 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.components = new System.ComponentModel.Container();
+			this.SuspendLayout();
+			// 
+			// NuklearForm
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Text = "Form1";
+			this.ClientSize = new System.Drawing.Size(1108, 728);
+			this.Name = "NuklearForm";
+			this.Text = "Nuklear Form";
+			this.Load += new System.EventHandler(this.NuklearForm_Load);
+			this.ResumeLayout(false);
+
 		}
 
 		#endregion
