@@ -25,6 +25,8 @@ namespace NuklearDotNet {
 		static NuklearDevice Dev;
 		static IFrameBuffered FrameBuffered;
 
+		static bool ForceUpdateQueued;
+
 		// TODO: Support swapping this, native memcmp is the fastest so it's used here
 		[DllImport("msvcrt", EntryPoint = "memcmp", CallingConvention = CallingConvention.Cdecl)]
 		static extern int MemCmp(IntPtr A, IntPtr B, IntPtr Count);
@@ -233,6 +235,12 @@ namespace NuklearDotNet {
 		}
 
 		public static void Frame(Action A) {
+			if (ForceUpdateQueued) {
+				ForceUpdateQueued = false;
+
+				Dev?.ForceUpdate();
+			}
+
 			bool HasInput;
 			if (HasInput = HandleInput())
 				A();
@@ -264,6 +272,20 @@ namespace NuklearDotNet {
 
 		public static bool WindowIsCollapsed(string Name) => Nuklear.nk_window_is_collapsed(Ctx, Name) != 0;
 
+		public static bool Group(string Name, string Title, NkPanelFlags Flags, Action A) {
+			bool Res = true;
+
+			if (Nuklear.nk_group_begin_titled(Ctx, Name, Title, (uint)Flags) != 0)
+				A?.Invoke();
+			else
+				Res = false;
+
+			Nuklear.nk_group_end(Ctx);
+			return Res;
+		}
+
+		public static bool Group(string Name, NkPanelFlags Flags, Action A) => Group(Name, Name, Flags, A);
+
 		public static bool ButtonLabel(string Label) {
 			return Nuklear.nk_button_label(Ctx, Label) != 0;
 		}
@@ -282,6 +304,32 @@ namespace NuklearDotNet {
 			Nuklear.nk_layout_row_dynamic(Ctx, Height, Cols);
 		}
 
+		public static void Label(string Txt, NkTextAlign TextAlign = (NkTextAlign)NkTextAlignment.NK_TEXT_LEFT) {
+			Nuklear.nk_label(Ctx, Txt, (uint)TextAlign);
+		}
+
+		public static void LabelWrap(string Txt) {
+			//Nuklear.nk_label(Ctx, Txt, (uint)TextAlign);
+			Nuklear.nk_label_wrap(Ctx, Txt);
+		}
+
+		public static void LabelColored(string Txt, NkColor Clr, NkTextAlign TextAlign = (NkTextAlign)NkTextAlignment.NK_TEXT_LEFT) {
+			Nuklear.nk_label_colored(Ctx, Txt, (uint)TextAlign, Clr);
+		}
+
+		public static void LabelColored(string Txt, byte R, byte G, byte B, byte A, NkTextAlign TextAlign = (NkTextAlign)NkTextAlignment.NK_TEXT_LEFT) {
+			//Nuklear.nk_label_colored(Ctx, Txt, (uint)TextAlign, new NkColor() { r = R, g = G, b = B, a = A });
+			LabelColored(Txt, new NkColor() { R = R, G = G, B = B, A = A }, TextAlign);
+		}
+
+		public static void LabelColoredWrap(string Txt, NkColor Clr) {
+			Nuklear.nk_label_colored_wrap(Ctx, Txt, Clr);
+		}
+
+		public static void LabelColoredWrap(string Txt, byte R, byte G, byte B, byte A) {
+			LabelColoredWrap(Txt, new NkColor() { R = R, G = G, B = B, A = A });
+		}
+
 		public static NkRect WindowGetBounds() {
 			return Nuklear.nk_window_get_bounds(Ctx);
 		}
@@ -298,6 +346,14 @@ namespace NuklearDotNet {
 			//Nuklear.nk_input_is_key_pressed()
 			return Nuklear.nk_input_is_key_pressed(&Ctx->input, Key) != 0;
 		}
+
+		public static void QueueForceUpdate() {
+			ForceUpdateQueued = true;
+		}
+
+		public static void WindowClose(string Name) {
+			Nuklear.nk_window_close(Ctx, Name);
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -309,14 +365,14 @@ namespace NuklearDotNet {
 		}
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack = 1)]
+	/*[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public struct NkColor {
 		public byte R, G, B, A;
 
 		public override string ToString() {
 			return string.Format("({0}, {1}, {2}, {3})", R, G, B, A);
 		}
-	}
+	}*/
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public struct NkVertex {

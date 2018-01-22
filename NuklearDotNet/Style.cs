@@ -14,7 +14,7 @@ namespace NuklearDotNet {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct nk_style_item_data {
 		[FieldOffset(0)]
-		public nk_color color;
+		public NkColor color;
 
 		[FieldOffset(0)]
 		public nk_image image;
@@ -28,7 +28,7 @@ namespace NuklearDotNet {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_text {
-		public nk_color color;
+		public NkColor color;
 		public nk_vec2 padding;
 	}
 
@@ -39,12 +39,12 @@ namespace NuklearDotNet {
 		public nk_style_item normal;
 		public nk_style_item hover;
 		public nk_style_item active;
-		public nk_color border_color;
+		public NkColor border_color;
 
-		public nk_color text_background;
-		public nk_color text_normal;
-		public nk_color text_hover;
-		public nk_color text_active;
+		public NkColor text_background;
+		public NkColor text_normal;
+		public NkColor text_hover;
+		public NkColor text_active;
 		public uint text_alignment_nkflags;
 
 		public float border;
@@ -63,15 +63,15 @@ namespace NuklearDotNet {
 		public nk_style_item normal;
 		public nk_style_item hover;
 		public nk_style_item active;
-		public nk_color border_color;
+		public NkColor border_color;
 
 		public nk_style_item cursor_normal;
 		public nk_style_item cursor_hover;
 
-		public nk_color text_normal;
-		public nk_color text_hover;
-		public nk_color text_active;
-		public nk_color text_background;
+		public NkColor text_normal;
+		public NkColor text_hover;
+		public NkColor text_active;
+		public NkColor text_background;
 		public uint text_alignment_nkflags;
 
 		public nk_vec2 padding;
@@ -94,14 +94,14 @@ namespace NuklearDotNet {
 		public nk_style_item hover_active;
 		public nk_style_item pressed_active;
 
-		public nk_color text_normal;
-		public nk_color text_hover;
-		public nk_color text_pressed;
+		public NkColor text_normal;
+		public NkColor text_hover;
+		public NkColor text_pressed;
 
-		public nk_color text_normal_active;
-		public nk_color text_hover_active;
-		public nk_color text_pressed_active;
-		public nk_color text_background;
+		public NkColor text_normal_active;
+		public NkColor text_hover_active;
+		public NkColor text_pressed_active;
+		public NkColor text_background;
 		public uint text_alignment_nkflags;
 
 		public float rounding;
@@ -119,12 +119,12 @@ namespace NuklearDotNet {
 		public nk_style_item normal;
 		public nk_style_item hover;
 		public nk_style_item active;
-		public nk_color border_color;
+		public NkColor border_color;
 
-		public nk_color bar_normal;
-		public nk_color bar_hover;
-		public nk_color bar_active;
-		public nk_color bar_filled;
+		public NkColor bar_normal;
+		public NkColor bar_hover;
+		public NkColor bar_active;
+		public NkColor bar_filled;
 
 		public nk_style_item cursor_normal;
 		public nk_style_item cursor_hover;
@@ -153,12 +153,12 @@ namespace NuklearDotNet {
 		public nk_style_item normal;
 		public nk_style_item hover;
 		public nk_style_item active;
-		public nk_color border_color;
+		public NkColor border_color;
 
 		public nk_style_item cursor_normal;
 		public nk_style_item cursor_hover;
 		public nk_style_item cursor_active;
-		public nk_color cursor_border_color;
+		public NkColor cursor_border_color;
 
 		public float rounding;
 		public float border;
@@ -176,12 +176,12 @@ namespace NuklearDotNet {
 		public nk_style_item normal;
 		public nk_style_item hover;
 		public nk_style_item active;
-		public nk_color border_color;
+		public NkColor border_color;
 
 		public nk_style_item cursor_normal;
 		public nk_style_item cursor_hover;
 		public nk_style_item cursor_active;
-		public nk_color cursor_border_color;
+		public NkColor cursor_border_color;
 
 		public float border;
 		public float rounding;
@@ -205,22 +205,22 @@ namespace NuklearDotNet {
 		public nk_style_item normal;
 		public nk_style_item hover;
 		public nk_style_item active;
-		public nk_color border_color;
+		public NkColor border_color;
 		public nk_style_scrollbar scrollbar;
 
-		public nk_color cursor_normal;
-		public nk_color cursor_hover;
-		public nk_color cursor_text_normal;
-		public nk_color cursor_text_hover;
+		public NkColor cursor_normal;
+		public NkColor cursor_hover;
+		public NkColor cursor_text_normal;
+		public NkColor cursor_text_hover;
 
-		public nk_color text_normal;
-		public nk_color text_hover;
-		public nk_color text_active;
+		public NkColor text_normal;
+		public NkColor text_hover;
+		public NkColor text_active;
 
-		public nk_color selected_normal;
-		public nk_color selected_hover;
-		public nk_color selected_text_normal;
-		public nk_color selected_text_hover;
+		public NkColor selected_normal;
+		public NkColor selected_hover;
+		public NkColor selected_text_normal;
+		public NkColor selected_text_hover;
 
 		public float border;
 		public float rounding;
@@ -235,11 +235,11 @@ namespace NuklearDotNet {
 		public nk_style_item normal;
 		public nk_style_item hover;
 		public nk_style_item active;
-		public nk_color border_color;
+		public NkColor border_color;
 
-		public nk_color label_normal;
-		public nk_color label_hover;
-		public nk_color label_active;
+		public NkColor label_normal;
+		public NkColor label_hover;
+		public NkColor label_active;
 
 		public nk_symbol_type sym_left;
 		public nk_symbol_type sym_right;
@@ -260,9 +260,9 @@ namespace NuklearDotNet {
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_chart {
 		public nk_style_item background;
-		public nk_color border_color;
-		public nk_color selected_color;
-		public nk_color color;
+		public NkColor border_color;
+		public NkColor selected_color;
+		public NkColor color;
 
 		public float border;
 		public float rounding;
@@ -274,15 +274,15 @@ namespace NuklearDotNet {
 		public nk_style_item normal;
 		public nk_style_item hover;
 		public nk_style_item active;
-		public nk_color border_color;
+		public NkColor border_color;
 
-		public nk_color label_normal;
-		public nk_color label_hover;
-		public nk_color label_active;
+		public NkColor label_normal;
+		public NkColor label_hover;
+		public NkColor label_active;
 
-		public nk_color symbol_normal;
-		public nk_color symbol_hover;
-		public nk_color symbol_active;
+		public NkColor symbol_normal;
+		public NkColor symbol_hover;
+		public NkColor symbol_active;
 
 		public nk_style_button button;
 		public nk_symbol_type sym_normal;
@@ -299,8 +299,8 @@ namespace NuklearDotNet {
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_tab {
 		public nk_style_item background;
-		public nk_color border_color;
-		public nk_color text;
+		public NkColor border_color;
+		public NkColor text;
 
 		public nk_style_button tab_maximize_button;
 		public nk_style_button tab_minimize_button;
@@ -333,9 +333,9 @@ namespace NuklearDotNet {
 		public nk_symbol_type minimize_symbol;
 		public nk_symbol_type maximize_symbol;
 
-		public nk_color label_normal;
-		public nk_color label_hover;
-		public nk_color label_active;
+		public NkColor label_normal;
+		public NkColor label_hover;
+		public NkColor label_active;
 
 		public nk_style_header_align align;
 		public nk_vec2 padding;
@@ -347,15 +347,15 @@ namespace NuklearDotNet {
 	public struct nk_style_window {
 		public nk_style_window_header header;
 		public nk_style_item fixed_background;
-		public nk_color background;
+		public NkColor background;
 
-		public nk_color border_color;
-		public nk_color popup_border_color;
-		public nk_color combo_border_color;
-		public nk_color contextual_border_color;
-		public nk_color menu_border_color;
-		public nk_color group_border_color;
-		public nk_color tooltip_border_color;
+		public NkColor border_color;
+		public NkColor popup_border_color;
+		public NkColor combo_border_color;
+		public NkColor contextual_border_color;
+		public NkColor menu_border_color;
+		public NkColor group_border_color;
+		public NkColor tooltip_border_color;
 		public nk_style_item scaler;
 
 		public float border;
@@ -466,7 +466,7 @@ namespace NuklearDotNet {
 		public static extern void nk_style_default(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_style_from_table(nk_context* ctx, nk_color* color);
+		public static extern void nk_style_from_table(nk_context* ctx, NkColor* color);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_style_load_cursor(nk_context* ctx, nk_style_cursor scur, nk_cursor* cursor);
@@ -505,7 +505,7 @@ namespace NuklearDotNet {
 		public static extern int nk_style_push_flags(nk_context* ctx, uint* a_nkflags, uint b_nkflags);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_style_push_color(nk_context* ctx, nk_color* a, nk_color b);
+		public static extern int nk_style_push_color(nk_context* ctx, NkColor* a, NkColor b);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_style_pop_font(nk_context* ctx);
@@ -526,121 +526,121 @@ namespace NuklearDotNet {
 		public static extern int nk_style_pop_color(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_rgb(int r, int g, int b);
+		public static extern NkColor nk_rgb(int r, int g, int b);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_rgb_iv(int* rgb);
+		public static extern NkColor nk_rgb_iv(int* rgb);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_rgb_bv(byte* rgb);
+		public static extern NkColor nk_rgb_bv(byte* rgb);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_rgb_f(float r, float g, float b);
+		public static extern NkColor nk_rgb_f(float r, float g, float b);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_rgb_fv(float* rgb);
+		public static extern NkColor nk_rgb_fv(float* rgb);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_rgb_hex(byte* rgb);
+		public static extern NkColor nk_rgb_hex(byte* rgb);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_rgba(int r, int g, int b, int a);
+		public static extern NkColor nk_rgba(int r, int g, int b, int a);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_rgba_u32(uint rgba);
+		public static extern NkColor nk_rgba_u32(uint rgba);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_rgba_iv(int* rgba);
+		public static extern NkColor nk_rgba_iv(int* rgba);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_rgba_bv(byte* rgba);
+		public static extern NkColor nk_rgba_bv(byte* rgba);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_rgba_f(float r, float g, float b, float a);
+		public static extern NkColor nk_rgba_f(float r, float g, float b, float a);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_rgba_fv(float* rgba);
+		public static extern NkColor nk_rgba_fv(float* rgba);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_rgba_hex(float* hsv);
+		public static extern NkColor nk_rgba_hex(float* hsv);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_hsva(int h, int s, int v, int a);
+		public static extern NkColor nk_hsva(int h, int s, int v, int a);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_hsva_iv(int* hsva);
+		public static extern NkColor nk_hsva_iv(int* hsva);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_hsva_bv(byte* hsva);
+		public static extern NkColor nk_hsva_bv(byte* hsva);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_hsva_f(float h, float s, float v, float a);
+		public static extern NkColor nk_hsva_f(float h, float s, float v, float a);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_hsva_fv(float* hsva);
+		public static extern NkColor nk_hsva_fv(float* hsva);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_f(out float r, out float g, out float b, out float a, nk_color src);
+		public static extern void nk_color_f(out float r, out float g, out float b, out float a, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_fv(float* rgba_out, nk_color src);
+		public static extern void nk_color_fv(float* rgba_out, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_d(out double r, out double g, out double b, out double a, nk_color src);
+		public static extern void nk_color_d(out double r, out double g, out double b, out double a, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_dv(double* rgba_out, nk_color src);
+		public static extern void nk_color_dv(double* rgba_out, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern uint nk_color_u32(nk_color src);
+		public static extern uint nk_color_u32(NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_hex_rgba(byte* output, nk_color src);
+		public static extern void nk_color_hex_rgba(byte* output, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_hex_rgb(byte* output, nk_color src);
+		public static extern void nk_color_hex_rgb(byte* output, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_hsv_i(out int h, out int s, out int v, nk_color src);
+		public static extern void nk_color_hsv_i(out int h, out int s, out int v, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_hsv_b(out byte h, out byte s, out byte v, nk_color src);
+		public static extern void nk_color_hsv_b(out byte h, out byte s, out byte v, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_hsv_iv(int* hsv_out, nk_color src);
+		public static extern void nk_color_hsv_iv(int* hsv_out, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_hsv_bv(byte* hsv_out, nk_color src);
+		public static extern void nk_color_hsv_bv(byte* hsv_out, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_hsv_f(out float h, out float s, out float v, nk_color src);
+		public static extern void nk_color_hsv_f(out float h, out float s, out float v, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_hsv_fv(float* hsv_out, nk_color src);
+		public static extern void nk_color_hsv_fv(float* hsv_out, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_hsva_i(out int h, out int s, out int v, out int a, nk_color src);
+		public static extern void nk_color_hsva_i(out int h, out int s, out int v, out int a, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_hsva_b(out byte h, out byte s, out byte v, out byte a, nk_color src);
+		public static extern void nk_color_hsva_b(out byte h, out byte s, out byte v, out byte a, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_hsva_iv(int* hsva_out, nk_color src);
+		public static extern void nk_color_hsva_iv(int* hsva_out, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_hsva_bv(byte* hsva_out, nk_color src);
+		public static extern void nk_color_hsva_bv(byte* hsva_out, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_hsva_f(out float h, out float s, out float v, out float a, nk_color src);
+		public static extern void nk_color_hsva_f(out float h, out float s, out float v, out float a, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_color_hsva_fv(float* hsva_out, nk_color src);
+		public static extern void nk_color_hsva_fv(float* hsva_out, NkColor src);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern nk_style_item nk_style_item_image(nk_image img);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_style_item nk_style_item_color(nk_color col);
+		public static extern nk_style_item nk_style_item_color(NkColor col);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern nk_style_item nk_style_item_hide();

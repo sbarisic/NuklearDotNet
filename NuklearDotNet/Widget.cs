@@ -45,8 +45,8 @@ namespace NuklearDotNet {
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_chart_slot {
 		public nk_chart_type type;
-		public nk_color color;
-		public nk_color highlight;
+		public NkColor color;
+		public NkColor highlight;
 		public float min;
 		public float max;
 		public float range;
@@ -251,7 +251,7 @@ namespace NuklearDotNet {
 	}
 
 	[Flags]
-	public enum nk_text_align {
+	public enum NkTextAlign {
 		NK_TEXT_ALIGN_LEFT = 0x01,
 		NK_TEXT_ALIGN_CENTERED = 0x02,
 		NK_TEXT_ALIGN_RIGHT = 0x04,
@@ -260,10 +260,10 @@ namespace NuklearDotNet {
 		NK_TEXT_ALIGN_BOTTOM = 0x20
 	}
 
-	public enum nk_text_alignment {
-		NK_TEXT_LEFT = nk_text_align.NK_TEXT_ALIGN_MIDDLE | nk_text_align.NK_TEXT_ALIGN_LEFT,
-		NK_TEXT_CENTERED = nk_text_align.NK_TEXT_ALIGN_MIDDLE | nk_text_align.NK_TEXT_ALIGN_CENTERED,
-		NK_TEXT_RIGHT = nk_text_align.NK_TEXT_ALIGN_MIDDLE | nk_text_align.NK_TEXT_ALIGN_RIGHT
+	public enum NkTextAlignment {
+		NK_TEXT_LEFT = NkTextAlign.NK_TEXT_ALIGN_MIDDLE | NkTextAlign.NK_TEXT_ALIGN_LEFT,
+		NK_TEXT_CENTERED = NkTextAlign.NK_TEXT_ALIGN_MIDDLE | NkTextAlign.NK_TEXT_ALIGN_CENTERED,
+		NK_TEXT_RIGHT = NkTextAlign.NK_TEXT_ALIGN_MIDDLE | NkTextAlign.NK_TEXT_ALIGN_RIGHT
 	}
 
 	[Flags]
@@ -391,6 +391,9 @@ namespace NuklearDotNet {
 		public static extern void nk_window_close(nk_context* ctx, byte* name);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_window_close(nk_context* ctx, string name);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_window_collapse(nk_context* ctx, byte* name, nk_collapse_states state);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
@@ -410,7 +413,7 @@ namespace NuklearDotNet {
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_group_begin_titled(nk_context* ctx, byte* id, byte* title, uint nkflags);
-		
+
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_group_begin_titled(nk_context* ctx, string id, string title, uint nkflags);
 
@@ -487,25 +490,37 @@ namespace NuklearDotNet {
 		public static extern void nk_text(nk_context* ctx, byte* s, int i, uint flags_nkflags);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_text_colored(nk_context* ctx, byte* s, int i, uint flags_nkflags, nk_color color);
+		public static extern void nk_text_colored(nk_context* ctx, byte* s, int i, uint flags_nkflags, NkColor color);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_text_wrap(nk_context* ctx, byte* s, int i);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_text_wrap_colored(nk_context* ctx, byte* s, int i, nk_color color);
+		public static extern void nk_text_wrap_colored(nk_context* ctx, byte* s, int i, NkColor color);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_label(nk_context* ctx, byte* s, uint align_nkflags);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_label_colored(nk_context* ctx, byte* s, uint align_nkflags, nk_color color);
+		public static extern void nk_label(nk_context* ctx, string s, uint align_nkflags);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_label_colored(nk_context* ctx, byte* s, uint align_nkflags, NkColor color);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_label_colored(nk_context* ctx, string s, uint align_nkflags, NkColor color);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_label_wrap(nk_context* ctx, byte* s);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_label_colored_wrap(nk_context* ctx, byte* s, nk_color color);
+		public static extern void nk_label_wrap(nk_context* ctx, string s);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_label_colored_wrap(nk_context* ctx, byte* s, NkColor color);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_label_colored_wrap(nk_context* ctx, string s, NkColor color);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_image(nk_context* ctx, nk_image img);
@@ -525,7 +540,7 @@ namespace NuklearDotNet {
 		public static extern int nk_button_label(nk_context* ctx, string title);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_button_color(nk_context* ctx, nk_color color);
+		public static extern int nk_button_color(nk_context* ctx, NkColor color);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_button_symbol(nk_context* ctx, nk_symbol_type symtype);
@@ -657,10 +672,10 @@ namespace NuklearDotNet {
 		public static extern IntPtr nk_prog(nk_context* ctx, IntPtr cur_nksize, IntPtr max_nksize, int modifyable);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_color nk_color_picker(nk_context* ctx, nk_color color, nk_color_format cfmt);
+		public static extern NkColor nk_color_picker(nk_context* ctx, NkColor color, nk_color_format cfmt);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_color_pick(nk_context* ctx, nk_color* color, nk_color_format cfmt);
+		public static extern int nk_color_pick(nk_context* ctx, NkColor* color, nk_color_format cfmt);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_property_int(nk_context* ctx, byte* name, int min, int* val, int max, int step, float inc_per_pixel);
@@ -705,13 +720,13 @@ namespace NuklearDotNet {
 		public static extern int nk_chart_begin(nk_context* ctx, nk_chart_type chatype, int num, float min, float max);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_chart_begin_colored(nk_context* ctx, nk_chart_type chatype, nk_color color, nk_color active, int num, float min, float max);
+		public static extern int nk_chart_begin_colored(nk_context* ctx, nk_chart_type chatype, NkColor color, NkColor active, int num, float min, float max);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_chart_add_slot(nk_context* ctx, nk_chart_type chatype, int count, float min_value, float max_value);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_chart_add_slot_colored(nk_context* ctx, nk_chart_type chatype, nk_color color, nk_color active, int count, float min_value, float max_value);
+		public static extern void nk_chart_add_slot_colored(nk_context* ctx, nk_chart_type chatype, NkColor color, NkColor active, int count, float min_value, float max_value);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern uint nk_chart_push(nk_context* ctx, float f);
@@ -768,7 +783,7 @@ namespace NuklearDotNet {
 		public static extern int nk_combo_begin_label(nk_context* ctx, char* selected, nk_vec2 size);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_combo_begin_color(nk_context* ctx, nk_color color, nk_vec2 size);
+		public static extern int nk_combo_begin_color(nk_context* ctx, NkColor color, nk_vec2 size);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_combo_begin_symbol(nk_context* ctx, nk_symbol_type stype, nk_vec2 size);

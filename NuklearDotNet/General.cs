@@ -12,11 +12,15 @@ namespace NuklearDotNet {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public struct nk_color {
-		public byte r;
-		public byte g;
-		public byte b;
-		public byte a;
+	public struct NkColor {
+		public byte R;
+		public byte G;
+		public byte B;
+		public byte A;
+
+		public override string ToString() {
+			return string.Format("({0}, {1}, {2}, {3})", R, G, B, A);
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

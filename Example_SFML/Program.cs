@@ -15,7 +15,7 @@ using System.Reflection;
 
 namespace Example_SFML {
 	// Because SFML _still does not have a fucking Scissor function, what the *fuck*_
-	static class GayGL {
+	static class OpenGL {
 		const string LibName = "opengl32";
 		public const int GL_SCISSOR_TEST = 0xC11;
 
@@ -81,13 +81,13 @@ namespace Example_SFML {
 
 			Texture.Bind(Texture);
 
-			GayGL.glEnable(GayGL.GL_SCISSOR_TEST);
-			GayGL.glScissor2((int)RWind.Size.Y, (int)ClipRect.X, (int)ClipRect.Y, (int)ClipRect.W, (int)ClipRect.H);
+			OpenGL.glEnable(OpenGL.GL_SCISSOR_TEST);
+			OpenGL.glScissor2((int)RWind.Size.Y, (int)ClipRect.X, (int)ClipRect.Y, (int)ClipRect.W, (int)ClipRect.H);
 
 			//RWind.Draw(SfmlVerts, PrimitiveType.Triangles);
 			RT.Draw(SfmlVerts, PrimitiveType.Triangles);
 
-			GayGL.glDisable(GayGL.GL_SCISSOR_TEST);
+			OpenGL.glDisable(OpenGL.GL_SCISSOR_TEST);
 		}
 
 		public void EndBuffering() {
