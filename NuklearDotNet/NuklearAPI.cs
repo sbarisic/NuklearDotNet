@@ -354,6 +354,36 @@ namespace NuklearDotNet {
 		public static void WindowClose(string Name) {
 			Nuklear.nk_window_close(Ctx, Name);
 		}
+
+		public static void SetClipboardCallback(Action<string> CopyFunc, Func<string> PasteFunc) {
+			// TODO: Contains alloc and forget, don't call SetClipboardCallback too many times
+
+
+			nk_plugin_copy_t NkCopyFunc = (Handle, Str, Len) => {
+				byte[] Bytes = new byte[Len];
+
+				for (int i = 0; i < Bytes.Length; i++)
+					Bytes[i] = Str[i];
+
+				CopyFunc(Encoding.UTF8.GetString(Bytes));
+			};
+
+			nk_plugin_paste_t NkPasteFunc = (NkHandle Handle, ref nk_text_edit TextEdit) => {
+				byte[] Bytes = Encoding.UTF8.GetBytes(PasteFunc());
+
+				fixed (byte* BytesPtr = Bytes)
+				fixed (nk_text_edit* TextEditPtr = &TextEdit)
+					Nuklear.nk_textedit_paste(TextEditPtr, BytesPtr, Bytes.Length);
+			};
+
+			GCHandle.Alloc(CopyFunc);
+			GCHandle.Alloc(PasteFunc);
+			GCHandle.Alloc(NkCopyFunc);
+			GCHandle.Alloc(NkPasteFunc);
+
+			Ctx->clip.copyfun_nkPluginCopyT = Marshal.GetFunctionPointerForDelegate(NkCopyFunc);
+			Ctx->clip.pastefun_nkPluginPasteT = Marshal.GetFunctionPointerForDelegate(NkPasteFunc);
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
