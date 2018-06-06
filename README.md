@@ -14,13 +14,13 @@ to build Nuklear.dll (x64) with all API functions exported and ready to be used 
 Updating should be as easy as updating the submodule and rebuilding the project.
 
 Currently this binding is used in my game engine project, so i implement stuff as i need it.
-https://github.com/cartman300/libTech
+https://github.com/sbarisic/libTech
 
 Contributions welcome.
 
 # Screenshots
 
-![alt text](https://raw.githubusercontent.com/cartman300/NuklearDotNet/master/screenshots/a.png "Hello World!")
+![alt text](https://raw.githubusercontent.com/sbarisic/NuklearDotNet/master/screenshots/a.png "Hello World!")
 
 # Code samples
 
