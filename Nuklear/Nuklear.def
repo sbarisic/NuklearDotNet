@@ -514,7 +514,6 @@ nk_input_is_key_down
 
 nk_draw_list_init
 nk_draw_list_setup
-nk_draw_list_clear
 
 nk__draw_list_begin
 nk__draw_list_next
