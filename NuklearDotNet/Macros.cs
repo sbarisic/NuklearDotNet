@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
 namespace NuklearDotNet {
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public unsafe delegate void nk_foreach_action(nk_command* c);
+
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public unsafe delegate void nk_draw_foreach_action(nk_draw_command* c);
 
 	public static unsafe partial class Nuklear {

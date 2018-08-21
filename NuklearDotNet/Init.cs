@@ -8,12 +8,16 @@ using System.Threading.Tasks;
 namespace NuklearDotNet {
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public delegate IntPtr nk_plugin_alloc_t(NkHandle handle, IntPtr old, IntPtr nk_size);
+
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public delegate void nk_plugin_free_t(NkHandle handle, IntPtr old);
+
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public delegate int nk_plugin_filter_t(ref nk_text_edit edit, uint unicode_rune);
+
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public delegate void nk_plugin_paste_t(NkHandle handle, ref nk_text_edit edit);
+
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public unsafe delegate void nk_plugin_copy_t(NkHandle handle, byte* str, int len);
 

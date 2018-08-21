@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NuklearDotNet {
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public unsafe delegate void FontStashAction(IntPtr Atlas);
 
 	public static unsafe class NuklearAPI {

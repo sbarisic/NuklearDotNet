@@ -300,8 +300,10 @@ namespace NuklearDotNet {
 		Commited = (1 << (4))
 	}
 
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public delegate float nk_value_getter_fun(IntPtr user, int index);
 
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public unsafe delegate void nk_item_getter_fun(IntPtr user, int i, byte** idk);
 
 	// [DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]

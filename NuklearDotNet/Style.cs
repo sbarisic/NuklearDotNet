@@ -32,6 +32,7 @@ namespace NuklearDotNet {
 		public nk_vec2 padding;
 	}
 
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public unsafe delegate void nk_style_drawbeginend(nk_command_buffer* cbuf, NkHandle userdata);
 
 	[StructLayout(LayoutKind.Sequential)]

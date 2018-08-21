@@ -232,6 +232,7 @@ namespace NuklearDotNet {
 		public NkColor col;
 	}
 
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	public delegate void nk_command_custom_callback(IntPtr canvas, short x, short y, ushort w, ushort h, NkHandle callback_data);
 
 	[StructLayout(LayoutKind.Sequential)]
