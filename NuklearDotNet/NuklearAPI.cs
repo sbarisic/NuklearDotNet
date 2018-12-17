@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace NuklearDotNet {
@@ -430,8 +431,21 @@ namespace NuklearDotNet {
 	public struct NkVector2f {
 		public float X, Y;
 
+		public NkVector2f(float X, float Y) {
+			this.X = X;
+			this.Y = Y;
+		}
+
 		public override string ToString() {
 			return string.Format("({0}, {1})", X, Y);
+		}
+
+		public static implicit operator Vector2(NkVector2f V) {
+			return new Vector2(V.X, V.Y);
+		}
+
+		public static implicit operator NkVector2f(Vector2 V) {
+			return new NkVector2f(V.X, V.Y);
 		}
 	}
 
