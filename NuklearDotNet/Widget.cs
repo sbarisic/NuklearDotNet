@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NuklearDotNet {
 	[Flags]
-	public enum NkPanelFlags { // nk_panel_flags, NK_WINDOW_*
+	public enum NkPanelFlags : uint { // nk_panel_flags, NK_WINDOW_*
 		Border = (1 << (0)),
 		Movable = (1 << (1)),
 		Scalable = (1 << (2)),
@@ -26,7 +26,7 @@ namespace NuklearDotNet {
 	}
 
 	[Flags]
-	public enum nk_panel_type {
+	public enum nk_panel_type : uint {
 		NK_PANEL_WINDOW = (1 << (0)),
 		NK_PANEL_GROUP = (1 << (1)),
 		NK_PANEL_POPUP = (1 << (2)),
@@ -36,7 +36,7 @@ namespace NuklearDotNet {
 		NK_PANEL_TOOLTIP = (1 << (7))
 	}
 
-	public enum nk_panel_set {
+	public enum nk_panel_set : uint {
 		NK_PANEL_SET_NONBLOCK = nk_panel_type.NK_PANEL_CONTEXTUAL | nk_panel_type.NK_PANEL_COMBO | nk_panel_type.NK_PANEL_MENU | nk_panel_type.NK_PANEL_TOOLTIP,
 		NK_PANEL_SET_POPUP = NK_PANEL_SET_NONBLOCK | nk_panel_type.NK_PANEL_POPUP,
 		NK_PANEL_SET_SUB = NK_PANEL_SET_POPUP | nk_panel_type.NK_PANEL_GROUP
@@ -139,7 +139,7 @@ namespace NuklearDotNet {
 	}
 
 	[Flags]
-	public enum nk_window_flags : int {
+	public enum nk_window_flags : uint {
 		NK_WINDOW_PRIVATE = (1 << (11)),
 		NK_WINDOW_DYNAMIC = NK_WINDOW_PRIVATE,
 		NK_WINDOW_ROM = (1 << (12)),
@@ -674,10 +674,10 @@ namespace NuklearDotNet {
 		public static extern IntPtr nk_prog(nk_context* ctx, IntPtr cur_nksize, IntPtr max_nksize, int modifyable);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern NkColor nk_color_picker(nk_context* ctx, NkColor color, nk_color_format cfmt);
+		public static extern nk_colorf nk_color_picker(nk_context* ctx, nk_colorf color, nk_color_format cfmt);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern int nk_color_pick(nk_context* ctx, NkColor* color, nk_color_format cfmt);
+		public static extern int nk_color_pick(nk_context* ctx, nk_colorf* color, nk_color_format cfmt);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_property_int(nk_context* ctx, byte* name, int min, int* val, int max, int step, float inc_per_pixel);
