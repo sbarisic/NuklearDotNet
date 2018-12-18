@@ -192,6 +192,8 @@ namespace NuklearDotNet {
 					FrameBuffered?.BeginBuffering();
 
 					uint Offset = 0;
+					Dev.BeginRender();
+
 					Nuklear.nk_draw_foreach(Ctx, Commands, (Cmd) => {
 						if (Cmd->elem_count == 0)
 							return;
@@ -200,6 +202,7 @@ namespace NuklearDotNet {
 						Offset += Cmd->elem_count;
 					});
 
+					Dev.EndRender();
 					FrameBuffered?.EndBuffering();
 				}
 
@@ -504,7 +507,7 @@ namespace NuklearDotNet {
 		public abstract void SetBuffer(NkVertex[] VertexBuffer, ushort[] IndexBuffer);
 		public abstract void Render(NkHandle Userdata, int Texture, NkRect ClipRect, uint Offset, uint Count);
 		public abstract int CreateTextureHandle(int W, int H, IntPtr Data);
-
+		
 		public NuklearDevice() {
 			Events = new Queue<NuklearEvent>();
 			ForceUpdate();
@@ -514,6 +517,12 @@ namespace NuklearDotNet {
 		}
 
 		public virtual void FontStash(IntPtr Atlas) {
+		}
+
+		public virtual void BeginRender() {
+		}
+
+		public virtual void EndRender() {
 		}
 
 		public void OnMouseButton(NuklearEvent.MouseButton MouseButton, int X, int Y, bool Down) {
