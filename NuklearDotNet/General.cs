@@ -19,6 +19,13 @@ namespace NuklearDotNet {
 		public byte B;
 		public byte A;
 
+		public NkColor(byte R, byte G, byte B, byte A = 255) {
+			this.R = R;
+			this.G = G;
+			this.B = B;
+			this.A = A;
+		}
+
 		public override string ToString() {
 			return string.Format("({0}, {1}, {2}, {3})", R, G, B, A);
 		}
