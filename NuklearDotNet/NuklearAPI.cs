@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
-using System.Numerics;
 using System.Threading.Tasks;
 
 namespace NuklearDotNet {
@@ -29,6 +29,8 @@ namespace NuklearDotNet {
 		static IFrameBuffered FrameBuffered;
 
 		static bool ForceUpdateQueued;
+
+		static bool Initialized = false;
 
 		// TODO: Support swapping this, native memcmp is the fastest so it's used here
 		[DllImport("msvcrt", EntryPoint = "memcmp", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
@@ -226,6 +228,11 @@ namespace NuklearDotNet {
 
 		//public  NuklearAPI(NuklearDevice Device) {
 		public static void Init(NuklearDevice Device) {
+			if (Initialized)
+				throw new InvalidOperationException("NuklearAPI.Init is called twice");
+
+			Initialized = true;
+
 			Dev = Device;
 			FrameBuffered = Device as IFrameBuffered;
 
@@ -279,6 +286,9 @@ namespace NuklearDotNet {
 		}
 
 		public static void Frame(Action A) {
+			if (!Initialized)
+				throw new InvalidOperationException("You forgot to call NuklearAPI.Init");
+
 			if (ForceUpdateQueued) {
 				ForceUpdateQueued = false;
 
@@ -507,7 +517,7 @@ namespace NuklearDotNet {
 		public abstract void SetBuffer(NkVertex[] VertexBuffer, ushort[] IndexBuffer);
 		public abstract void Render(NkHandle Userdata, int Texture, NkRect ClipRect, uint Offset, uint Count);
 		public abstract int CreateTextureHandle(int W, int H, IntPtr Data);
-		
+
 		public NuklearDevice() {
 			Events = new Queue<NuklearEvent>();
 			ForceUpdate();
