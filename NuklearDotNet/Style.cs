@@ -412,7 +412,7 @@ namespace NuklearDotNet {
 		public nk_style_edit edit;
 		public nk_style_chart chart;
 		public nk_style_scrollbar scrollh;
-		public nk_style_scrollbar scrollb;
+		public nk_style_scrollbar scrollv;
 		public nk_style_tab tab;
 		public nk_style_combo combo;
 		public nk_style_window window;
