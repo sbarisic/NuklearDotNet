@@ -13,6 +13,8 @@ namespace NuklearDotNet {
 
 	public static unsafe class NuklearAPI {
 		public static nk_context* Ctx;
+		public static NuklearDevice Dev;
+
 		static nk_allocator* Allocator;
 		static nk_font_atlas* FontAtlas;
 		static nk_draw_null_texture* NullTexture;
@@ -25,7 +27,6 @@ namespace NuklearDotNet {
 		static nk_plugin_alloc_t Alloc;
 		static nk_plugin_free_t Free;
 
-		static NuklearDevice Dev;
 		static IFrameBuffered FrameBuffered;
 
 		static bool ForceUpdateQueued;
@@ -568,14 +569,22 @@ namespace NuklearDotNet {
 			Textures.Add(default(T)); // Start indices at 1
 		}
 
-		public sealed override int CreateTextureHandle(int W, int H, IntPtr Data) {
-			T Tex = CreateTexture(W, H, Data);
+		public int CreateTextureHandle(T Tex) {
 			Textures.Add(Tex);
 			return Textures.Count - 1;
 		}
 
+		public T GetTexture(int Handle) {
+			return Textures[Handle];
+		}
+
+		public sealed override int CreateTextureHandle(int W, int H, IntPtr Data) {
+			T Tex = CreateTexture(W, H, Data);
+			return CreateTextureHandle(Tex);
+		}
+
 		public sealed override void Render(NkHandle Userdata, int Texture, NkRect ClipRect, uint Offset, uint Count) =>
-			Render(Userdata, Textures[Texture], ClipRect, Offset, Count);
+			Render(Userdata, GetTexture(Texture), ClipRect, Offset, Count);
 
 		public abstract T CreateTexture(int W, int H, IntPtr Data);
 		public abstract void Render(NkHandle Userdata, T Texture, NkRect ClipRect, uint Offset, uint Count);
