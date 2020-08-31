@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -136,7 +136,7 @@ namespace Example_SFML {
 			Console.Title = "Nuklear SFML .NET";
 
 			Stopwatch SWatch = Stopwatch.StartNew();
-			Color ClearColor = new Color(50, 50, 50);
+			Color ClearColor = new Color(170, 80, 20);
 			VideoMode VMode = new VideoMode(1366, 768);
 
 			RenderWindow RWind = new RenderWindow(VMode, Console.Title, Styles.Close);

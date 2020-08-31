@@ -30,8 +30,8 @@ namespace NuklearDotNet {
 		static IFrameBuffered FrameBuffered;
 
 		static bool ForceUpdateQueued;
-
 		static bool Initialized = false;
+		static bool FirstFrame = true;
 
 		// TODO: Support swapping this, native memcmp is the fastest so it's used here
 		[DllImport("msvcrt", EntryPoint = "memcmp", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
@@ -299,7 +299,13 @@ namespace NuklearDotNet {
 			bool HasInput;
 			if (HasInput = HandleInput())
 				A();
+
 			Render(HasInput);
+
+			if (FirstFrame) {
+				FirstFrame = false;
+				QueueForceUpdate();
+			}
 		}
 
 		public static void SetDeltaTime(float Delta) {
