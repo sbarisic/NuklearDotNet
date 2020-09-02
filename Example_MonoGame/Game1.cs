@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using NuklearDotNet;
+using Nuklear;
 
 namespace Example_MonoGame
 {
@@ -16,6 +17,7 @@ namespace Example_MonoGame
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
+            
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             this.Window.AllowUserResizing = true;
@@ -33,7 +35,7 @@ namespace Example_MonoGame
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Initalizing The Nuklear Device Render Context!
-            _NuklearRenderDevice = new NuklearRenderer(this.GraphicsDevice);
+            _NuklearRenderDevice = new NuklearRenderer(this.GraphicsDevice, this.Window);
 
             // Initalizing the UI!
             Shared.Init(_NuklearRenderDevice);
@@ -50,18 +52,8 @@ namespace Example_MonoGame
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-
-            // We need a custom blendstate beacuse of the premultiplied aplha blending?
-            BlendState blendState = new BlendState();
-            blendState.ColorBlendFunction = BlendFunction.Add;
-            blendState.ColorSourceBlend = Blend.SourceAlpha;
-            blendState.ColorDestinationBlend = Blend.InverseSourceAlpha;
-
-            _spriteBatch.Begin(blendState: blendState, samplerState: SamplerState.PointClamp, depthStencilState: DepthStencilState.None, rasterizerState: RasterizerState.CullNone);
             Shared.DrawLoop((float)gameTime.ElapsedGameTime.TotalSeconds);
-            _spriteBatch.End();
-
-
+            
             base.Draw(gameTime);
         }
     }

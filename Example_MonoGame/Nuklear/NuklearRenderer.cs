@@ -1,13 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using NuklearDotNet;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Example_MonoGame
+namespace Nuklear
 {
     public class NuklearRenderer : NuklearDeviceTex<Texture2D>, IFrameBuffered
     {
@@ -15,19 +17,20 @@ namespace Example_MonoGame
         BasicEffect _basicEffect;
         VertexBuffer _vertexBuffer;
         RenderTarget2D _renderTarget2D;
-
         SpriteBatch _spriteBatch;
 
         NkVertex[] _verts;
         ushort[] _inds;
 
-        public NuklearRenderer(GraphicsDevice graphics)
+        public NuklearRenderer(GraphicsDevice graphics, GameWindow window)
         {
             this._graphics = graphics;
             this._basicEffect = new BasicEffect(_graphics)
             {
                 TextureEnabled = true,
-                VertexColorEnabled = true
+                VertexColorEnabled = true,
+                Projection = Matrix.CreateOrthographicOffCenter(
+                    0, _graphics.Viewport.Width, _graphics.Viewport.Height, 0, 0, 1)
             };
 
             _renderTarget2D = new RenderTarget2D(_graphics,
@@ -35,20 +38,74 @@ namespace Example_MonoGame
                 _graphics.PresentationParameters.BackBufferHeight,
                 false,
                 _graphics.PresentationParameters.BackBufferFormat,
-                DepthFormat.Depth24);
+                DepthFormat.None,
+                0,
+                RenderTargetUsage.DiscardContents);
 
             _spriteBatch = new SpriteBatch(_graphics);
 
-            // This BlendState is no longer neccesary.
-            //BlendState _blendState = new BlendState();
-            //_blendState.ColorBlendFunction = BlendFunction.Add;
-            //_blendState.ColorSourceBlend = Blend.SourceAlpha;
-            //_blendState.ColorDestinationBlend = Blend.InverseSourceAlpha;
-            //SpriteBatch.Begin(SpriteSortMode.Immediate, 
-            //    blendState: _blendstate, 
-            //    samplerState: SamplerState.PointClamp, 
-            //    depthStencilState: DepthStencilState.None, 
-            //    rasterizerState: RasterizerState.CullNone);
+            window.TextInput += (sender, args) =>
+            {
+                this.OnText(args.Character.ToString());
+            };
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            var mouse = Mouse.GetState();
+            this.OnMouseMove(mouse.X, mouse.Y);
+
+            #region Mouse
+            switch (mouse.LeftButton)
+            {
+                case ButtonState.Released:
+                    this.OnMouseButton(NuklearEvent.MouseButton.Left, mouse.X, mouse.Y, false);
+                    break;
+                case ButtonState.Pressed:
+                    this.OnMouseButton(NuklearEvent.MouseButton.Left, mouse.X, mouse.Y, true);
+                    break;
+
+                default:
+                    break;
+            }
+
+            switch (mouse.RightButton)
+            {
+                case ButtonState.Released:
+                    this.OnMouseButton(NuklearEvent.MouseButton.Middle, mouse.X, mouse.Y, false);
+                    break;
+                case ButtonState.Pressed:
+                    this.OnMouseButton(NuklearEvent.MouseButton.Right, mouse.X, mouse.Y, true);
+                    break;
+                default:
+                    break;
+            }
+
+            switch (mouse.MiddleButton)
+            {
+                case ButtonState.Released:
+                    this.OnMouseButton(NuklearEvent.MouseButton.Middle, mouse.X, mouse.Y, false);
+                    break;
+                case ButtonState.Pressed:
+                    this.OnMouseButton(NuklearEvent.MouseButton.Middle, mouse.X, mouse.Y, true);
+                    break;
+                default:
+                    break;
+            }
+
+            this.OnScroll(mouse.HorizontalScrollWheelValue, mouse.ScrollWheelValue);
+            #endregion
+        }
+
+
+
+
+        #region NuklearAPI
+
+        public override void SetBuffer(NkVertex[] VertexBuffer, ushort[] IndexBuffer)
+        {
+            _verts = VertexBuffer;
+            _inds = IndexBuffer;
         }
 
         public override Texture2D CreateTexture(int W, int H, IntPtr Data)
@@ -62,13 +119,12 @@ namespace Example_MonoGame
             return texture;
         }
 
-        public void Update(GameTime gameTime)
+        void IFrameBuffered.BeginBuffering()
         {
-            _basicEffect.Projection = Matrix.CreateOrthographicOffCenter(
-                0, _graphics.Viewport.Width, _graphics.Viewport.Height, 0, 0, 1);
-
+            _graphics.SetRenderTarget(_renderTarget2D);
+            _graphics.Clear(Color.CornflowerBlue);
+            _spriteBatch.Begin(SpriteSortMode.Immediate, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp, depthStencilState: DepthStencilState.None, rasterizerState: RasterizerState.CullNone);
         }
-
 
         public override void Render(NkHandle Userdata, Texture2D Texture, NkRect ClipRect, uint Offset, uint Count)
         {
@@ -93,34 +149,22 @@ namespace Example_MonoGame
             }
         }
 
-        public override void SetBuffer(NkVertex[] VertexBuffer, ushort[] IndexBuffer)
-        {
-            _verts = VertexBuffer;
-            _inds = IndexBuffer;
-        }
-
-        public void BeginBuffering()
-        {
-            _graphics.SetRenderTarget(_renderTarget2D);
-            _graphics.Clear(Color.CornflowerBlue);
-            _spriteBatch.Begin(SpriteSortMode.Immediate, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp, depthStencilState: DepthStencilState.None, rasterizerState: RasterizerState.CullNone);
-        }
-
-        public void EndBuffering()
+        void IFrameBuffered.EndBuffering()
         {
             _spriteBatch.End();
             _graphics.SetRenderTarget(null);
-            //_graphics.RasterizerState.ScissorTestEnable = false;
         }
 
         void IFrameBuffered.RenderFinal()
         {
             _spriteBatch.Begin(blendState: BlendState.Opaque);
-            _spriteBatch.Draw(_renderTarget2D, Vector2.Zero, Color.White);
+            _spriteBatch.Draw(_renderTarget2D, new Rectangle(0, 0, _graphics.Viewport.Width, _graphics.Viewport.Height), Color.White);
             _spriteBatch.End();
 
             RenderFinalEnded();
         }
+
+        #endregion
 
         void RenderFinalEnded()
         {
@@ -132,9 +176,12 @@ namespace Example_MonoGame
                 _graphics.PresentationParameters.BackBufferHeight,
                 false,
                 _graphics.PresentationParameters.BackBufferFormat,
-                DepthFormat.None);
+                DepthFormat.None,
+                0,
+                RenderTargetUsage.PreserveContents);
 
-                ForceUpdate();
+                _basicEffect.Projection = Matrix.CreateOrthographicOffCenter(
+                    0, _graphics.Viewport.Width, _graphics.Viewport.Height, 0, 0, 1);
             }
         }
     }
