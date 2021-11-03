@@ -25,6 +25,7 @@ namespace Example_Raylib {
 				}
 
 			Texture = Raylib.LoadTextureFromImage(Image);
+			// Texture = Raylib.LoadTexture("test.png");
 		}
 	}
 
@@ -55,27 +56,43 @@ namespace Example_Raylib {
 			Inds = IndexBuffer;
 		}
 
-		static void Draw(NkVertex V) {
-			Rlgl.rlColor4f(V.Color.R / 255.0f, V.Color.G / 255.0f, V.Color.B / 255.0f, V.Color.A / 255.0f);
-			Rlgl.rlTexCoord2f(V.UV.X, V.UV.Y);
-			Rlgl.rlVertex2f(V.Position.X, V.Position.Y);
+		static void rlColor(NkColor Clr) {
+			Rlgl.rlColor4f(Clr.R / 255.0f, Clr.G / 255.0f, Clr.B / 255.0f, Clr.A / 255.0f);
+		}
+
+		static void Draw(NkVertex v1, NkVertex v2, NkVertex v3) {
+			rlColor(v1.Color);
+			Rlgl.rlTexCoord2f(v1.UV.X, v1.UV.Y);
+			Rlgl.rlVertex2f(v1.Position.X, v1.Position.Y);
+
+
+			rlColor(v3.Color);
+			Rlgl.rlTexCoord2f(v3.UV.X, v3.UV.Y);
+			Rlgl.rlVertex2f(v3.Position.X, v3.Position.Y);
+
+			rlColor(v2.Color);
+			Rlgl.rlTexCoord2f(v2.UV.X, v2.UV.Y);
+			Rlgl.rlVertex2f(v2.Position.X, v2.Position.Y);
+
+			rlColor(v2.Color);
+			Rlgl.rlTexCoord2f(v2.UV.X, v2.UV.Y);
+			Rlgl.rlVertex2f(v2.Position.X, v2.Position.Y);
+
 		}
 
 		public override void Render(NkHandle Userdata, RaylibTexture Texture, NkRect ClipRect, uint Offset, uint Count) {
 			Raylib.BeginScissorMode((int)ClipRect.X, (int)ClipRect.Y, (int)ClipRect.W, (int)ClipRect.H);
 			Rlgl.rlSetTexture(Texture.Texture.id);
 
-			Rlgl.rlBegin(Rlgl.RL_TRIANGLES);
+			Rlgl.rlCheckRenderBatchLimit((int)Count);
+			Rlgl.rlBegin(Rlgl.RL_QUADS);
 
 			for (int i = 0; i < Count; i += 3) {
 				NkVertex V1 = Verts[Inds[Offset + i]];
-				NkVertex V2 = Verts[Inds[Offset + i+1]];
-				NkVertex V3 = Verts[Inds[Offset + i+2]];
+				NkVertex V2 = Verts[Inds[Offset + i + 1]];
+				NkVertex V3 = Verts[Inds[Offset + i + 2]];
 
-				Draw(V1);
-				Draw(V3);
-				Draw(V2);
-
+				Draw(V1, V2, V3);
 			}
 
 			Rlgl.rlEnd();
@@ -112,7 +129,6 @@ namespace Example_Raylib {
 			while (!Raylib.WindowShouldClose()) {
 				NuklearAPI.QueueForceUpdate();
 
-
 				Vector2 MousePos = Raylib.GetMousePosition();
 				if (LastMouseX != (int)MousePos.X || LastMouseY != (int)MousePos.Y) {
 					LastMouseX = (int)MousePos.X;
@@ -135,9 +151,7 @@ namespace Example_Raylib {
 
 				Raylib.BeginDrawing();
 				Raylib.ClearBackground(Color.BLACK);
-
 				Shared.DrawLoop(Dt);
-
 				Raylib.EndDrawing();
 
 				//Raylib.EndDrawing();
