@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31321.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuklearDotNet", "NuklearDotNet\NuklearDotNet.csproj", "{BDB132A4-22A1-479D-A4D0-0A2B00021F16}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -15,6 +15,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example_WindowsForms", "Example_WindowsForms\Example_WindowsForms.csproj", "{0495BAF0-A16C-4CAF-B661-0F71F55A8B66}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleShared", "ExampleShared\ExampleShared.csproj", "{1DD60202-210F-4E88-97FA-3F6B9F2D04BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example_Raylib", "Example_Raylib\Example_Raylib.csproj", "{89C993D6-6C28-42D3-96BA-A85104A1122D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{44FD6C45-1F83-4382-A567-B0908C982C0B}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +69,14 @@ Global
 		{1DD60202-210F-4E88-97FA-3F6B9F2D04BB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1DD60202-210F-4E88-97FA-3F6B9F2D04BB}.Release|x64.ActiveCfg = Release|Any CPU
 		{1DD60202-210F-4E88-97FA-3F6B9F2D04BB}.Release|x64.Build.0 = Release|Any CPU
+		{89C993D6-6C28-42D3-96BA-A85104A1122D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89C993D6-6C28-42D3-96BA-A85104A1122D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89C993D6-6C28-42D3-96BA-A85104A1122D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{89C993D6-6C28-42D3-96BA-A85104A1122D}.Debug|x64.Build.0 = Debug|Any CPU
+		{89C993D6-6C28-42D3-96BA-A85104A1122D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89C993D6-6C28-42D3-96BA-A85104A1122D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89C993D6-6C28-42D3-96BA-A85104A1122D}.Release|x64.ActiveCfg = Release|Any CPU
+		{89C993D6-6C28-42D3-96BA-A85104A1122D}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
