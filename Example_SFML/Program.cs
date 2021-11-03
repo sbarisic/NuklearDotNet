@@ -61,6 +61,7 @@ namespace Example_SFML {
 		}
 
 		public void BeginBuffering() {
+			Console.WriteLine("BeginBuffering");
 			RT.Clear(Color.Transparent);
 		}
 
@@ -157,6 +158,8 @@ namespace Example_SFML {
 			float Dt = 0.1f;
 
 			while (RWind.IsOpen) {
+				NuklearAPI.QueueForceUpdate();
+
 				RWind.DispatchEvents();
 				RWind.Clear(ClearColor);
 
