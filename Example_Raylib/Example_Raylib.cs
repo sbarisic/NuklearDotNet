@@ -15,17 +15,25 @@ namespace Example_Raylib {
 		public Image Image;
 
 		public RaylibTexture(int W, int H, IntPtr Data) {
-			Image = Raylib.GenImageColor(W, H, Color.ORANGE);
+			/*Image = Raylib.GenImageColor(W, H, Color.ORANGE);
 
 			for (int y = 0; y < H; y++)
 				for (int x = 0; x < W; x++) {
 					NkColor C = ((NkColor*)Data)[y * W + x];
 
 					Raylib.ImageDrawPixel(ref Image, x, y, new Color(C.R, C.G, C.B, C.A));
-				}
+				}*/
+
+			Image = new Image();
+			Image.width = W;
+			Image.height = H;
+			Image.mipmaps = 1;
+			Image.format = PixelFormat.PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
+			Image.data = Data;
 
 			Texture = Raylib.LoadTextureFromImage(Image);
-			// Texture = Raylib.LoadTexture("test.png");
+			Raylib.SetTextureFilter(Texture, TextureFilter.TEXTURE_FILTER_POINT);
+			Raylib.SetTextureWrap(Texture, TextureWrap.TEXTURE_WRAP_CLAMP);
 		}
 	}
 
@@ -65,7 +73,6 @@ namespace Example_Raylib {
 			Rlgl.rlTexCoord2f(v1.UV.X, v1.UV.Y);
 			Rlgl.rlVertex2f(v1.Position.X, v1.Position.Y);
 
-
 			rlColor(v3.Color);
 			Rlgl.rlTexCoord2f(v3.UV.X, v3.UV.Y);
 			Rlgl.rlVertex2f(v3.Position.X, v3.Position.Y);
@@ -77,13 +84,12 @@ namespace Example_Raylib {
 			rlColor(v2.Color);
 			Rlgl.rlTexCoord2f(v2.UV.X, v2.UV.Y);
 			Rlgl.rlVertex2f(v2.Position.X, v2.Position.Y);
-
 		}
 
 		public override void Render(NkHandle Userdata, RaylibTexture Texture, NkRect ClipRect, uint Offset, uint Count) {
 			Raylib.BeginScissorMode((int)ClipRect.X, (int)ClipRect.Y, (int)ClipRect.W, (int)ClipRect.H);
-			Rlgl.rlSetTexture(Texture.Texture.id);
 
+			Rlgl.rlSetTexture(Texture.Texture.id);
 			Rlgl.rlCheckRenderBatchLimit((int)Count);
 			Rlgl.rlBegin(Rlgl.RL_QUADS);
 
@@ -96,8 +102,8 @@ namespace Example_Raylib {
 			}
 
 			Rlgl.rlEnd();
-
 			Rlgl.rlSetTexture(0);
+
 			Raylib.EndScissorMode();
 		}
 
