@@ -41,9 +41,12 @@ namespace Example_Raylib {
 		RenderTexture2D RT;
 
 		public RaylibDevice() {
+			CreateRT();
+		}
+
+		void CreateRT() {
 			int W = Raylib.GetScreenWidth();
 			int H = Raylib.GetScreenHeight();
-
 			RT = Raylib.LoadRenderTexture(W, H);
 		}
 
@@ -76,8 +79,8 @@ namespace Example_Raylib {
 
 		static void Draw(NkVertex v1, NkVertex v2, NkVertex v3) {
 			DrawVert(v1);
-			DrawVert(v1);
 			DrawVert(v3);
+			DrawVert(v2);
 			DrawVert(v2);
 		}
 
@@ -99,7 +102,6 @@ namespace Example_Raylib {
 				Rlgl.rlEnd();
 
 				Rlgl.rlSetTexture(0);
-
 			}
 			Raylib.EndScissorMode();
 			Rlgl.rlEnableBackfaceCulling();
@@ -110,6 +112,12 @@ namespace Example_Raylib {
 		}
 
 		public void RenderFinal() {
+			if (Raylib.IsWindowResized()) {
+				Raylib.UnloadRenderTexture(RT);
+				CreateRT();
+				NuklearAPI.QueueForceUpdate();
+			}
+
 			Raylib.DrawTextureRec(RT.texture, new Rectangle(0, RT.texture.height, RT.texture.width, -RT.texture.height), Vector2.Zero, Color.WHITE);
 		}
 	}
@@ -119,6 +127,7 @@ namespace Example_Raylib {
 		static void Main(string[] args) {
 			Stopwatch SWatch = Stopwatch.StartNew();
 
+			Raylib.SetConfigFlags(ConfigFlags.FLAG_WINDOW_RESIZABLE);
 			Raylib.InitWindow(800, 600, "Raylib Window");
 			Raylib.SetTargetFPS(60);
 
@@ -130,8 +139,8 @@ namespace Example_Raylib {
 			int LastMouseX = 0;
 			int LastMouseY = 0;
 
+			NuklearAPI.QueueForceUpdate();
 			while (!Raylib.WindowShouldClose()) {
-				NuklearAPI.QueueForceUpdate();
 
 				Vector2 MousePos = Raylib.GetMousePosition();
 				if (LastMouseX != (int)MousePos.X || LastMouseY != (int)MousePos.Y) {

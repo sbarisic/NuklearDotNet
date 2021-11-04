@@ -4,9 +4,7 @@ LICENSE: Dual-licensed under MIT and The Unlicense. Your choice.
 .NET binding for the Nuklear immediate mode GUI
 https://github.com/vurtun/nuklear
 
-NuklearSharp ( https://github.com/leafi/NuklearSharp ) was my original inspiration for this, i am not a fan
-of the original way the bindings were loaded. It was too much code duplication and i don't really understand
-why P/Invoke wasn't used.
+NuklearSharp ( https://github.com/leafi/NuklearSharp ) was my original inspiration for this.
 
 No original nuklear source files were modified. A project was created with some support code 
 to build Nuklear.dll (x64) with all API functions exported and ready to be used from .NET
@@ -17,6 +15,14 @@ Currently this binding is used in my game engine project, so i implement stuff a
 https://github.com/sbarisic/libTech
 
 Contributions welcome.
+
+# Implemented devices
+
+* Raylib
+In the example project, this binding was directly included
+https://github.com/ChrisDill/Raylib-cs
+
+* SFML
 
 # Screenshots
 

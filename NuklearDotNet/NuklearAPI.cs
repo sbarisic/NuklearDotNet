@@ -32,6 +32,7 @@ namespace NuklearDotNet {
 		static bool ForceUpdateQueued;
 
 		static bool Initialized = false;
+		static bool ForceDirty = false;
 
 		// TODO: Support swapping this, native memcmp is the fastest so it's used here
 		[DllImport("msvcrt", EntryPoint = "memcmp", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
@@ -131,6 +132,7 @@ namespace NuklearDotNet {
 							break;
 
 						case NuklearEvent.EventType.ForceUpdate:
+							ForceDirty = true;
 							break;
 
 						default:
@@ -171,7 +173,9 @@ namespace NuklearDotNet {
 					}
 				}
 
-				if (Dirty) {
+				if (Dirty || ForceDirty) {
+					ForceDirty = false;
+
 					NkConvertResult R = (NkConvertResult)Nuklear.nk_convert(Ctx, Commands, Vertices, Indices, ConvertCfg);
 					if (R != NkConvertResult.Success)
 						throw new Exception(R.ToString());
@@ -304,6 +308,7 @@ namespace NuklearDotNet {
 			bool HasInput;
 			if (HasInput = HandleInput())
 				A();
+
 			Render(HasInput);
 		}
 
@@ -594,10 +599,12 @@ namespace NuklearDotNet {
 			return CreateTextureHandle(Tex);
 		}
 
-		public sealed override void Render(NkHandle Userdata, int Texture, NkRect ClipRect, uint Offset, uint Count) =>
+		public sealed override void Render(NkHandle Userdata, int Texture, NkRect ClipRect, uint Offset, uint Count) {
 			Render(Userdata, GetTexture(Texture), ClipRect, Offset, Count);
+		}
 
 		public abstract T CreateTexture(int W, int H, IntPtr Data);
+
 		public abstract void Render(NkHandle Userdata, T Texture, NkRect ClipRect, uint Offset, uint Count);
 	}
 }

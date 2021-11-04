@@ -282,6 +282,13 @@ namespace Raylib_cs
 
 
         // General render state
+        /// <summary>Enable depth test</summary>
+        [DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void rlEnableColorBlend();
+
+        /// <summary>Disable depth test</summary>
+        [DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void rlDisableColorBlend();
 
         /// <summary>Enable depth test</summary>
         [DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]

@@ -157,8 +157,8 @@ namespace Example_SFML {
 
 			float Dt = 0.1f;
 
+			NuklearAPI.QueueForceUpdate();
 			while (RWind.IsOpen) {
-				NuklearAPI.QueueForceUpdate();
 
 				RWind.DispatchEvents();
 				RWind.Clear(ClearColor);
