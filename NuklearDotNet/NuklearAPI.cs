@@ -235,7 +235,12 @@ namespace NuklearDotNet {
 			Initialized = true;
 
 			Dev = Device;
-			FrameBuffered = Device as IFrameBuffered;
+
+			if (Device.EnableFrameBuffered)
+				FrameBuffered = Device as IFrameBuffered;
+			else
+				FrameBuffered = null;
+
 
 			// TODO: Free these later
 			Ctx = (nk_context*)ManagedAlloc(sizeof(nk_context));
@@ -514,6 +519,12 @@ namespace NuklearDotNet {
 
 	public unsafe abstract class NuklearDevice {
 		internal Queue<NuklearEvent> Events;
+
+		public virtual bool EnableFrameBuffered {
+			get {
+				return true;
+			}
+		}
 
 		public abstract void SetBuffer(NkVertex[] VertexBuffer, ushort[] IndexBuffer);
 		public abstract void Render(NkHandle Userdata, int Texture, NkRect ClipRect, uint Offset, uint Count);
