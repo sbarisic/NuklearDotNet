@@ -68,43 +68,41 @@ namespace Example_Raylib {
 			Rlgl.rlColor4f(Clr.R / 255.0f, Clr.G / 255.0f, Clr.B / 255.0f, Clr.A / 255.0f);
 		}
 
+		static void DrawVert(NkVertex V) {
+			rlColor(V.Color);
+			Rlgl.rlTexCoord2f(V.UV.X, V.UV.Y);
+			Rlgl.rlVertex2f(V.Position.X, V.Position.Y);
+		}
+
 		static void Draw(NkVertex v1, NkVertex v2, NkVertex v3) {
-			rlColor(v1.Color);
-			Rlgl.rlTexCoord2f(v1.UV.X, v1.UV.Y);
-			Rlgl.rlVertex2f(v1.Position.X, v1.Position.Y);
-
-			rlColor(v3.Color);
-			Rlgl.rlTexCoord2f(v3.UV.X, v3.UV.Y);
-			Rlgl.rlVertex2f(v3.Position.X, v3.Position.Y);
-
-			rlColor(v2.Color);
-			Rlgl.rlTexCoord2f(v2.UV.X, v2.UV.Y);
-			Rlgl.rlVertex2f(v2.Position.X, v2.Position.Y);
-
-			rlColor(v2.Color);
-			Rlgl.rlTexCoord2f(v2.UV.X, v2.UV.Y);
-			Rlgl.rlVertex2f(v2.Position.X, v2.Position.Y);
+			DrawVert(v1);
+			DrawVert(v1);
+			DrawVert(v3);
+			DrawVert(v2);
 		}
 
 		public override void Render(NkHandle Userdata, RaylibTexture Texture, NkRect ClipRect, uint Offset, uint Count) {
+			Rlgl.rlDisableBackfaceCulling();
 			Raylib.BeginScissorMode((int)ClipRect.X, (int)ClipRect.Y, (int)ClipRect.W, (int)ClipRect.H);
+			{
+				Rlgl.rlSetTexture(Texture.Texture.id);
+				Rlgl.rlCheckRenderBatchLimit((int)Count);
 
-			Rlgl.rlSetTexture(Texture.Texture.id);
-			Rlgl.rlCheckRenderBatchLimit((int)Count);
-			Rlgl.rlBegin(Rlgl.RL_QUADS);
+				Rlgl.rlBegin(Rlgl.RL_QUADS);
+				for (int i = 0; i < Count; i += 3) {
+					NkVertex V1 = Verts[Inds[Offset + i]];
+					NkVertex V2 = Verts[Inds[Offset + i + 1]];
+					NkVertex V3 = Verts[Inds[Offset + i + 2]];
 
-			for (int i = 0; i < Count; i += 3) {
-				NkVertex V1 = Verts[Inds[Offset + i]];
-				NkVertex V2 = Verts[Inds[Offset + i + 1]];
-				NkVertex V3 = Verts[Inds[Offset + i + 2]];
+					Draw(V1, V2, V3);
+				}
+				Rlgl.rlEnd();
 
-				Draw(V1, V2, V3);
+				Rlgl.rlSetTexture(0);
+
 			}
-
-			Rlgl.rlEnd();
-			Rlgl.rlSetTexture(0);
-
 			Raylib.EndScissorMode();
+			Rlgl.rlEnableBackfaceCulling();
 		}
 
 		public void EndBuffering() {
@@ -148,22 +146,10 @@ namespace Example_Raylib {
 				if (Raylib.IsMouseButtonReleased(MouseButton.MOUSE_LEFT_BUTTON))
 					Dev.OnMouseButton(NuklearEvent.MouseButton.Left, LastMouseX, LastMouseY, false);
 
-				//Raylib.BeginDrawing();
-				//Raylib.ClearBackground(Color.RAYWHITE);
-				// dispatch events, clear
-
-				//Raylib.BeginDrawing();
-				//Raylib.ClearBackground(Color.PINK);
-
 				Raylib.BeginDrawing();
 				Raylib.ClearBackground(Color.BLACK);
 				Shared.DrawLoop(Dt);
 				Raylib.EndDrawing();
-
-				//Raylib.EndDrawing();
-
-				// Display
-				//Raylib.EndDrawing();
 
 				Dt = SWatch.ElapsedMilliseconds / 1000.0f;
 				SWatch.Restart();
