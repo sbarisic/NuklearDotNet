@@ -1,3 +1,6 @@
 [submodule "nuklear_c"]
 	path = nuklear_c
 	url = https://github.com/vurtun/nuklear
+[submodule "nuklear2_c"]
+	path = nuklear2_c
+	url = https://github.com/Immediate-Mode-UI/Nuklear
