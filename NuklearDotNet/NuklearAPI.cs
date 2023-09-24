@@ -97,7 +97,7 @@ namespace NuklearDotNet {
         }
 
 
-        static bool HandleInput() {
+        public static bool HandleInput() {
             bool HasInput = FrameBuffered == null || Dev.Events.Count > 0;
 
             if (HasInput) {
@@ -146,7 +146,7 @@ namespace NuklearDotNet {
             return HasInput;
         }
 
-        static void Render(bool HadInput) {
+        public static void Render(bool HadInput) {
             if (HadInput) {
                 bool Dirty = true;
 
