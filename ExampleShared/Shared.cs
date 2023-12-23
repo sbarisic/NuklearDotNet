@@ -1,10 +1,12 @@
 ﻿using NuklearDotNet;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace ExampleShared
-{
-    public static class Shared {
+namespace ExampleShared {
+	public static class Shared {
 		static NuklearCalculator CalcA;
 		static NuklearCalculator CalcB;
 

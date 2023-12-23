@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NuklearDotNet")]
+[assembly: AssemblyTitle("Example_WindowsForms")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("NuklearDotNet")]
+[assembly: AssemblyProduct("Example_WindowsForms")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("bdb132a4-22a1-479d-a4d0-0a2b00021f16")]
+[assembly: Guid("0495baf0-a16c-4caf-b661-0f71f55a8b66")]
 
 // Version information for an assembly consists of the following four values:
 //
