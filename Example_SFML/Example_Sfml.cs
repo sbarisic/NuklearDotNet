@@ -156,7 +156,7 @@ namespace Example_SFML
             Color ClearColor = new Color(50, 50, 50);
             VideoMode VMode = new VideoMode(1366, 768);
 
-            RenderWindow RWind = new RenderWindow(VMode, Console.Title, Styles.Close);
+            RenderWindow RWind = new RenderWindow(VMode, "Nuklear SFML .NET", Styles.Close);
             RWind.SetKeyRepeatEnabled(true);
 
             SFMLDevice Dev = new SFMLDevice(RWind);
