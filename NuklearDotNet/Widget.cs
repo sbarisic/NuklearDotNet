@@ -957,9 +957,7 @@ namespace NuklearDotNet {
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_menu_end(nk_context* ctx);
 
-		// New Nuklear2 functions - requires multi-file build or additional defines
-		// Uncomment when Nuklear2.vcxproj is updated to compile all nuklear2_c/src/*.c files
-		/*
+		// New Nuklear2 functions - now enabled via single-file includes build
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_knob_float(nk_context* ctx, float min, float* val, float max, float step, nk_heading zero_direction, float dead_zone_degrees);
 
@@ -1034,6 +1032,11 @@ namespace NuklearDotNet {
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_select_symbol_text(nk_context* ctx, nk_symbol_type stype, byte* s, int len, uint align_nkflags, int val);
-		*/
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_draw_nine_slice(nk_command_buffer* cbuf, NkRect rect, nk_nine_slice* slice, NkColor color);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_image_color(nk_context* ctx, nk_image img, NkColor color);
 	}
 }

@@ -510,11 +510,46 @@ nk_value_float
 nk_value_int
 nk_value_uint
 
-; New Nuklear2 functions - These require multi-file build (separate .c files)
-; nk_knob_* (nuklear_knob.c)
-; nk_nine_slice_* (nuklear_9slice.c)
-; nk_widget_disable_* (nuklear_widget.c)
-; nk_spacer, nk_rule_horizontal (nuklear_layout.c, nuklear_widget.c)
+; New Nuklear2 multi-file functions (now enabled via single-file includes)
+nk_knob_float
+nk_knob_int
+nk_nine_slice_handle
+nk_nine_slice_ptr
+nk_nine_slice_id
+nk_nine_slice_is_sub9slice
+nk_sub9slice_ptr
+nk_sub9slice_id
+nk_sub9slice_handle
+nk_draw_nine_slice
+nk_style_item_nine_slice
+nk_widget_disable_begin
+nk_widget_disable_end
+nk_spacer
+nk_rule_horizontal
+nk_image_color
+nk_group_get_scroll
+nk_group_set_scroll
+nk_window_get_scroll
+nk_window_set_scroll
+nk_popup_get_scroll
+nk_popup_set_scroll
+nk_selectable_symbol_label
+nk_selectable_symbol_text
+nk_select_symbol_label
+nk_select_symbol_text
+nk_tree_element_push_hashed
+nk_tree_element_image_push_hashed
+nk_tree_element_pop
+nk_checkbox_label_align
+nk_checkbox_text_align
+nk_check_text_align
+nk_option_label_align
+nk_option_text_align
+nk_radio_label_align
+nk_radio_text_align
+nk_rgb_factor
+nk_input_is_mouse_moved
+nk_input_has_mouse_click_in_button_rect
 
 
 nk_fill_rect

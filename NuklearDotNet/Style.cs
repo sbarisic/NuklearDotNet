@@ -650,11 +650,11 @@ public nk_nine_slice slice;
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern nk_style_item nk_style_item_hide();
 
-		// New Nuklear2 functions - requires multi-file build
-		// [DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		// public static extern nk_style_item nk_style_item_nine_slice(nk_nine_slice slice);
+		// New Nuklear2 functions - now enabled
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern nk_style_item nk_style_item_nine_slice(nk_nine_slice slice);
 
-		// [DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		// public static extern NkColor nk_rgb_factor(NkColor col, float factor);
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern NkColor nk_rgb_factor(NkColor col, float factor);
 	}
 }

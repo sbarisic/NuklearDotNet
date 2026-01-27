@@ -42,7 +42,9 @@ A list of planned features, improvements, and tasks for this project.
 
 ### Medium Priority
 
-*No medium priority items*
+- [ ] **CPX 3** - Add safe wrapper methods for unsafe P/Invoke functions in Nuklear class
+  - Create managed overloads that handle pointer marshalling internally
+  - Target commonly used functions like nk_label, nk_button, nk_edit_string, etc.
 
 ---
 
@@ -58,10 +60,7 @@ A list of planned features, improvements, and tasks for this project.
 
 ### Medium Priority
 
-- [ ] **CPX 5** - Enable full Nuklear2 multi-file build for new widget features
-  - Update Nuklear2.vcxproj to compile all nuklear2_c/src/*.c files
-  - Enable: nk_knob_*, nk_nine_slice_*, nk_widget_disable_*, nk_spacer, nk_rule_horizontal
-  - Uncomment corresponding P/Invoke declarations in NuklearDotNet/Widget.cs
+*No medium priority items*
 
 ### Code Refactoring
 
@@ -111,8 +110,7 @@ NuklearDotNet is a C# binding library for the Nuklear immediate-mode GUI library
 ### Improvements
 
 - [x] **CPX 3** - Created Raylib backend using raylib_cs NuGet package (v6.1.1), removed legacy bundled bindings
-- [x] **CPX 3** - Partial update of C# bindings: added nk_nine_slice struct, NK_STYLE_ITEM_NINE_SLICE enum
-- [x] **CPX 2** - Enabled NK_INCLUDE_DEFAULT_ALLOCATOR and NK_INCLUDE_STANDARD_VARARGS: added nk_init_default, nk_value_*, nk_labelf_*, nk_tooltipf
+- [x] **CPX 4** - Full Nuklear2 multi-file build: enabled nk_knob_*, nk_nine_slice_*, nk_widget_disable_*, nk_spacer, nk_rule_horizontal, scroll functions, and 48 more exports
 
 ### Fixed Bugs
 
