@@ -5,7 +5,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyTitle>Example_Raylib</AssemblyTitle>
     <Product>Example_Raylib</Product>
-    <Copyright>Copyright ©  2021</Copyright>
+    <Copyright>Copyright 2024</Copyright>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>
@@ -20,16 +20,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ExampleShared\ExampleShared.csproj" />
-    <ProjectReference Include="..\NuklearDotNet\NuklearDotNet.csproj" />
+    <ProjectReference Include="..\ExampleShared\ExampleSharedDotnet.csproj" />
+    <ProjectReference Include="..\NuklearDotNet\NuklearDotNetDotnet.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="raylib.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="Raylib-cs" Version="6.1.1" />
   </ItemGroup>
 </Project>

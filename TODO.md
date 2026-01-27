@@ -40,7 +40,7 @@ A list of planned features, improvements, and tasks for this project.
 
 ### Medium Priority
 
-- [ ] **CPX 2** - Configure Raylib as the main testing backend
+*No medium priority items*
 
 ---
 
@@ -68,11 +68,11 @@ A list of planned features, improvements, and tasks for this project.
 
 ### Active Bugs
 
-*No active bugs*
+- Build fails to compile
 
 ### Uncategorized (Analyze and create TODO entries in above appropriate sections with priority. Do not fix or implement them just yet. Assign complexity points where applicable. Do not delete this section when you are done, just empty it)
 
-- NU1201: Example_SFML, Example_MonoGame, and Example_WindowsForms target net8.0 but reference projects targeting net9.0 - projects should target .NET 9 per project notes
+- Example_Raylib project needs to be added to NuklearDotNetDotnet.sln (use Visual Studio UI)
 
 
 ---
@@ -94,8 +94,9 @@ A list of planned features, improvements, and tasks for this project.
 
 ### Improvements
 
-*No completed improvements yet*
+- [x] **CPX 3** - Created Raylib backend using raylib_cs NuGet package (v6.1.1), removed legacy bundled bindings
 
 ### Fixed Bugs
 
+- [x] **CPX 2** - NU1201: Updated target framework to net9.0 in Example_SFML, Example_MonoGame, Example_WindowsForms
 - [x] **CPX 3** - NU1105: Fixed incorrect project reference paths (ExampleShared.csproj → ExampleSharedDotnet.csproj, NuklearDotNet.csproj → NuklearDotNetDotnet.csproj)
