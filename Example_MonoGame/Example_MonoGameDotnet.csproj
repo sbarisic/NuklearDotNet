@@ -27,8 +27,8 @@
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ExampleShared\ExampleShared.csproj" />
-    <ProjectReference Include="..\NuklearDotNet\NuklearDotNet.csproj" />
+    <ProjectReference Include="..\ExampleShared\ExampleSharedDotnet.csproj" />
+    <ProjectReference Include="..\NuklearDotNet\NuklearDotNetDotnet.csproj" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />

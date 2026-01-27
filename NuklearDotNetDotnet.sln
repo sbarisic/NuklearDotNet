@@ -16,8 +16,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example_WindowsForms", "Exa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleShared", "ExampleShared\ExampleSharedDotnet.csproj", "{1DD60202-210F-4E88-97FA-3F6B9F2D04BB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example_Raylib", "Example_Raylib\Example_RaylibDotnet.csproj", "{89C993D6-6C28-42D3-96BA-A85104A1122D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{44FD6C45-1F83-4382-A567-B0908C982C0B}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
