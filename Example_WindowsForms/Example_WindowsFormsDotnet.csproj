@@ -18,8 +18,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ExampleShared\ExampleShared.csproj" />
-    <ProjectReference Include="..\NuklearDotNet\NuklearDotNet.csproj" />
+    <ProjectReference Include="..\ExampleShared\ExampleSharedDotnet.csproj" />
+    <ProjectReference Include="..\NuklearDotNet\NuklearDotNetDotnet.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

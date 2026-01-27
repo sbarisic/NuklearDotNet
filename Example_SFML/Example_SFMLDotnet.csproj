@@ -20,8 +20,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ExampleShared\ExampleShared.csproj" />
-    <ProjectReference Include="..\NuklearDotNet\NuklearDotNet.csproj" />
+    <ProjectReference Include="..\ExampleShared\ExampleSharedDotnet.csproj" />
+    <ProjectReference Include="..\NuklearDotNet\NuklearDotNetDotnet.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="csfml-audio-2.dll">
