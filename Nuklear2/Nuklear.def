@@ -484,6 +484,39 @@ nk_stroke_triangle
 nk_stroke_polyline
 nk_stroke_polygon
 
+; Functions enabled by NK_INCLUDE_DEFAULT_ALLOCATOR
+nk_buffer_init_default
+nk_init_default
+nk_font_atlas_init_default
+nk_str_init_default
+nk_textedit_init_default
+
+; Functions enabled by NK_INCLUDE_STANDARD_VARARGS
+nk_labelf
+nk_labelf_colored
+nk_labelf_colored_wrap
+nk_labelf_wrap
+nk_labelfv
+nk_labelfv_colored
+nk_labelfv_colored_wrap
+nk_labelfv_wrap
+nk_tooltipf
+nk_tooltipfv
+nk_value_bool
+nk_value_color_byte
+nk_value_color_float
+nk_value_color_hex
+nk_value_float
+nk_value_int
+nk_value_uint
+
+; New Nuklear2 functions - These require multi-file build (separate .c files)
+; nk_knob_* (nuklear_knob.c)
+; nk_nine_slice_* (nuklear_9slice.c)
+; nk_widget_disable_* (nuklear_widget.c)
+; nk_spacer, nk_rule_horizontal (nuklear_layout.c, nuklear_widget.c)
+
+
 nk_fill_rect
 nk_fill_rect_multi_color
 nk_fill_circle

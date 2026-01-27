@@ -524,6 +524,19 @@ namespace NuklearDotNet {
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_label_colored_wrap(nk_context* ctx, string s, NkColor color);
 
+		// Functions enabled by NK_INCLUDE_STANDARD_VARARGS
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_labelf(nk_context* ctx, uint flags_nkflags, string fmt, __arglist);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_labelf_colored(nk_context* ctx, uint flags_nkflags, NkColor color, string fmt, __arglist);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_labelf_wrap(nk_context* ctx, string fmt, __arglist);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_labelf_colored_wrap(nk_context* ctx, NkColor color, string fmt, __arglist);
+
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_image(nk_context* ctx, nk_image img);
 
@@ -865,6 +878,31 @@ namespace NuklearDotNet {
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_tooltip_end(nk_context* ctx);
 
+		// Functions enabled by NK_INCLUDE_STANDARD_VARARGS
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_tooltipf(nk_context* ctx, string fmt, __arglist);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_value_bool(nk_context* ctx, string prefix, int val);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_value_int(nk_context* ctx, string prefix, int val);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_value_uint(nk_context* ctx, string prefix, uint val);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_value_float(nk_context* ctx, string prefix, float val);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_value_color_byte(nk_context* ctx, string prefix, NkColor color);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_value_color_float(nk_context* ctx, string prefix, NkColor color);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_value_color_hex(nk_context* ctx, string prefix, NkColor color);
+
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_menubar_begin(nk_context* ctx);
 
@@ -918,5 +956,84 @@ namespace NuklearDotNet {
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_menu_end(nk_context* ctx);
+
+		// New Nuklear2 functions - requires multi-file build or additional defines
+		// Uncomment when Nuklear2.vcxproj is updated to compile all nuklear2_c/src/*.c files
+		/*
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_knob_float(nk_context* ctx, float min, float* val, float max, float step, nk_heading zero_direction, float dead_zone_degrees);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_knob_int(nk_context* ctx, int min, int* val, int max, int step, nk_heading zero_direction, float dead_zone_degrees);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_spacer(nk_context* ctx);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_rule_horizontal(nk_context* ctx, NkColor color, int rounding);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_widget_disable_begin(nk_context* ctx);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_widget_disable_end(nk_context* ctx);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern nk_nine_slice nk_nine_slice_handle(NkHandle handle, ushort l, ushort t, ushort r, ushort b);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern nk_nine_slice nk_nine_slice_ptr(IntPtr ptr, ushort l, ushort t, ushort r, ushort b);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern nk_nine_slice nk_nine_slice_id(int id, ushort l, ushort t, ushort r, ushort b);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_nine_slice_is_sub9slice(nk_nine_slice* img);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern nk_nine_slice nk_sub9slice_ptr(IntPtr ptr, ushort w, ushort h, NkRect sub_region, ushort l, ushort t, ushort r, ushort b);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern nk_nine_slice nk_sub9slice_id(int id, ushort w, ushort h, NkRect sub_region, ushort l, ushort t, ushort r, ushort b);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern nk_nine_slice nk_sub9slice_handle(NkHandle handle, ushort w, ushort h, NkRect sub_region, ushort l, ushort t, ushort r, ushort b);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_window_get_scroll(nk_context* ctx, uint* offset_x, uint* offset_y);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_window_set_scroll(nk_context* ctx, uint offset_x, uint offset_y);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_group_get_scroll(nk_context* ctx, byte* id, uint* x_offset, uint* y_offset);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_group_get_scroll(nk_context* ctx, string id, uint* x_offset, uint* y_offset);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_group_set_scroll(nk_context* ctx, byte* id, uint x_offset, uint y_offset);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_group_set_scroll(nk_context* ctx, string id, uint x_offset, uint y_offset);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_popup_get_scroll(nk_context* ctx, uint* offset_x, uint* offset_y);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_popup_set_scroll(nk_context* ctx, uint offset_x, uint offset_y);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_selectable_symbol_label(nk_context* ctx, nk_symbol_type stype, byte* s, uint align_nkflags, int* val);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_selectable_symbol_text(nk_context* ctx, nk_symbol_type stype, byte* s, int len, uint align_nkflags, int* val);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_select_symbol_label(nk_context* ctx, nk_symbol_type stype, byte* s, uint align_nkflags, int val);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_select_symbol_text(nk_context* ctx, nk_symbol_type stype, byte* s, int len, uint align_nkflags, int val);
+		*/
 	}
 }

@@ -8,8 +8,14 @@
 #define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
 #define NK_INCLUDE_COMMAND_USERDATA
 
+// Additional features - these add new functions without changing existing behavior
+#define NK_INCLUDE_DEFAULT_ALLOCATOR
+#define NK_INCLUDE_STANDARD_VARARGS
+
 #define NK_INPUT_MAX 512
 
+// Required for NK_INCLUDE_STANDARD_VARARGS before nuklear.h
+#include <stdarg.h>
 
 // Crash on assertion failure, it is captured as an exception in .NET
 #define NK_ASSERT(ex) do { if(!(ex)) { *(int*)0 = 0; } } while(0)

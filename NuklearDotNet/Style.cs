@@ -6,19 +6,23 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NuklearDotNet {
-	public enum nk_style_item_type {
-		NK_STYLE_ITEM_COLOR,
-		NK_STYLE_ITEM_IMAGE
-	}
+public enum nk_style_item_type {
+NK_STYLE_ITEM_COLOR,
+NK_STYLE_ITEM_IMAGE,
+NK_STYLE_ITEM_NINE_SLICE
+}
 
-	[StructLayout(LayoutKind.Explicit)]
-	public struct nk_style_item_data {
-		[FieldOffset(0)]
-		public NkColor color;
+[StructLayout(LayoutKind.Explicit)]
+public struct nk_style_item_data {
+[FieldOffset(0)]
+public NkColor color;
 
-		[FieldOffset(0)]
-		public nk_image image;
-	}
+[FieldOffset(0)]
+public nk_image image;
+
+[FieldOffset(0)]
+public nk_nine_slice slice;
+}
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_style_item {
@@ -645,5 +649,12 @@ namespace NuklearDotNet {
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern nk_style_item nk_style_item_hide();
+
+		// New Nuklear2 functions - requires multi-file build
+		// [DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		// public static extern nk_style_item nk_style_item_nine_slice(nk_nine_slice slice);
+
+		// [DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		// public static extern NkColor nk_rgb_factor(NkColor col, float factor);
 	}
 }

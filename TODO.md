@@ -58,11 +58,10 @@ A list of planned features, improvements, and tasks for this project.
 
 ### Medium Priority
 
-- [ ] **CPX 4** - Update C# bindings to latest Nuklear2 version
-- Export all functions from nuklear2_c/src/nuklear.h in Nuklear2/Nuklear.def
-- Add corresponding P/Invoke declarations in NuklearDotNet/*.cs files
-- Update all struct definitions to match latest Nuklear2 API
-- Rebuild native Nuklear2.dll after .def updates
+- [ ] **CPX 5** - Enable full Nuklear2 multi-file build for new widget features
+  - Update Nuklear2.vcxproj to compile all nuklear2_c/src/*.c files
+  - Enable: nk_knob_*, nk_nine_slice_*, nk_widget_disable_*, nk_spacer, nk_rule_horizontal
+  - Uncomment corresponding P/Invoke declarations in NuklearDotNet/Widget.cs
 
 ### Code Refactoring
 
@@ -112,6 +111,8 @@ NuklearDotNet is a C# binding library for the Nuklear immediate-mode GUI library
 ### Improvements
 
 - [x] **CPX 3** - Created Raylib backend using raylib_cs NuGet package (v6.1.1), removed legacy bundled bindings
+- [x] **CPX 3** - Partial update of C# bindings: added nk_nine_slice struct, NK_STYLE_ITEM_NINE_SLICE enum
+- [x] **CPX 2** - Enabled NK_INCLUDE_DEFAULT_ALLOCATOR and NK_INCLUDE_STANDARD_VARARGS: added nk_init_default, nk_value_*, nk_labelf_*, nk_tooltipf
 
 ### Fixed Bugs
 

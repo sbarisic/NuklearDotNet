@@ -115,6 +115,15 @@ namespace NuklearDotNet {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
+	public struct nk_nine_slice {
+		public nk_image img;
+		public ushort l;
+		public ushort t;
+		public ushort r;
+		public ushort b;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
 	public struct nk_cursor {
 		public nk_image img;
 		public nk_vec2 size;

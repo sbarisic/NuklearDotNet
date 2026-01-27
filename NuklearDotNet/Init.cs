@@ -461,5 +461,12 @@ namespace NuklearDotNet {
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern IntPtr nk_buffer_total(nk_buffer* buffer);
 
+		// Functions enabled by NK_INCLUDE_DEFAULT_ALLOCATOR
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_init_default(nk_context* context, nk_user_font* userfont);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_buffer_init_default(nk_buffer* buffer);
+
 	}
 }
