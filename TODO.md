@@ -68,11 +68,11 @@ A list of planned features, improvements, and tasks for this project.
 
 ### Active Bugs
 
-- Build fails to compile
+*No active bugs*
 
 ### Uncategorized (Analyze and create TODO entries in above appropriate sections with priority. Do not fix or implement them just yet. Assign complexity points where applicable. Do not delete this section when you are done, just empty it)
 
-- Example_Raylib project needs to be added to NuklearDotNetDotnet.sln (use Visual Studio UI)
+*No uncategorized items*
 
 
 ---
@@ -98,5 +98,7 @@ A list of planned features, improvements, and tasks for this project.
 
 ### Fixed Bugs
 
+- [x] **CPX 2** - Updated Example_Raylib.cs to raylib_cs v6.x API (PascalCase properties/enums)
+- [x] **CPX 1** - Added Example_Raylib project to solution (was already present)
 - [x] **CPX 2** - NU1201: Updated target framework to net9.0 in Example_SFML, Example_MonoGame, Example_WindowsForms
-- [x] **CPX 3** - NU1105: Fixed incorrect project reference paths (ExampleShared.csproj → ExampleSharedDotnet.csproj, NuklearDotNet.csproj → NuklearDotNetDotnet.csproj)
+- [x] **CPX 3** - NU1105: Fixed incorrect project reference paths

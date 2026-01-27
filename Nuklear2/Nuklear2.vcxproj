@@ -74,21 +74,25 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin_dbg\</OutDir>
     <IncludePath>$(ProjectDir)..\nuklear_c\;$(IncludePath)</IncludePath>
+    <TargetName>Nuklear2</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin_dbg\</OutDir>
     <IncludePath>$(ProjectDir)..\nuklear_c\;$(IncludePath)</IncludePath>
+    <TargetName>Nuklear2</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IncludePath>$(ProjectDir)..\nuklear_c\;$(IncludePath)</IncludePath>
+    <TargetName>Nuklear2</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IncludePath>$(ProjectDir)..\nuklear_c\;$(IncludePath)</IncludePath>
+    <TargetName>Nuklear2</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

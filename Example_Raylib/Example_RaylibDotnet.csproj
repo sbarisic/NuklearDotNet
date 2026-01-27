@@ -20,6 +20,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="..\bin_dbg\Nuklear2.dll" Link="Nuklear2.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Example_Raylib.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\ExampleShared\ExampleSharedDotnet.csproj" />
     <ProjectReference Include="..\NuklearDotNet\NuklearDotNetDotnet.csproj" />
   </ItemGroup>
