@@ -32,7 +32,9 @@ A list of planned features, improvements, and tasks for this project.
 
 ### Lower Priority
 
-*No lower priority items*
+- [ ] **CPX 3** - Expand Raylib example with more widgets and demo functionality
+  - Increase window size to fit more content
+  - Add demos for additional Nuklear widgets (sliders, charts, trees, etc.)
 
 ---
 
@@ -57,6 +59,10 @@ A list of planned features, improvements, and tasks for this project.
 ### Medium Priority
 
 - [ ] **CPX 4** - Update C# bindings to latest Nuklear2 version
+- Export all functions from nuklear2_c/src/nuklear.h in Nuklear2/Nuklear.def
+- Add corresponding P/Invoke declarations in NuklearDotNet/*.cs files
+- Update all struct definitions to match latest Nuklear2 API
+- Rebuild native Nuklear2.dll after .def updates
 
 ### Code Refactoring
 
@@ -83,6 +89,17 @@ A list of planned features, improvements, and tasks for this project.
 - C# projects should target .NET 9
 - Nuklear2 is the latest version of the original native GUI library Nuklear
 - Keep small project summary as a separate section here (Summary) and up to date to keep track
+
+### Summary
+
+NuklearDotNet is a C# binding library for the Nuklear immediate-mode GUI library. Structure:
+- **NuklearDotNet/** - Core C# bindings (P/Invoke declarations, structs, API wrapper)
+- **Nuklear2/** - Native C source for building Nuklear2.dll (uses nuklear2_c/src headers)
+- **Example_Raylib/** - Raylib-cs backend example
+- **Example_SFML/** - SFML backend example  
+- **Example_MonoGame/** - MonoGame backend example
+- **Example_WindowsForms/** - WinForms backend example
+- **ExampleShared/** - Shared example UI code
 
 ---
 
