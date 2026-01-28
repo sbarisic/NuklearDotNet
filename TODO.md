@@ -32,9 +32,7 @@ A list of planned features, improvements, and tasks for this project.
 
 ### Lower Priority
 
-- [ ] **CPX 3** - Expand Raylib example with more widgets and demo functionality
-  - Increase window size to fit more content
-  - Add demos for additional Nuklear widgets (sliders, charts, trees, etc.)
+*No lower priority items*
 
 ---
 
@@ -72,7 +70,19 @@ A list of planned features, improvements, and tasks for this project.
 
 ### Active Bugs
 
-*No active bugs*
+- [ ] **CPX 4** - Window dragging broken: window stays in place, only clip zone moves
+  - **Root Cause**: C# struct field offsets don't match native due to size mismatches
+  - **Mismatches Found**:
+    - `nk_context`: C#=18360 vs native=19064 (704 bytes difference)
+    - `nk_style`: C#=8640 vs native=9336 (696 bytes difference)  
+    - `nk_input`: C#=856 vs native=864 (8 bytes difference)
+    - `nk_context.draw_list` offset: C#=12528 vs native=13232
+  - **Workaround Applied**: Allocate native sizes for structs (fixes nk_convert crash)
+  - **Remaining Issue**: Direct C# field access reads wrong memory locations
+  - **Fix Options**:
+    1. Correct nk_input and nk_style struct definitions in C# (CPX 5)
+    2. Add P/Invoke getter functions for commonly accessed fields (CPX 3)
+    3. Add padding fields to align C# structs with native layout (CPX 4)
 
 ### Uncategorized (Analyze and create TODO entries in above appropriate sections with priority. Do not fix or implement them just yet. Assign complexity points where applicable. Do not delete this section when you are done, just empty it)
 
@@ -105,7 +115,7 @@ NuklearDotNet is a C# binding library for the Nuklear immediate-mode GUI library
 
 ### Features
 
-*No completed features yet*
+- [x] **CPX 3** - Expanded Raylib example with widget showcase: sliders, progress, checkbox, radio, color picker, properties, knob, chart, collapsible groups
 
 ### Improvements
 
@@ -114,6 +124,8 @@ NuklearDotNet is a C# binding library for the Nuklear immediate-mode GUI library
 
 ### Fixed Bugs
 
+- [x] **CPX 4** - Demo crashes at nk_convert: struct size mismatches (nk_context 704 bytes too small in C#); fixed by allocating native sizes via debug helpers
+- [x] **CPX 3** - Demo crashes at startup: switched to nk_init_default, nk_font_atlas_init_default, nk_buffer_init_default; fixed Group method to only call nk_group_end when begin succeeded
 - [x] **CPX 2** - Updated Example_Raylib.cs to raylib_cs v6.x API (PascalCase properties/enums)
 - [x] **CPX 1** - Added Example_Raylib project to solution (was already present)
 - [x] **CPX 2** - NU1201: Updated target framework to net9.0 in Example_SFML, Example_MonoGame, Example_WindowsForms

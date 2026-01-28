@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -12,6 +13,20 @@ namespace NuklearDotNet {
     public unsafe delegate void FontStashAction(IntPtr Atlas);
 
     public static unsafe class NuklearAPI {
+        private static readonly string DebugLogFile = "nuklear_debug.txt";
+        
+        private static void Log(string msg) {
+            try {
+                File.AppendAllText(DebugLogFile, $"[{DateTime.Now:HH:mm:ss.fff}] {msg}\n");
+            } catch { }
+        }
+        
+        private static void ClearLog() {
+            try {
+                File.WriteAllText(DebugLogFile, $"=== NuklearDotNet Debug Log - {DateTime.Now:yyyy-MM-dd HH:mm:ss} ===\n\n");
+            } catch { }
+        }
+
         public static nk_context* Ctx;
         public static NuklearDevice Dev;
 
@@ -81,19 +96,25 @@ namespace NuklearDotNet {
         }
 
         static void FontStash(FontStashAction A = null) {
-            Nuklear.nk_font_atlas_init(FontAtlas, Allocator);
+            Log("FontStash: nk_font_atlas_init_default");
+            Nuklear.nk_font_atlas_init_default(FontAtlas);
+            Log("FontStash: nk_font_atlas_begin");
             Nuklear.nk_font_atlas_begin(FontAtlas);
 
             A?.Invoke(new IntPtr(FontAtlas));
 
+            Log("FontStash: nk_font_atlas_bake");
             int W, H;
             IntPtr Image = Nuklear.nk_font_atlas_bake(FontAtlas, &W, &H, nk_font_atlas_format.NK_FONT_ATLAS_RGBA32);
+            Log($"FontStash: bake done {W}x{H}");
             int TexHandle = Dev.CreateTextureHandle(W, H, Image);
+            Log($"FontStash: texture handle = {TexHandle}");
 
             Nuklear.nk_font_atlas_end(FontAtlas, Nuklear.nk_handle_id(TexHandle), NullTexture);
 
             if (FontAtlas->default_font != null)
                 Nuklear.nk_style_set_font(Ctx, &FontAtlas->default_font->handle);
+            Log("FontStash: completed");
         }
 
 
@@ -150,33 +171,15 @@ namespace NuklearDotNet {
             if (HadInput) {
                 bool Dirty = true;
 
-                if (FrameBuffered != null) {
-                    Dirty = false;
-
-                    IntPtr MemoryBuffer = Nuklear.nk_buffer_memory(&Ctx->memory);
-                    if ((int)Ctx->memory.allocated == 0)
-                        Dirty = true;
-
-                    if (!Dirty) {
-                        if (LastMemory == null || LastMemory.Length < (int)Ctx->memory.allocated) {
-                            LastMemory = new byte[(int)Ctx->memory.allocated];
-                            Dirty = true;
-                        }
-                    }
-
-                    if (!Dirty) {
-                        fixed (byte* LastMemoryPtr = LastMemory)
-                            if (MemCmp(new IntPtr(LastMemoryPtr), MemoryBuffer, Ctx->memory.allocated) != 0) {
-                                Dirty = true;
-                                Marshal.Copy(MemoryBuffer, LastMemory, 0, (int)Ctx->memory.allocated);
-                            }
-                    }
-                }
-
+                // Temporarily disable frame buffer optimization - always render
+                // The memory comparison was causing issues with struct layout mismatches
+                
                 if (Dirty || ForceDirty) {
                     ForceDirty = false;
 
+                    Log("Render: calling nk_convert");
                     NkConvertResult R = (NkConvertResult)Nuklear.nk_convert(Ctx, Commands, Vertices, Indices, ConvertCfg);
+                    Log($"Render: nk_convert returned {R}");
                     if (R != NkConvertResult.Success)
                         throw new Exception(R.ToString());
 
@@ -233,31 +236,57 @@ namespace NuklearDotNet {
 
         //public  NuklearAPI(NuklearDevice Device) {
         public static void Init(NuklearDevice Device) {
-            if (Initialized)
-                throw new InvalidOperationException("NuklearAPI.Init is called twice");
+        ClearLog();
+        Log("Init starting");
+            
+        if (Initialized)
+            throw new InvalidOperationException("NuklearAPI.Init is called twice");
 
-            Initialized = true;
+        Initialized = true;
+        Log("Initialized = true");
 
-            Dev = Device;
+        Dev = Device;
+        Log("Device assigned");
 
-            if (Device.EnableFrameBuffered)
-                FrameBuffered = Device as IFrameBuffered;
-            else
-                FrameBuffered = null;
+        if (Device.EnableFrameBuffered)
+            FrameBuffered = Device as IFrameBuffered;
+        else
+            FrameBuffered = null;
+        Log($"FrameBuffered: {FrameBuffered != null}");
 
 
-            // TODO: Free these later
-            Ctx = (nk_context*)ManagedAlloc(sizeof(nk_context));
-            Allocator = (nk_allocator*)ManagedAlloc(sizeof(nk_allocator));
-            FontAtlas = (nk_font_atlas*)ManagedAlloc(sizeof(nk_font_atlas));
-            NullTexture = (nk_draw_null_texture*)ManagedAlloc(sizeof(nk_draw_null_texture));
-            ConvertCfg = (nk_convert_config*)ManagedAlloc(sizeof(nk_convert_config));
-            Commands = (nk_buffer*)ManagedAlloc(sizeof(nk_buffer));
-            Vertices = (nk_buffer*)ManagedAlloc(sizeof(nk_buffer));
-            Indices = (nk_buffer*)ManagedAlloc(sizeof(nk_buffer));
+        // TODO: Free these later
+        Log("Allocating core structures");
+        Log($"sizeof(nk_context) = {sizeof(nk_context)} (native: {Nuklear.nk_debug_sizeof_context()})");
+        Log($"sizeof(nk_buffer) = {sizeof(nk_buffer)} (native: {Nuklear.nk_debug_sizeof_buffer()})");
+        Log($"sizeof(nk_convert_config) = {sizeof(nk_convert_config)} (native: {Nuklear.nk_debug_sizeof_convert_config()})");
+        Log($"sizeof(nk_draw_null_texture) = {sizeof(nk_draw_null_texture)} (native: {Nuklear.nk_debug_sizeof_draw_null_texture()})");
+        Log($"sizeof(NkHandle) = {sizeof(NkHandle)} (native: {Nuklear.nk_debug_sizeof_handle()})");
+        Log($"sizeof(nk_allocator) = {sizeof(nk_allocator)} (native: {Nuklear.nk_debug_sizeof_allocator()})");
+        Log($"sizeof(nk_draw_list) = {sizeof(nk_draw_list)} (native: {Nuklear.nk_debug_sizeof_draw_list()})");
+        Log($"sizeof(nk_style) = {sizeof(nk_style)} (native: {Nuklear.nk_debug_sizeof_style()})");
+        Log($"sizeof(nk_input) = {sizeof(nk_input)} (native: {Nuklear.nk_debug_sizeof_input()})");
+        Log($"sizeof(nk_font_atlas) = {sizeof(nk_font_atlas)} (native: {Nuklear.nk_debug_sizeof_font_atlas()})");
+        Log($"offset of nk_context.draw_list: C#={Marshal.OffsetOf<nk_context>(nameof(nk_context.draw_list))} native={Nuklear.nk_debug_offset_draw_list()}");
+        
+        // CRITICAL: Use NATIVE sizes for allocation, not C# sizes!
+        // C# struct definitions don't match native due to nested struct mismatches
+        int nativeContextSize = Nuklear.nk_debug_sizeof_context();
+        int nativeFontAtlasSize = Nuklear.nk_debug_sizeof_font_atlas();
+        Log($"Using native sizes: nk_context={nativeContextSize}, nk_font_atlas={nativeFontAtlasSize}");
+        
+        Ctx = (nk_context*)ManagedAlloc(nativeContextSize);
+        Allocator = (nk_allocator*)ManagedAlloc(sizeof(nk_allocator));
+        FontAtlas = (nk_font_atlas*)ManagedAlloc(nativeFontAtlasSize);
+        NullTexture = (nk_draw_null_texture*)ManagedAlloc(sizeof(nk_draw_null_texture));
+        ConvertCfg = (nk_convert_config*)ManagedAlloc(sizeof(nk_convert_config));
+        Commands = (nk_buffer*)ManagedAlloc(sizeof(nk_buffer));
+        Vertices = (nk_buffer*)ManagedAlloc(sizeof(nk_buffer));
+        Indices = (nk_buffer*)ManagedAlloc(sizeof(nk_buffer));
+        Log("Core allocations done (using native sizes)");
 
-            VertexLayout = (nk_draw_vertex_layout_element*)ManagedAlloc(sizeof(nk_draw_vertex_layout_element) * 4);
-            VertexLayout[0] = new nk_draw_vertex_layout_element(nk_draw_vertex_layout_attribute.NK_VERTEX_POSITION, nk_draw_vertex_layout_format.NK_FORMAT_FLOAT,
+        VertexLayout = (nk_draw_vertex_layout_element*)ManagedAlloc(sizeof(nk_draw_vertex_layout_element) * 4);
+        VertexLayout[0] = new nk_draw_vertex_layout_element(nk_draw_vertex_layout_attribute.NK_VERTEX_POSITION, nk_draw_vertex_layout_format.NK_FORMAT_FLOAT,
                 Marshal.OffsetOf(typeof(NkVertex), nameof(NkVertex.Position)));
             VertexLayout[1] = new nk_draw_vertex_layout_element(nk_draw_vertex_layout_attribute.NK_VERTEX_TEXCOORD, nk_draw_vertex_layout_format.NK_FORMAT_FLOAT,
                 Marshal.OffsetOf(typeof(NkVertex), nameof(NkVertex.UV)));
@@ -268,17 +297,26 @@ namespace NuklearDotNet {
             Alloc = (Handle, Old, Size) => ManagedAlloc(Size);
             Free = (Handle, Old) => ManagedFree(Old);
 
-            //GCHandle.Alloc(Alloc);
-            //GCHandle.Alloc(Free);
+            // CRITICAL: Pin the delegates so GC doesn't collect them while native code holds pointers
+            GCHandle.Alloc(Alloc);
+            GCHandle.Alloc(Free);
 
             Allocator->alloc_nkpluginalloct = Marshal.GetFunctionPointerForDelegate(Alloc);
             Allocator->free_nkpluginfreet = Marshal.GetFunctionPointerForDelegate(Free);
 
-            Nuklear.nk_init(Ctx, Allocator, null);
+            Log("Calling nk_init_default (built-in allocator)");
+            int result = Nuklear.nk_init_default(Ctx, null);
+            Log($"nk_init_default returned: {result}");
 
+            Log("Calling Dev.Init()");
             Dev.Init();
+            Log("Dev.Init() completed");
+            
+            Log("Calling FontStash");
             FontStash(Dev.FontStash);
+            Log("FontStash done");
 
+            Log("Configuring ConvertCfg");
             ConvertCfg->shape_AA = nk_anti_aliasing.NK_ANTI_ALIASING_ON;
             ConvertCfg->line_AA = nk_anti_aliasing.NK_ANTI_ALIASING_ON;
             ConvertCfg->vertex_layout = VertexLayout;
@@ -289,10 +327,16 @@ namespace NuklearDotNet {
             ConvertCfg->arc_segment_count = 22;
             ConvertCfg->global_alpha = 1.0f;
             ConvertCfg->null_tex = *NullTexture;
+            Log($"ConvertCfg: vertex_size={sizeof(NkVertex)}, NullTexture ptr={(IntPtr)NullTexture}");
 
-            Nuklear.nk_buffer_init(Commands, Allocator, new IntPtr(4 * 1024));
-            Nuklear.nk_buffer_init(Vertices, Allocator, new IntPtr(4 * 1024));
-            Nuklear.nk_buffer_init(Indices, Allocator, new IntPtr(4 * 1024));
+            Log("Initializing buffers with nk_buffer_init_default");
+            Nuklear.nk_buffer_init_default(Commands);
+            Log("Commands buffer initialized");
+            Nuklear.nk_buffer_init_default(Vertices);
+            Log("Vertices buffer initialized");
+            Nuklear.nk_buffer_init_default(Indices);
+            Log("Indices buffer initialized");
+            Log("Init completed successfully");
         }
 
         public static void Frame(Action A) {
@@ -338,15 +382,13 @@ namespace NuklearDotNet {
         public static bool WindowIsCollapsed(string Name) => Nuklear.nk_window_is_collapsed(Ctx, Name) != 0;
 
         public static bool Group(string Name, string Title, NkPanelFlags Flags, Action A) {
-            bool Res = true;
-
-            if (Nuklear.nk_group_begin_titled(Ctx, Name, Title, (uint)Flags) != 0)
+            // Only call nk_group_end if nk_group_begin_titled succeeded
+            if (Nuklear.nk_group_begin_titled(Ctx, Name, Title, (uint)Flags) != 0) {
                 A?.Invoke();
-            else
-                Res = false;
-
-            Nuklear.nk_group_end(Ctx);
-            return Res;
+                Nuklear.nk_group_end(Ctx);
+                return true;
+            }
+            return false;
         }
 
         public static bool Group(string Name, NkPanelFlags Flags, Action A) => Group(Name, Name, Flags, A);

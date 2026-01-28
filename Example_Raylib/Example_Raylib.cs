@@ -9,12 +9,15 @@ using System.Numerics;
 using NuklearDotNet;
 using Raylib_cs;
 
-namespace Example_Raylib {
-	unsafe class RaylibTexture {
+namespace Example_Raylib
+{
+	unsafe class RaylibTexture
+	{
 		public Texture2D Texture;
 		public Image Image;
 
-		public RaylibTexture(int W, int H, IntPtr Data) {
+		public RaylibTexture(int W, int H, IntPtr Data)
+		{
 			/*Image = Raylib.GenImageColor(W, H, Color.ORANGE);
 
 			for (int y = 0; y < H; y++)
@@ -24,7 +27,8 @@ namespace Example_Raylib {
 					Raylib.ImageDrawPixel(ref Image, x, y, new Color(C.R, C.G, C.B, C.A));
 				}*/
 
-			Image = new Image {
+			Image = new Image
+			{
 				Width = W,
 				Height = H,
 				Mipmaps = 1,
@@ -38,24 +42,32 @@ namespace Example_Raylib {
 		}
 	}
 
-	unsafe class RaylibDevice : NuklearDeviceTex<RaylibTexture>, IFrameBuffered {
+	unsafe class RaylibDevice : NuklearDeviceTex<RaylibTexture>, IFrameBuffered
+	{
 		RenderTexture2D RT;
 
-		public RaylibDevice() {
+		// Re-enable frame buffering - basic rendering works now
+		public override bool EnableFrameBuffered => true;
+
+		public RaylibDevice()
+		{
 			CreateRT();
 		}
 
-		void CreateRT() {
+		void CreateRT()
+		{
 			int W = Raylib.GetScreenWidth();
 			int H = Raylib.GetScreenHeight();
 			RT = Raylib.LoadRenderTexture(W, H);
 		}
 
-		public override RaylibTexture CreateTexture(int W, int H, IntPtr Data) {
+		public override RaylibTexture CreateTexture(int W, int H, IntPtr Data)
+		{
 			return new RaylibTexture(W, H, Data);
 		}
 
-		public void BeginBuffering() {
+		public void BeginBuffering()
+		{
 			Raylib.BeginTextureMode(RT);
 			Raylib.ClearBackground(Color.Blank);
 		}
@@ -63,29 +75,34 @@ namespace Example_Raylib {
 		NkVertex[] Verts;
 		ushort[] Inds;
 
-		public override void SetBuffer(NkVertex[] VertexBuffer, ushort[] IndexBuffer) {
+		public override void SetBuffer(NkVertex[] VertexBuffer, ushort[] IndexBuffer)
+		{
 			Verts = VertexBuffer;
 			Inds = IndexBuffer;
 		}
 
-		static void rlColor(NkColor Clr) {
+		static void rlColor(NkColor Clr)
+		{
 			Rlgl.Color4f(Clr.R / 255.0f, Clr.G / 255.0f, Clr.B / 255.0f, Clr.A / 255.0f);
 		}
 
-		static void DrawVert(NkVertex V) {
+		static void DrawVert(NkVertex V)
+		{
 			rlColor(V.Color);
 			Rlgl.TexCoord2f(V.UV.X, V.UV.Y);
 			Rlgl.Vertex2f(V.Position.X, V.Position.Y);
 		}
 
-		static void Draw(NkVertex v1, NkVertex v2, NkVertex v3) {
+		static void Draw(NkVertex v1, NkVertex v2, NkVertex v3)
+		{
 			DrawVert(v1);
 			DrawVert(v3);
 			DrawVert(v2);
 			DrawVert(v2);
 		}
 
-		public override void Render(NkHandle Userdata, RaylibTexture Texture, NkRect ClipRect, uint Offset, uint Count) {
+		public override void Render(NkHandle Userdata, RaylibTexture Texture, NkRect ClipRect, uint Offset, uint Count)
+		{
 			Rlgl.DisableBackfaceCulling();
 			Raylib.BeginScissorMode((int)ClipRect.X, (int)ClipRect.Y, (int)ClipRect.W, (int)ClipRect.H);
 			{
@@ -93,7 +110,8 @@ namespace Example_Raylib {
 				Rlgl.CheckRenderBatchLimit((int)Count);
 
 				Rlgl.Begin(DrawMode.Quads);
-				for (int i = 0; i < Count; i += 3) {
+				for (int i = 0; i < Count; i += 3)
+				{
 					NkVertex V1 = Verts[Inds[Offset + i]];
 					NkVertex V2 = Verts[Inds[Offset + i + 1]];
 					NkVertex V3 = Verts[Inds[Offset + i + 2]];
@@ -108,12 +126,15 @@ namespace Example_Raylib {
 			Rlgl.EnableBackfaceCulling();
 		}
 
-		public void EndBuffering() {
+		public void EndBuffering()
+		{
 			Raylib.EndTextureMode();
 		}
 
-		public void RenderFinal() {
-			if (Raylib.IsWindowResized()) {
+		public void RenderFinal()
+		{
+			if (Raylib.IsWindowResized())
+			{
 				Raylib.UnloadRenderTexture(RT);
 				CreateRT();
 				NuklearAPI.QueueForceUpdate();
@@ -124,45 +145,83 @@ namespace Example_Raylib {
 	}
 
 
-	class Program {
-		static void Main(string[] args) {
-			Stopwatch SWatch = Stopwatch.StartNew();
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			// Initialize debug logging first
+			DebugLog.Init();
+			DebugLog.Log("Application starting");
 
-			Raylib.SetConfigFlags(ConfigFlags.ResizableWindow);
-			Raylib.InitWindow(800, 600, "Raylib Window");
-			Raylib.SetTargetFPS(60);
+			try
+			{
+				Stopwatch SWatch = Stopwatch.StartNew();
 
-			RaylibDevice Dev = new RaylibDevice();
-			Shared.Init(Dev);
+				DebugLog.Log("Setting up Raylib window");
+				Raylib.SetConfigFlags(ConfigFlags.ResizableWindow);
+				Raylib.InitWindow(1280, 800, "NuklearDotNet - Raylib Example");
+				Raylib.SetTargetFPS(60);
+				DebugLog.Log("Raylib window initialized");
 
-			float Dt = 0.1f;
+				DebugLog.Log("Creating RaylibDevice");
+				RaylibDevice Dev = new RaylibDevice();
+				DebugLog.Log("RaylibDevice created, calling Shared.Init");
+				Shared.Init(Dev);
+				DebugLog.Log("Shared.Init completed");
 
-			int LastMouseX = 0;
-			int LastMouseY = 0;
+				float Dt = 0.1f;
 
-			NuklearAPI.QueueForceUpdate();
-			while (!Raylib.WindowShouldClose()) {
+				int LastMouseX = 0;
+				int LastMouseY = 0;
 
-				Vector2 MousePos = Raylib.GetMousePosition();
-				if (LastMouseX != (int)MousePos.X || LastMouseY != (int)MousePos.Y) {
-					LastMouseX = (int)MousePos.X;
-					LastMouseY = (int)MousePos.Y;
-					Dev.OnMouseMove(LastMouseX, LastMouseY);
-				}
+				DebugLog.Log("Entering main loop");
+				NuklearAPI.QueueForceUpdate();
 
-				if (Raylib.IsMouseButtonPressed(MouseButton.Left))
-					Dev.OnMouseButton(NuklearEvent.MouseButton.Left, LastMouseX, LastMouseY, true);
+				int loopCount = 0;
+				while (!Raylib.WindowShouldClose())
+				{
+					loopCount++;
+
+					Vector2 MousePos = Raylib.GetMousePosition();
+					if (LastMouseX != (int)MousePos.X || LastMouseY != (int)MousePos.Y)
+					{
+						LastMouseX = (int)MousePos.X;
+						LastMouseY = (int)MousePos.Y;
+						Dev.OnMouseMove(LastMouseX, LastMouseY);
+					}
+
+					if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+						Dev.OnMouseButton(NuklearEvent.MouseButton.Left, LastMouseX, LastMouseY, true);
 
 					if (Raylib.IsMouseButtonReleased(MouseButton.Left))
-					Dev.OnMouseButton(NuklearEvent.MouseButton.Left, LastMouseX, LastMouseY, false);
+						Dev.OnMouseButton(NuklearEvent.MouseButton.Left, LastMouseX, LastMouseY, false);
 
-				Raylib.BeginDrawing();
-				Raylib.ClearBackground(Color.Black);
-				Shared.DrawLoop(Dt);
-				Raylib.EndDrawing();
+					Raylib.BeginDrawing();
+					Raylib.ClearBackground(Color.Black);
+					Shared.DrawLoop(Dt);
+					Raylib.EndDrawing();
 
-				Dt = SWatch.ElapsedMilliseconds / 1000.0f;
-				SWatch.Restart();
+					Dt = SWatch.ElapsedMilliseconds / 1000.0f;
+					SWatch.Restart();
+
+					// Log every 500 loops
+					if (loopCount % 500 == 0)
+					{
+						DebugLog.Log($"Main loop iteration {loopCount}, Dt={Dt:F4}");
+					}
+				}
+
+				DebugLog.Log("Main loop exited normally");
+			}
+			catch (Exception ex)
+			{
+				DebugLog.Error("Unhandled exception in Main", ex);
+				throw;
+			}
+			finally
+			{
+				DebugLog.Log("Application shutting down");
+				DebugLog.Flush();
 			}
 
 			Environment.Exit(0);

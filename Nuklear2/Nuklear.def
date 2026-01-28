@@ -1,6 +1,19 @@
 LIBRARY Nuklear2
 EXPORTS
 
+; Debug sizeof helpers
+nk_debug_sizeof_context
+nk_debug_sizeof_buffer
+nk_debug_sizeof_convert_config
+nk_debug_sizeof_draw_null_texture
+nk_debug_sizeof_allocator
+nk_debug_sizeof_handle
+nk_debug_sizeof_draw_list
+nk_debug_sizeof_style
+nk_debug_sizeof_input
+nk_debug_sizeof_font_atlas
+nk_debug_offset_draw_list
+
 nk_init_fixed
 nk_init
 nk_init_custom

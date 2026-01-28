@@ -70,3 +70,23 @@
 #include "nuklear_color.c"
 #include "nuklear_image.c"
 #include "nuklear_9slice.c"
+
+// Debug helper functions for struct size verification
+#include <stdio.h>
+
+// Export struct sizes for C# comparison
+__declspec(dllexport) int nk_debug_sizeof_context(void) { return (int)sizeof(struct nk_context); }
+__declspec(dllexport) int nk_debug_sizeof_buffer(void) { return (int)sizeof(struct nk_buffer); }
+__declspec(dllexport) int nk_debug_sizeof_convert_config(void) { return (int)sizeof(struct nk_convert_config); }
+__declspec(dllexport) int nk_debug_sizeof_draw_null_texture(void) { return (int)sizeof(struct nk_draw_null_texture); }
+__declspec(dllexport) int nk_debug_sizeof_allocator(void) { return (int)sizeof(struct nk_allocator); }
+__declspec(dllexport) int nk_debug_sizeof_handle(void) { return (int)sizeof(nk_handle); }
+__declspec(dllexport) int nk_debug_sizeof_draw_list(void) { return (int)sizeof(struct nk_draw_list); }
+__declspec(dllexport) int nk_debug_sizeof_style(void) { return (int)sizeof(struct nk_style); }
+__declspec(dllexport) int nk_debug_sizeof_input(void) { return (int)sizeof(struct nk_input); }
+__declspec(dllexport) int nk_debug_sizeof_font_atlas(void) { return (int)sizeof(struct nk_font_atlas); }
+
+// Offset helpers for nk_context
+__declspec(dllexport) int nk_debug_offset_draw_list(void) { 
+    return (int)((char*)&((struct nk_context*)0)->draw_list - (char*)0); 
+}

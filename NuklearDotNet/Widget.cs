@@ -5,9 +5,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NuklearDotNet {
+namespace NuklearDotNet
+{
 	[Flags]
-	public enum NkPanelFlags : uint { // nk_panel_flags, NK_WINDOW_*
+	public enum NkPanelFlags : uint
+	{ // nk_panel_flags, NK_WINDOW_*
 		Border = (1 << (0)),
 		Movable = (1 << (1)),
 		Scalable = (1 << (2)),
@@ -26,7 +28,8 @@ namespace NuklearDotNet {
 	}
 
 	[Flags]
-	public enum nk_panel_type : uint {
+	public enum nk_panel_type : uint
+	{
 		NK_PANEL_WINDOW = (1 << (0)),
 		NK_PANEL_GROUP = (1 << (1)),
 		NK_PANEL_POPUP = (1 << (2)),
@@ -36,14 +39,16 @@ namespace NuklearDotNet {
 		NK_PANEL_TOOLTIP = (1 << (7))
 	}
 
-	public enum nk_panel_set : uint {
+	public enum nk_panel_set : uint
+	{
 		NK_PANEL_SET_NONBLOCK = nk_panel_type.NK_PANEL_CONTEXTUAL | nk_panel_type.NK_PANEL_COMBO | nk_panel_type.NK_PANEL_MENU | nk_panel_type.NK_PANEL_TOOLTIP,
 		NK_PANEL_SET_POPUP = NK_PANEL_SET_NONBLOCK | nk_panel_type.NK_PANEL_POPUP,
 		NK_PANEL_SET_SUB = NK_PANEL_SET_POPUP | nk_panel_type.NK_PANEL_GROUP
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public struct nk_chart_slot {
+	public struct nk_chart_slot
+	{
 		public nk_chart_type type;
 		public NkColor color;
 		public NkColor highlight;
@@ -56,7 +61,8 @@ namespace NuklearDotNet {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public struct nk_chart {
+	public struct nk_chart
+	{
 		public int slot;
 		public float x;
 		public float y;
@@ -68,7 +74,8 @@ namespace NuklearDotNet {
 		public nk_chart_slot slot3;
 	}
 
-	public enum nk_panel_row_layout_type {
+	public enum nk_panel_row_layout_type
+	{
 		NK_LAYOUT_DYNAMIC_FIXED = 0,
 		NK_LAYOUT_DYNAMIC_ROW,
 		NK_LAYOUT_DYNAMIC_FREE,
@@ -82,7 +89,8 @@ namespace NuklearDotNet {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public unsafe struct nk_row_layout {
+	public unsafe struct nk_row_layout
+	{
 		public nk_panel_row_layout_type type;
 		public int index;
 		public float height;
@@ -99,7 +107,8 @@ namespace NuklearDotNet {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public struct nk_popup_buffer {
+	public struct nk_popup_buffer
+	{
 		public IntPtr begin_nksize;
 		public IntPtr parent_nksize;
 		public IntPtr last_nksize;
@@ -108,7 +117,8 @@ namespace NuklearDotNet {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public struct nk_menu_state {
+	public struct nk_menu_state
+	{
 		public float x;
 		public float y;
 		public float w;
@@ -117,7 +127,8 @@ namespace NuklearDotNet {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public unsafe struct nk_panel {
+	public unsafe struct nk_panel
+	{
 		public nk_panel_type type;
 		public uint flags_nkflags;
 		public NkRect bounds;
@@ -139,7 +150,8 @@ namespace NuklearDotNet {
 	}
 
 	[Flags]
-	public enum nk_window_flags : uint {
+	public enum nk_window_flags : uint
+	{
 		NK_WINDOW_PRIVATE = (1 << (11)),
 		NK_WINDOW_DYNAMIC = NK_WINDOW_PRIVATE,
 		NK_WINDOW_ROM = (1 << (12)),
@@ -151,7 +163,8 @@ namespace NuklearDotNet {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public unsafe struct nk_popup_state {
+	public unsafe struct nk_popup_state
+	{
 		public nk_window* win;
 		public nk_panel_type type;
 		public nk_popup_buffer buf;
@@ -165,7 +178,8 @@ namespace NuklearDotNet {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public struct nk_edit_state {
+	public struct nk_edit_state
+	{
 		public uint name_nkhash;
 		public uint seq;
 		public uint old;
@@ -180,7 +194,8 @@ namespace NuklearDotNet {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public unsafe struct nk_property_state {
+	public unsafe struct nk_property_state
+	{
 		public int active;
 		public int prev;
 		public fixed byte buffer[64];
@@ -195,7 +210,8 @@ namespace NuklearDotNet {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public unsafe struct nk_window {
+	public unsafe struct nk_window
+	{
 		public uint seq;
 		public uint name_nkhash;
 		public fixed byte name_string[64];
@@ -221,7 +237,8 @@ namespace NuklearDotNet {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public unsafe struct nk_list_view {
+	public unsafe struct nk_list_view
+	{
 		public int begin;
 		public int end;
 		public int count;
@@ -232,14 +249,16 @@ namespace NuklearDotNet {
 		public uint scroll_value;
 	}
 
-	public enum nk_widget_layout_states {
+	public enum nk_widget_layout_states
+	{
 		NK_WIDGET_INVALID,
 		NK_WIDGET_VALID,
 		NK_WIDGET_ROM
 	}
 
 	[Flags]
-	public enum nk_widget_states {
+	public enum nk_widget_states
+	{
 		NK_WIDGET_STATE_MODIFIED = (1 << (1)),
 		NK_WIDGET_STATE_INACTIVE = (1 << (2)),
 		NK_WIDGET_STATE_ENTERED = (1 << (3)),
@@ -251,7 +270,8 @@ namespace NuklearDotNet {
 	}
 
 	[Flags]
-	public enum NkTextAlign {
+	public enum NkTextAlign
+	{
 		NK_TEXT_ALIGN_LEFT = 0x01,
 		NK_TEXT_ALIGN_CENTERED = 0x02,
 		NK_TEXT_ALIGN_RIGHT = 0x04,
@@ -260,14 +280,16 @@ namespace NuklearDotNet {
 		NK_TEXT_ALIGN_BOTTOM = 0x20
 	}
 
-	public enum NkTextAlignment {
+	public enum NkTextAlignment
+	{
 		NK_TEXT_LEFT = NkTextAlign.NK_TEXT_ALIGN_MIDDLE | NkTextAlign.NK_TEXT_ALIGN_LEFT,
 		NK_TEXT_CENTERED = NkTextAlign.NK_TEXT_ALIGN_MIDDLE | NkTextAlign.NK_TEXT_ALIGN_CENTERED,
 		NK_TEXT_RIGHT = NkTextAlign.NK_TEXT_ALIGN_MIDDLE | NkTextAlign.NK_TEXT_ALIGN_RIGHT
 	}
 
 	[Flags]
-	public enum NkEditFlags { // nk_edit_flags
+	public enum NkEditFlags
+	{ // nk_edit_flags
 		Default = 0,
 		ReadOnly = (1 << (0)),
 		AutoSelect = (1 << (1)),
@@ -283,7 +305,8 @@ namespace NuklearDotNet {
 		GotoEndOnActivate = (1 << (11))
 	}
 
-	public enum NkEditTypes { // nk_edit_types
+	public enum NkEditTypes
+	{ // nk_edit_types
 		Simple = NkEditFlags.AlwaysInsertMode,
 		Field = Simple | NkEditFlags.Selectable | NkEditFlags.Clipboard,
 		Box = NkEditFlags.AlwaysInsertMode | NkEditFlags.Selectable | NkEditFlags.Multiline | NkEditFlags.AllowTab | NkEditFlags.Clipboard,
@@ -292,7 +315,8 @@ namespace NuklearDotNet {
 	}
 
 	[Flags]
-	public enum NkEditEvents {
+	public enum NkEditEvents
+	{
 		Active = (1 << (0)),
 		Inactive = (1 << (1)),
 		Activated = (1 << (2)),
@@ -307,7 +331,8 @@ namespace NuklearDotNet {
 	public unsafe delegate void nk_item_getter_fun(IntPtr user, int i, byte** idk);
 
 	// [DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-	public static unsafe partial class Nuklear {
+	public static unsafe partial class Nuklear
+	{
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern nk_window* nk_window_find(nk_context* ctx, byte* name);
 

@@ -146,6 +146,9 @@ namespace NuklearDotNet {
 		public static extern void nk_font_atlas_init(nk_font_atlas* atlas, nk_allocator* alloc);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_font_atlas_init_default(nk_font_atlas* atlas);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_font_atlas_init_custom(nk_font_atlas* atlas, nk_allocator* persistent, nk_allocator* transient);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
