@@ -1,0 +1,159 @@
+name: Build and Package NuGet
+
+on:
+  push:
+    branches:
+      - master
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  SOLUTION_FILE: 'NuklearDotNetDotnet.sln'
+  PROJECT_FILE: 'NuklearDotNet/NuklearDotNetDotnet.csproj'
+
+jobs:
+  build:
+    name: Build and Package
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            rid: linux-x64
+          - os: windows-latest
+            rid: win-x64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Setup build tools (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake
+
+      - name: Setup build tools (Windows)
+        if: runner.os == 'Windows'
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_FILE }}
+
+      - name: Build native binaries (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          cd Nuklear
+          cmake -B build -S .
+          cmake --build build --config Release
+          mkdir -p ../NuklearDotNet/runtimes/linux-x64/native
+          cp build/*.so ../NuklearDotNet/runtimes/linux-x64/native/ || true
+
+      - name: Build native binaries (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cd Nuklear
+          cmake -B build -S . -A x64
+          cmake --build build --config Release
+          mkdir -p ..\NuklearDotNet\runtimes\win-x64\native
+          copy build\Release\*.dll ..\NuklearDotNet\runtimes\win-x64\native\ || exit /b 0
+
+      - name: Build .NET project (Release)
+        run: dotnet build ${{ env.PROJECT_FILE }} --configuration Release --no-restore
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries-${{ matrix.rid }}
+          path: |
+            NuklearDotNet/runtimes/*/native/*
+            bin/Release/
+
+  package:
+    name: Create NuGet Package
+    needs: build
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Download Linux artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: binaries-linux-x64
+          path: build-artifacts/linux
+
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: binaries-win-x64
+          path: build-artifacts/windows
+
+      - name: Merge runtime directories
+        run: |
+          mkdir -p NuklearDotNet/runtimes/linux-x64/native
+          mkdir -p NuklearDotNet/runtimes/win-x64/native
+          
+          if [ -d build-artifacts/linux/NuklearDotNet/runtimes/linux-x64/native ]; then
+            cp build-artifacts/linux/NuklearDotNet/runtimes/linux-x64/native/* NuklearDotNet/runtimes/linux-x64/native/ || true
+          fi
+          
+          if [ -d build-artifacts/windows/NuklearDotNet/runtimes/win-x64/native ]; then
+            cp build-artifacts/windows/NuklearDotNet/runtimes/win-x64/native/* NuklearDotNet/runtimes/win-x64/native/ || true
+          fi
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_FILE }}
+
+      - name: Build project
+        run: dotnet build ${{ env.PROJECT_FILE }} --configuration Release --no-restore
+
+      - name: Pack NuGet package
+        run: dotnet pack ${{ env.PROJECT_FILE }} --configuration Release --output ./nuget-output --no-build
+
+      - name: Upload NuGet artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: nuget-output/
+
+  verify:
+    name: Verify Package
+    needs: package
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+      - name: Download NuGet package
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-package
+
+      - name: List package contents
+        run: |
+          for nupkg in *.nupkg; do
+            echo "Package: $nupkg"
+            unzip -l "$nupkg"
+          done
