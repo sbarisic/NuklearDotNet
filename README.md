@@ -1,114 +1,183 @@
 # NuklearDotNet
-LICENSE: Dual-licensed under MIT and The Unlicense. Your choice.
 
-.NET binding for the Nuklear immediate mode GUI
-https://github.com/vurtun/nuklear
+NuklearDotNet is an unsafe C# binding and renderer abstraction for [Nuklear](https://github.com/Immediate-Mode-UI/Nuklear), a small immediate-mode GUI library written in C. The current binding uses the newer `Nuklear2.dll` native project and provides both direct P/Invoke access and a higher-level frame API.
 
-NuklearSharp ( https://github.com/leafi/NuklearSharp ) was my original inspiration for this.
+The primary development path targets .NET 9 on Windows. The repository also retains .NET Framework 4.8 projects as a legacy compatibility path.
 
-No original nuklear source files were modified. A project was created with some support code 
-to build Nuklear.dll (x64) with all API functions exported and ready to be used from .NET
+> [!WARNING]
+> The current C# definitions of several native structs do not exactly match the Nuklear2 ABI. Native-sized allocation prevents the previous `nk_convert` crash, but window dragging is still broken and direct field access on affected structs can read incorrect offsets. See [Known ABI limitation](INFO.md#known-abi-limitation) and [TODO.md](TODO.md) before using the binding in production.
 
-Updating should be as easy as updating the submodule and rebuilding the project.
+![NuklearDotNet example](screenshots/a.png)
 
-Currently this binding is used in my game engine project, so i implement stuff as i need it.
-https://github.com/sbarisic/libTech
+## Project status
 
-Contributions welcome.
+- Native library: Nuklear2, built as `Nuklear2.dll`
+- Primary managed target: .NET 9
+- Platform: Windows; examples are configured primarily for x64
+- API layers: raw unsafe `Nuklear` bindings and the convenience-oriented `NuklearAPI`
+- Included renderer examples: Raylib, SFML.Net, MonoGame DesktopGL, and Windows Forms
+- Packaging: source projects and native DLLs; no NuGet package is currently published
+- Testing: no automated test suite or CI workflow is currently included
 
-# Implemented devices
+For architecture, maintenance procedures, and verified project details, see [INFO.md](INFO.md). Planned work and active defects are tracked in [TODO.md](TODO.md).
 
-* Raylib
-In the example project, this binding was directly included
-https://github.com/ChrisDill/Raylib-cs
+## Prerequisites
 
-* SFML
+- Windows
+- Git with submodule support
+- .NET 9 SDK
+- Visual Studio/MSBuild with the Desktop development with C++ workload and a Windows SDK
+- The `v145` C++ platform toolset currently selected by both native projects, or an intentional local retarget to an installed toolset
 
-# Screenshots
+The native projects are `.vcxproj` files. The `dotnet` CLI by itself cannot build the complete solution; use Visual Studio or its full MSBuild installation for the native build.
 
-![alt text](https://raw.githubusercontent.com/sbarisic/NuklearDotNet/master/screenshots/a.png "Hello World!")
+## Clone and build
 
-# Code samples
+Clone both Nuklear source submodules with the repository:
 
-The custom device class implements actual drawing functions,
-it has to inherit from at least NuklearDevice.
-NuklearDeviceTex<T> allows you to specify your custom texture class which
-replaces the internal texture handle integers, just for convenience. You can return
-your own texture handle integers in NuklearDevice and handle textures manually.
+```powershell
+git clone --recurse-submodules https://github.com/sbarisic/NuklearDotNet.git
+cd NuklearDotNet
+```
 
-Optionally it can implement the IFrameBuffered interface which calls the Render
-function only when the GUI actually changes. It it supposed to be rendered to a framebuffer
-which is in turn rendered to the screen every frame in RenderFinal
+If the repository was cloned without submodules:
 
-```cs
-class Device : NuklearDeviceTex<Texture>, IFrameBuffered {
-	public override Texture CreateTexture(int W, int H, IntPtr Data) {
-		// Create a texture from raw image data
-		return null;
-	}
+```powershell
+git submodule update --init --recursive
+```
 
-	void IFrameBuffered.BeginBuffering() {
-		// Begin rendering to framebuffer
-	}
-	
-	public override void SetBuffer(NkVertex[] VertexBuffer, ushort[] IndexBuffer) {
-		// Called once before Render, upload your vertex buffer and index buffer here
-	}
+Open `NuklearDotNetDotnet.sln` in Visual Studio, select `Debug` and `x64`, and build the solution. This builds the native libraries before the managed binding and examples. The active binding loads `Nuklear2.dll`; a Debug native build places it in `bin_dbg` and the example projects copy it beside their managed output.
 
-	public override void Render(NkHandle Userdata, Texture Texture, NkRect ClipRect, uint Offset, uint Count) {
-		// Render to either framebuffer or screen
-		// If IFrameBuffered isn't implemented, it's called every frame, else only when the GUI actually changes
-		// Called multiple times per frame, uses the vertex and index buffer that has been sent to SetBuffer
-	}
+The equivalent command from a Visual Studio Developer PowerShell is:
 
-	void IFrameBuffered.EndBuffering() {
-		// End rendering to frame buffer
-	}
+```powershell
+msbuild NuklearDotNetDotnet.sln /m /p:Configuration=Debug /p:Platform=x64
+```
 
-	void IFrameBuffered.RenderFinal() {
-		// Called each frame, render to screen finally
-	}
+After a successful solution build, run the Raylib example from Visual Studio or with:
+
+```powershell
+dotnet run --project Example_Raylib/Example_RaylibDotnet.csproj --configuration Debug --no-build
+```
+
+If MSBuild reports `MSB8020`, install the configured `v145` toolset or explicitly retarget both native projects to a compatible installed toolset. A command such as `dotnet build NuklearDotNetDotnet.sln` is not a substitute because the .NET SDK MSBuild does not provide the C++ targets required by the native projects.
+
+## Included examples
+
+| Project | Backend | Managed target | Notes |
+| --- | --- | --- | --- |
+| `Example_Raylib` | Raylib-cs 6.1.1 | `net9.0` | Primary example; uses a render texture and `IFrameBuffered`. |
+| `Example_SFML` | SFML.Net 2.5.1 | `net9.0` | Includes the CSFML/OpenAL native runtime files used by the example. |
+| `Example_MonoGame` | MonoGame DesktopGL 3.8.1.303 | `net9.0-windows` | Uses the MonoGame content tool manifest; framebuffer support is not implemented. |
+| `Example_WindowsForms` | Windows Forms/System.Drawing | `net9.0-windows` | Software-oriented Windows backend. |
+
+These projects are implementation examples rather than a compatibility guarantee. Their managed projects compile individually as of the verification recorded in [INFO.md](INFO.md#verification-snapshot), but GUI runtime behavior is still subject to the ABI limitation above.
+
+## API overview
+
+`Nuklear` is the low-level layer. It exposes native functions and structs through unsafe P/Invoke declarations, closely following the C API.
+
+`NuklearAPI` owns the current context, queues input, builds a frame, converts Nuklear commands to vertices and indices, and dispatches draw commands to a `NuklearDevice` implementation.
+
+### Implementing a renderer
+
+Use `NuklearDeviceTex<T>` when the backend has its own texture type. It converts Nuklear integer handles to backend texture objects for you:
+
+```csharp
+sealed class Device : NuklearDeviceTex<Texture>
+{
+    public override bool EnableFrameBuffered => false;
+
+    public override Texture CreateTexture(int width, int height, IntPtr data)
+    {
+        // Upload the RGBA32 font-atlas pixels and return a backend texture.
+        throw new NotImplementedException();
+    }
+
+    public override void SetBuffer(NkVertex[] vertices, ushort[] indices)
+    {
+        // Upload or retain the converted vertex and index data.
+    }
+
+    public override void Render(
+        NkHandle userdata,
+        Texture texture,
+        NkRect clipRect,
+        uint offset,
+        uint count)
+    {
+        // Apply clipRect, bind texture, and draw count indices from offset.
+    }
 }
 ```
 
-Sending events; just call these when you capture the events from your input API. It's irrelevant when they're called.
-They are internally queued and dispatched to Nuklear on every frame.
+Alternatively, derive from `NuklearDevice` and manage integer texture handles directly. Backends may also override `Init`, `FontStash`, `BeginRender`, and `EndRender`.
 
+For cached rendering, return `true` from `EnableFrameBuffered` and implement `IFrameBuffered`:
 
-```cs
-	Device.OnMouseButton(Button, X, Y, Down)
-	Device.OnMouseMove(X, Y)
-	Device.OnScroll(X, Y)
-	Device.OnText(Text)
-	Device.OnKey(Key, Down)
-```
-
-Using the GUI, note that the while loop represents an OnRender function in your renderer code. At the end of the Frame
-call, the actual rendering functions are dispatched.
-
-```cs
-NuklearAPI.Init(Device);
-
-while (true) {
-
-	// Optional
-	NuklearAPI.SetDeltaTime(Dt);
-	
-	NuklearAPI.Frame(() => {
-		NuklearAPI.Window("Test Window", 100, 100, 200, 200, Flags, () => {
-			NuklearAPI.LayoutRowDynamic(35);
-			
-			if (NuklearAPI.ButtonLabel("Some Button"))
-				Console.WriteLine("You pressed Some Button!");
-		});
-	});
-
+```csharp
+interface IFrameBuffered
+{
+    void BeginBuffering();
+    void EndBuffering();
+    void RenderFinal();
 }
-
 ```
 
-# TODO
+`BeginBuffering` and `EndBuffering` surround the GUI redraw. `RenderFinal` composites the cached result every frame. The current implementation temporarily forces conversion whenever input is handled because memory-based dirty detection was disabled while the ABI mismatch is unresolved.
 
-* Demo application
-* Higher level binding
-* Support for multiple contexts, want to draw a GUI and some example on a 3D in-game screen at the same time?
+Forward backend input through the device event queue:
+
+```csharp
+device.OnMouseButton(NuklearEvent.MouseButton.Left, x, y, isDown);
+device.OnMouseMove(x, y);
+device.OnScroll(scrollX, scrollY);
+device.OnText(text);
+device.OnKey(NkKeys.Enter, isDown);
+```
+
+### Building a frame
+
+Initialize one device, then submit immediate-mode UI from the render loop:
+
+```csharp
+NuklearAPI.Init(device);
+
+while (running)
+{
+    NuklearAPI.SetDeltaTime(deltaSeconds);
+
+    NuklearAPI.Frame(() =>
+    {
+        NuklearAPI.Window(
+            "Test Window",
+            100, 100, 300, 200,
+            NkPanelFlags.BorderTitle | NkPanelFlags.MovableScalable,
+            () =>
+            {
+                NuklearAPI.LayoutRowDynamic(35);
+
+                if (NuklearAPI.ButtonLabel("Some Button"))
+                    Console.WriteLine("Button pressed");
+            });
+    });
+}
+```
+
+The library currently owns a single static context. Calling `NuklearAPI.Init` more than once throws, and multiple-context support remains planned work.
+
+## Legacy .NET Framework projects
+
+`NuklearDotNet.sln` and the non-`Dotnet` project files target .NET Framework 4.8. They remain in the repository for compatibility, but new development and documentation use `NuklearDotNetDotnet.sln` and the .NET 9 projects.
+
+## Updating and contributing
+
+The native source trees are Git submodules and are not intended to be edited as part of normal binding updates. Updating Nuklear2 may require changes to the native compilation unit, exported symbol list, P/Invoke declarations, and managed struct layouts; follow the checklist in [INFO.md](INFO.md#updating-nuklear2).
+
+Contributions are welcome. Please account for the unsafe native boundary, build the relevant managed projects, and test the affected renderer manually. Keep active work and newly discovered defects synchronized with [TODO.md](TODO.md).
+
+NuklearSharp was the original inspiration for this binding: [leafi/NuklearSharp](https://github.com/leafi/NuklearSharp). NuklearDotNet is also used by the author's [libTech](https://github.com/sbarisic/libTech) engine project.
+
+## License
+
+NuklearDotNet is dual-licensed under the [MIT License or The Unlicense](LICENSE), at your choice. The Nuklear submodules and third-party dependencies retain their own licenses.
