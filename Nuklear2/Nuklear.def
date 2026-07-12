@@ -1,18 +1,8 @@
 LIBRARY Nuklear2
 EXPORTS
 
-; Debug sizeof helpers
-nk_debug_sizeof_context
-nk_debug_sizeof_buffer
-nk_debug_sizeof_convert_config
-nk_debug_sizeof_draw_null_texture
-nk_debug_sizeof_allocator
-nk_debug_sizeof_handle
-nk_debug_sizeof_draw_list
-nk_debug_sizeof_style
-nk_debug_sizeof_input
-nk_debug_sizeof_font_atlas
-nk_debug_offset_draw_list
+; Managed ABI validation
+nk_debug_abi
 
 nk_init_fixed
 nk_init
@@ -111,7 +101,6 @@ nk_list_view_begin
 nk_list_view_end
 
 nk_widget
-nk_widget_fitting
 nk_widget_bounds
 nk_widget_position
 nk_widget_size
@@ -254,6 +243,13 @@ nk_contextual_end
 nk_tooltip
 nk_tooltip_begin
 nk_tooltip_end
+nk_tooltip_offset
+nk_do_tooltip
+nk_do_tooltip_delay
+nk_do_tooltip_delay_clicked
+nk_tooltipf_offset
+nk_tooltipfv_offset
+nk_tooltip_begin_offset
 
 nk_menubar_begin
 nk_menubar_end
@@ -585,6 +581,10 @@ nk_input_is_mouse_click_down_in_rect
 nk_input_any_mouse_click_in_rect
 nk_input_is_mouse_prev_hovering_rect
 nk_input_is_mouse_hovering_rect
+nk_input_is_mouse_hovering_still_rect
+nk_input_is_mouse_hovering_delay_rect
+nk_input_is_mouse_hovering_still_delay_rect
+nk_input_is_mouse_hovering_still_delay_clicked_rect
 nk_input_mouse_clicked
 nk_input_is_mouse_down
 nk_input_is_mouse_pressed

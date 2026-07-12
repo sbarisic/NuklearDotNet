@@ -34,6 +34,8 @@ public nk_nine_slice slice;
 	public struct nk_style_text {
 		public NkColor color;
 		public nk_vec2 padding;
+		public float color_factor;
+		public float disabled_factor;
 	}
 
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -45,18 +47,21 @@ public nk_nine_slice slice;
 		public nk_style_item hover;
 		public nk_style_item active;
 		public NkColor border_color;
+		public float color_factor_background;
 
 		public NkColor text_background;
 		public NkColor text_normal;
 		public NkColor text_hover;
 		public NkColor text_active;
 		public uint text_alignment_nkflags;
+		public float color_factor_text;
 
 		public float border;
 		public float rounding;
 		public nk_vec2 padding;
 		public nk_vec2 image_padding;
 		public nk_vec2 touch_padding;
+		public float disabled_factor;
 
 		public NkHandle userdata;
 		public IntPtr draw_begin_nkStyleDrawBeginEnd;
@@ -83,6 +88,8 @@ public nk_nine_slice slice;
 		public nk_vec2 touch_padding;
 		public float spacing;
 		public float border;
+		public float color_factor;
+		public float disabled_factor;
 
 		public NkHandle userdata;
 		public IntPtr draw_begin_nkStyleDrawBeginEnd;
@@ -113,6 +120,8 @@ public nk_nine_slice slice;
 		public nk_vec2 padding;
 		public nk_vec2 touch_padding;
 		public nk_vec2 image_padding;
+		public float color_factor;
+		public float disabled_factor;
 
 		public NkHandle userdata;
 		public IntPtr draw_begin_nkStyleDrawBeginEnd;
@@ -141,12 +150,43 @@ public nk_nine_slice slice;
 		public nk_vec2 padding;
 		public nk_vec2 spacing;
 		public nk_vec2 cursor_size;
+		public float color_factor;
+		public float disabled_factor;
 
 		public int show_buttons;
 		public nk_style_button inc_button;
 		public nk_style_button dec_button;
 		public nk_symbol_type inc_symbol;
 		public nk_symbol_type dec_symbol;
+
+		public NkHandle userdata;
+		public IntPtr draw_begin_nkStyleDrawBeginEnd;
+		public IntPtr draw_end_nkStyleDrawBeginEnd;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct nk_style_knob {
+		public nk_style_item normal;
+		public nk_style_item hover;
+		public nk_style_item active;
+		public NkColor border_color;
+
+		public NkColor knob_normal;
+		public NkColor knob_hover;
+		public NkColor knob_active;
+		public NkColor knob_border_color;
+
+		public NkColor cursor_normal;
+		public NkColor cursor_hover;
+		public NkColor cursor_active;
+
+		public float border;
+		public float knob_border;
+		public nk_vec2 padding;
+		public nk_vec2 spacing;
+		public float cursor_width;
+		public float color_factor;
+		public float disabled_factor;
 
 		public NkHandle userdata;
 		public IntPtr draw_begin_nkStyleDrawBeginEnd;
@@ -170,6 +210,8 @@ public nk_nine_slice slice;
 		public float cursor_border;
 		public float cursor_rounding;
 		public nk_vec2 padding;
+		public float color_factor;
+		public float disabled_factor;
 
 		public NkHandle userdata;
 		public IntPtr draw_begin_nkStyleDrawBeginEnd;
@@ -193,6 +235,8 @@ public nk_nine_slice slice;
 		public float border_cursor;
 		public float rounding_cursor;
 		public nk_vec2 padding;
+		public float color_factor;
+		public float disabled_factor;
 
 		public int show_buttons;
 		public nk_style_button inc_button;
@@ -233,6 +277,8 @@ public nk_nine_slice slice;
 		public nk_vec2 scrollbar_size;
 		public nk_vec2 padding;
 		public float row_padding;
+		public float color_factor;
+		public float disabled_factor;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -252,6 +298,8 @@ public nk_nine_slice slice;
 		public float border;
 		public float rounding;
 		public nk_vec2 padding;
+		public float color_factor;
+		public float disabled_factor;
 
 		public nk_style_edit edit;
 		public nk_style_button inc_button;
@@ -272,6 +320,9 @@ public nk_nine_slice slice;
 		public float border;
 		public float rounding;
 		public nk_vec2 padding;
+		public float color_factor;
+		public float disabled_factor;
+		public int show_markers;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -299,6 +350,8 @@ public nk_nine_slice slice;
 		public nk_vec2 content_padding;
 		public nk_vec2 button_padding;
 		public nk_vec2 spacing;
+		public float color_factor;
+		public float disabled_factor;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -319,6 +372,8 @@ public nk_nine_slice slice;
 		public float indent;
 		public nk_vec2 padding;
 		public nk_vec2 spacing;
+		public float color_factor;
+		public float disabled_factor;
 	}
 
 	public enum nk_style_header_align {
@@ -384,6 +439,10 @@ public nk_nine_slice slice;
 		public nk_vec2 contextual_padding;
 		public nk_vec2 menu_padding;
 		public nk_vec2 tooltip_padding;
+
+		public nk_tooltip_pos tooltip_origin;
+		public nk_vec2 tooltip_offset;
+		public float tooltip_delay;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -411,6 +470,7 @@ public nk_nine_slice slice;
 		public nk_style_toggle checkbox;
 		public nk_style_selectable selectable;
 		public nk_style_slider slider;
+		public nk_style_knob knob;
 		public nk_style_progress progress;
 		public nk_style_property property;
 		public nk_style_edit edit;
@@ -451,6 +511,10 @@ public nk_nine_slice slice;
 		NK_COLOR_SCROLLBAR_CURSOR_HOVER,
 		NK_COLOR_SCROLLBAR_CURSOR_ACTIVE,
 		NK_COLOR_TAB_HEADER,
+		NK_COLOR_KNOB,
+		NK_COLOR_KNOB_CURSOR,
+		NK_COLOR_KNOB_CURSOR_HOVER,
+		NK_COLOR_KNOB_CURSOR_ACTIVE,
 		NK_COLOR_COUNT
 	}
 

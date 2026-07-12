@@ -201,6 +201,18 @@ namespace NuklearDotNet {
 		NK_TREE_TAB
 	}
 
+	public enum nk_tooltip_pos {
+		NK_TOOLTIP_TOP_LEFT,
+		NK_TOOLTIP_TOP_CENTER,
+		NK_TOOLTIP_TOP_RIGHT,
+		NK_TOOLTIP_MIDDLE_LEFT,
+		NK_TOOLTIP_MIDDLE_RIGHT,
+		NK_TOOLTIP_BOTTOM_LEFT,
+		NK_TOOLTIP_BOTTOM_CENTER,
+		NK_TOOLTIP_BOTTOM_RIGHT,
+		NK_TOOLTIP_MOUSE_POSITION
+	}
+
 	public static unsafe partial class Nuklear {
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern NkHandle nk_handle_ptr(IntPtr ptr);

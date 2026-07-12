@@ -207,6 +207,10 @@ namespace NuklearDotNet
 		public uint seq;
 		public uint old;
 		public int state;
+		public int prev_state;
+		public uint prev_name_nkhash;
+		public fixed byte prev_buffer[64];
+		public int prev_length;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -227,6 +231,7 @@ namespace NuklearDotNet
 		public nk_popup_state popup;
 		public nk_edit_state edit;
 		public uint scrolled;
+		public int widgets_disabled;
 
 		public nk_table* tables;
 		public uint table_count;
@@ -484,9 +489,6 @@ namespace NuklearDotNet
 		public static extern nk_widget_layout_states nk_widget(NkRect* r, nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern nk_widget_layout_states nk_widget_fitting(NkRect* r, nk_context* ctx, nk_vec2 v);
-
-		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern NkRect nk_widget_bounds(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
@@ -718,13 +720,13 @@ namespace NuklearDotNet
 		public static extern int nk_color_pick(nk_context* ctx, nk_colorf* color, nk_color_format cfmt);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_property_int(nk_context* ctx, byte* name, int min, int* val, int max, int step, float inc_per_pixel);
+		public static extern int nk_property_int(nk_context* ctx, byte* name, int min, int* val, int max, int step, float inc_per_pixel);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_property_float(nk_context* ctx, byte* name, float min, float* val, float max, float step, float inc_per_pixel);
+		public static extern int nk_property_float(nk_context* ctx, byte* name, float min, float* val, float max, float step, float inc_per_pixel);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_property_double(nk_context* ctx, byte* name, double min, double* val, double max, double step, float inc_per_pixel);
+		public static extern int nk_property_double(nk_context* ctx, byte* name, double min, double* val, double max, double step, double inc_per_pixel);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_propertyi(nk_context* ctx, byte* name, int min, int val, int max, int step, float inc_per_pixel);
@@ -805,16 +807,16 @@ namespace NuklearDotNet
 		public static extern int nk_combo_callback(nk_context* ctx, nk_item_getter_fun getterfun, IntPtr userdata, int selected, int count, int item_height, nk_vec2 size);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_combobox(nk_context* ctx, byte** items, int count, int* selected, int item_height, nk_vec2 size);
+		public static extern int nk_combobox(nk_context* ctx, byte** items, int count, int* selected, int item_height, nk_vec2 size);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_combobox_string(nk_context* ctx, byte* items_separated_by_zeros, int* selected, int count, int item_height, nk_vec2 size);
+		public static extern int nk_combobox_string(nk_context* ctx, byte* items_separated_by_zeros, int* selected, int count, int item_height, nk_vec2 size);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_combobox_separator(nk_context* ctx, byte* items_separated_by_separator, int separator, int* selected, int count, int item_height, nk_vec2 size);
+		public static extern int nk_combobox_separator(nk_context* ctx, byte* items_separated_by_separator, int separator, int* selected, int count, int item_height, nk_vec2 size);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_combobox_callback(nk_context* ctx, nk_item_getter_fun getterfun, IntPtr userdata, int* selected, int count, int item_height, nk_vec2 size);
+		public static extern int nk_combobox_callback(nk_context* ctx, nk_item_getter_fun getterfun, IntPtr userdata, int* selected, int count, int item_height, nk_vec2 size);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_combo_begin_text(nk_context* ctx, char* selected, int i, nk_vec2 size);
@@ -903,9 +905,27 @@ namespace NuklearDotNet
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_tooltip_end(nk_context* ctx);
 
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_tooltip_offset(nk_context* ctx, byte* text, nk_tooltip_pos position, nk_vec2 offset);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_do_tooltip(nk_context* ctx, byte* text, NkRect bounds);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_do_tooltip_delay(nk_context* ctx, byte* text, NkRect bounds, float* timer);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_do_tooltip_delay_clicked(nk_context* ctx, byte* text, NkRect bounds, float* timer, int* clicked);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_tooltip_begin_offset(nk_context* ctx, float width, nk_tooltip_pos position, nk_vec2 offset);
+
 		// Functions enabled by NK_INCLUDE_STANDARD_VARARGS
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_tooltipf(nk_context* ctx, string fmt, __arglist);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_tooltipf_offset(nk_context* ctx, nk_tooltip_pos position, nk_vec2 offset, string fmt, __arglist);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_value_bool(nk_context* ctx, string prefix, int val);

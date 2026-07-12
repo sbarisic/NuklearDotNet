@@ -4,8 +4,8 @@ NuklearDotNet is an unsafe C# binding and renderer abstraction for [Nuklear](htt
 
 The primary development path targets .NET 9 on Windows. The repository also retains .NET Framework 4.8 projects as a legacy compatibility path.
 
-> [!WARNING]
-> The current C# definitions of several native structs do not exactly match the Nuklear2 ABI. Native-sized allocation prevents the previous `nk_convert` crash, but window dragging is still broken and direct field access on affected structs can read incorrect offsets. See [Known ABI limitation](INFO.md#known-abi-limitation) and [TODO.md](TODO.md) before using the binding in production.
+> [!NOTE]
+> The managed binding validates critical sizes, offsets, enum values, and native exports before initialization. A mismatched or stale `Nuklear2.dll` fails fast with a detailed `BadImageFormatException`; see [ABI validation](INFO.md#abi-validation).
 
 ![NuklearDotNet example](screenshots/a.png)
 
@@ -17,7 +17,7 @@ The primary development path targets .NET 9 on Windows. The repository also reta
 - API layers: raw unsafe `Nuklear` bindings and the convenience-oriented `NuklearAPI`
 - Included renderer examples: Raylib, SFML.Net, MonoGame DesktopGL, and Windows Forms
 - Packaging: source projects and native DLLs; no NuGet package is currently published
-- Testing: no automated test suite or CI workflow is currently included
+- Testing: a native ABI/export validation executable is included; no CI workflow is currently configured
 
 For architecture, maintenance procedures, and verified project details, see [INFO.md](INFO.md). Planned work and active defects are tracked in [TODO.md](TODO.md).
 
@@ -60,18 +60,24 @@ After a successful solution build, run the Raylib example from Visual Studio or 
 dotnet run --project Example_Raylib/Example_RaylibDotnet.csproj --configuration Debug --no-build
 ```
 
+Validate the DLL and managed binding without opening a GUI:
+
+```powershell
+dotnet run --project BindingValidation/BindingValidation.csproj --configuration Debug --no-build
+```
+
 If MSBuild reports `MSB8020`, install the configured `v145` toolset or explicitly retarget both native projects to a compatible installed toolset. A command such as `dotnet build NuklearDotNetDotnet.sln` is not a substitute because the .NET SDK MSBuild does not provide the C++ targets required by the native projects.
 
 ## Included examples
 
 | Project | Backend | Managed target | Notes |
 | --- | --- | --- | --- |
-| `Example_Raylib` | Raylib-cs 6.1.1 | `net9.0` | Primary example; uses a render texture and `IFrameBuffered`. |
+| `Example_Raylib` | Raylib-cs 6.1.1 | `net9.0` | Primary example; manually verified with indexed triangles, font-atlas texturing, clipping, input, and a cached render texture. |
 | `Example_SFML` | SFML.Net 2.5.1 | `net9.0` | Includes the CSFML/OpenAL native runtime files used by the example. |
 | `Example_MonoGame` | MonoGame DesktopGL 3.8.1.303 | `net9.0-windows` | Uses the MonoGame content tool manifest; framebuffer support is not implemented. |
 | `Example_WindowsForms` | Windows Forms/System.Drawing | `net9.0-windows` | Software-oriented Windows backend. |
 
-These projects are implementation examples rather than a compatibility guarantee. Their managed projects compile individually as of the verification recorded in [INFO.md](INFO.md#verification-snapshot), but GUI runtime behavior is still subject to the ABI limitation above.
+These projects are implementation examples rather than a compatibility guarantee. Their managed projects compile as of the verification recorded in [INFO.md](INFO.md#verification-snapshot); the Raylib example was also interactively verified on Windows x64.
 
 ## API overview
 
@@ -124,7 +130,7 @@ interface IFrameBuffered
 }
 ```
 
-`BeginBuffering` and `EndBuffering` surround the GUI redraw. `RenderFinal` composites the cached result every frame. The current implementation temporarily forces conversion whenever input is handled because memory-based dirty detection was disabled while the ABI mismatch is unresolved.
+`BeginBuffering` and `EndBuffering` surround the GUI redraw. `RenderFinal` composites the cached result every frame. Framebuffer devices redraw when input or an explicit `QueueForceUpdate` invalidation is queued.
 
 Forward backend input through the device event queue:
 
@@ -165,6 +171,8 @@ while (running)
 ```
 
 The library currently owns a single static context. Calling `NuklearAPI.Init` more than once throws, and multiple-context support remains planned work.
+
+Call `NuklearAPI.Shutdown()` before destroying the renderer or window. Shutdown is idempotent, frees native allocations, and invokes the device's optional `Shutdown` hook.
 
 ## Legacy .NET Framework projects
 

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ExampleShared;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using NuklearDotNet;
 using Raylib_cs;
 
@@ -14,20 +15,10 @@ namespace Example_Raylib
 	unsafe class RaylibTexture
 	{
 		public Texture2D Texture;
-		public Image Image;
 
 		public RaylibTexture(int W, int H, IntPtr Data)
 		{
-			/*Image = Raylib.GenImageColor(W, H, Color.ORANGE);
-
-			for (int y = 0; y < H; y++)
-				for (int x = 0; x < W; x++) {
-					NkColor C = ((NkColor*)Data)[y * W + x];
-
-					Raylib.ImageDrawPixel(ref Image, x, y, new Color(C.R, C.G, C.B, C.A));
-				}*/
-
-			Image = new Image
+			Image image = new Image
 			{
 				Width = W,
 				Height = H,
@@ -36,7 +27,7 @@ namespace Example_Raylib
 				Data = (void*)Data
 			};
 
-			Texture = Raylib.LoadTextureFromImage(Image);
+			Texture = Raylib.LoadTextureFromImage(image);
 			Raylib.SetTextureFilter(Texture, TextureFilter.Point);
 			Raylib.SetTextureWrap(Texture, TextureWrap.Clamp);
 		}
@@ -45,6 +36,10 @@ namespace Example_Raylib
 	unsafe class RaylibDevice : NuklearDeviceTex<RaylibTexture>, IFrameBuffered
 	{
 		RenderTexture2D RT;
+		readonly List<RaylibTexture> Textures = new List<RaylibTexture>();
+		readonly Dictionary<NkKeys, bool> KeyStates = new Dictionary<NkKeys, bool>();
+		int LastMouseX;
+		int LastMouseY;
 
 		// Re-enable frame buffering - basic rendering works now
 		public override bool EnableFrameBuffered => true;
@@ -63,7 +58,16 @@ namespace Example_Raylib
 
 		public override RaylibTexture CreateTexture(int W, int H, IntPtr Data)
 		{
-			return new RaylibTexture(W, H, Data);
+			RaylibTexture texture = new RaylibTexture(W, H, Data);
+			Textures.Add(texture);
+			return texture;
+		}
+
+		public override void Init()
+		{
+			NuklearAPI.SetClipboardCallback(
+				text => Raylib.SetClipboardText(text),
+				() => Marshal.PtrToStringUTF8((IntPtr)Raylib.GetClipboardText()) ?? string.Empty);
 		}
 
 		public void BeginBuffering()
@@ -93,37 +97,138 @@ namespace Example_Raylib
 			Rlgl.Vertex2f(V.Position.X, V.Position.Y);
 		}
 
-		static void Draw(NkVertex v1, NkVertex v2, NkVertex v3)
-		{
-			DrawVert(v1);
-			DrawVert(v3);
-			DrawVert(v2);
-			DrawVert(v2);
-		}
-
 		public override void Render(NkHandle Userdata, RaylibTexture Texture, NkRect ClipRect, uint Offset, uint Count)
 		{
+			if (Count == 0)
+				return;
+			if (Count % 3 != 0)
+				throw new InvalidOperationException("Nuklear returned a non-triangular index count.");
+
+			int clipX = Math.Max(0, (int)Math.Floor(ClipRect.X));
+			int clipY = Math.Max(0, (int)Math.Floor(ClipRect.Y));
+			int clipRight = Math.Min(RT.Texture.Width, (int)Math.Ceiling(ClipRect.X + ClipRect.W));
+			int clipBottom = Math.Min(RT.Texture.Height, (int)Math.Ceiling(ClipRect.Y + ClipRect.H));
+			if (clipRight <= clipX || clipBottom <= clipY)
+				return;
+
 			Rlgl.DisableBackfaceCulling();
-			Raylib.BeginScissorMode((int)ClipRect.X, (int)ClipRect.Y, (int)ClipRect.W, (int)ClipRect.H);
+			Raylib.BeginScissorMode(clipX, clipY, clipRight - clipX, clipBottom - clipY);
+			bool drawing = false;
 			{
-				Rlgl.SetTexture(Texture.Texture.Id);
-				Rlgl.CheckRenderBatchLimit((int)Count);
-
-				Rlgl.Begin(DrawMode.Quads);
-				for (int i = 0; i < Count; i += 3)
+				try
 				{
-					NkVertex V1 = Verts[Inds[Offset + i]];
-					NkVertex V2 = Verts[Inds[Offset + i + 1]];
-					NkVertex V3 = Verts[Inds[Offset + i + 2]];
+					Rlgl.Begin(DrawMode.Triangles);
+					drawing = true;
+					Rlgl.SetTexture(Texture.Texture.Id);
+					for (uint i = 0; i < Count; i += 3)
+					{
+						if (Rlgl.CheckRenderBatchLimit(3))
+						{
+							Rlgl.Begin(DrawMode.Triangles);
+							Rlgl.SetTexture(Texture.Texture.Id);
+						}
 
-					Draw(V1, V2, V3);
+						DrawVert(Verts[Inds[Offset + i]]);
+						DrawVert(Verts[Inds[Offset + i + 1]]);
+						DrawVert(Verts[Inds[Offset + i + 2]]);
+					}
 				}
-				Rlgl.End();
-
-				Rlgl.SetTexture(0);
+				finally
+				{
+					if (drawing)
+						Rlgl.End();
+					Rlgl.SetTexture(0);
+					Raylib.EndScissorMode();
+					Rlgl.EnableBackfaceCulling();
+				}
 			}
-			Raylib.EndScissorMode();
-			Rlgl.EnableBackfaceCulling();
+		}
+
+		void SetKey(NkKeys key, bool down)
+		{
+			bool previous;
+			if (KeyStates.TryGetValue(key, out previous) && previous == down)
+				return;
+
+			KeyStates[key] = down;
+			OnKey(key, down);
+		}
+
+		public void PollInput()
+		{
+			Vector2 mouse = Raylib.GetMousePosition();
+			int mouseX = (int)mouse.X;
+			int mouseY = (int)mouse.Y;
+			if (mouseX != LastMouseX || mouseY != LastMouseY)
+			{
+				LastMouseX = mouseX;
+				LastMouseY = mouseY;
+				OnMouseMove(mouseX, mouseY);
+			}
+
+			PollMouseButton(MouseButton.Left, NuklearEvent.MouseButton.Left);
+			PollMouseButton(MouseButton.Middle, NuklearEvent.MouseButton.Middle);
+			PollMouseButton(MouseButton.Right, NuklearEvent.MouseButton.Right);
+			PollMouseButton(MouseButton.Side, NuklearEvent.MouseButton.X1);
+			PollMouseButton(MouseButton.Extra, NuklearEvent.MouseButton.X2);
+
+			Vector2 wheel = Raylib.GetMouseWheelMoveV();
+			if (wheel.X != 0 || wheel.Y != 0)
+				OnScroll(wheel.X, wheel.Y);
+
+			for (int codepoint = Raylib.GetCharPressed(); codepoint != 0; codepoint = Raylib.GetCharPressed())
+				OnText(char.ConvertFromUtf32(codepoint));
+
+			bool shift = Raylib.IsKeyDown(KeyboardKey.LeftShift) || Raylib.IsKeyDown(KeyboardKey.RightShift);
+			bool ctrl = Raylib.IsKeyDown(KeyboardKey.LeftControl) || Raylib.IsKeyDown(KeyboardKey.RightControl);
+			bool alt = Raylib.IsKeyDown(KeyboardKey.LeftAlt) || Raylib.IsKeyDown(KeyboardKey.RightAlt);
+			SetKey(NkKeys.Shift, shift);
+			SetKey(NkKeys.Ctrl, ctrl);
+			SetKey(NkKeys.Alt, alt);
+			SetKey(NkKeys.Del, Raylib.IsKeyDown(KeyboardKey.Delete));
+			SetKey(NkKeys.Enter, Raylib.IsKeyDown(KeyboardKey.Enter) || Raylib.IsKeyDown(KeyboardKey.KpEnter));
+			SetKey(NkKeys.Tab, Raylib.IsKeyDown(KeyboardKey.Tab));
+			SetKey(NkKeys.Backspace, Raylib.IsKeyDown(KeyboardKey.Backspace));
+			SetKey(NkKeys.Up, Raylib.IsKeyDown(KeyboardKey.Up));
+			SetKey(NkKeys.Down, Raylib.IsKeyDown(KeyboardKey.Down));
+			SetKey(NkKeys.Left, Raylib.IsKeyDown(KeyboardKey.Left));
+			SetKey(NkKeys.Right, Raylib.IsKeyDown(KeyboardKey.Right));
+			SetKey(NkKeys.InsertMode, Raylib.IsKeyDown(KeyboardKey.Insert));
+			SetKey(NkKeys.LineStart, Raylib.IsKeyDown(KeyboardKey.Home));
+			SetKey(NkKeys.LineEnd, Raylib.IsKeyDown(KeyboardKey.End));
+			SetKey(NkKeys.ScrollUp, Raylib.IsKeyDown(KeyboardKey.PageUp));
+			SetKey(NkKeys.ScrollDown, Raylib.IsKeyDown(KeyboardKey.PageDown));
+			SetKey(NkKeys.TextStart, ctrl && Raylib.IsKeyDown(KeyboardKey.Home));
+			SetKey(NkKeys.TextEnd, ctrl && Raylib.IsKeyDown(KeyboardKey.End));
+			SetKey(NkKeys.TextWordLeft, ctrl && Raylib.IsKeyDown(KeyboardKey.Left));
+			SetKey(NkKeys.TextWordRight, ctrl && Raylib.IsKeyDown(KeyboardKey.Right));
+			SetKey(NkKeys.TextSelectAll, ctrl && Raylib.IsKeyDown(KeyboardKey.A));
+			SetKey(NkKeys.TextUndo, ctrl && Raylib.IsKeyDown(KeyboardKey.Z));
+			SetKey(NkKeys.TextRedo, ctrl && Raylib.IsKeyDown(KeyboardKey.Y));
+			SetKey(NkKeys.Copy, ctrl && Raylib.IsKeyDown(KeyboardKey.C));
+			SetKey(NkKeys.Cut, ctrl && Raylib.IsKeyDown(KeyboardKey.X));
+			SetKey(NkKeys.Paste, ctrl && Raylib.IsKeyDown(KeyboardKey.V));
+
+			SetKey(NkKeys.F1, Raylib.IsKeyDown(KeyboardKey.F1));
+			SetKey(NkKeys.F2, Raylib.IsKeyDown(KeyboardKey.F2));
+			SetKey(NkKeys.F3, Raylib.IsKeyDown(KeyboardKey.F3));
+			SetKey(NkKeys.F4, Raylib.IsKeyDown(KeyboardKey.F4));
+			SetKey(NkKeys.F5, Raylib.IsKeyDown(KeyboardKey.F5));
+			SetKey(NkKeys.F6, Raylib.IsKeyDown(KeyboardKey.F6));
+			SetKey(NkKeys.F7, Raylib.IsKeyDown(KeyboardKey.F7));
+			SetKey(NkKeys.F8, Raylib.IsKeyDown(KeyboardKey.F8));
+			SetKey(NkKeys.F9, Raylib.IsKeyDown(KeyboardKey.F9));
+			SetKey(NkKeys.F10, Raylib.IsKeyDown(KeyboardKey.F10));
+			SetKey(NkKeys.F11, Raylib.IsKeyDown(KeyboardKey.F11));
+			SetKey(NkKeys.F12, Raylib.IsKeyDown(KeyboardKey.F12));
+		}
+
+		void PollMouseButton(MouseButton raylibButton, NuklearEvent.MouseButton nuklearButton)
+		{
+			if (Raylib.IsMouseButtonPressed(raylibButton))
+				OnMouseButton(nuklearButton, LastMouseX, LastMouseY, true);
+			if (Raylib.IsMouseButtonReleased(raylibButton))
+				OnMouseButton(nuklearButton, LastMouseX, LastMouseY, false);
 		}
 
 		public void EndBuffering()
@@ -142,6 +247,18 @@ namespace Example_Raylib
 
 			Raylib.DrawTextureRec(RT.Texture, new Rectangle(0, RT.Texture.Height, RT.Texture.Width, -RT.Texture.Height), Vector2.Zero, Color.White);
 		}
+
+		public override void Shutdown()
+		{
+			foreach (RaylibTexture texture in Textures)
+				Raylib.UnloadTexture(texture.Texture);
+			Textures.Clear();
+			if (RT.Id != 0)
+				Raylib.UnloadRenderTexture(RT);
+			RT = default(RenderTexture2D);
+			Verts = null;
+			Inds = null;
+		}
 	}
 
 
@@ -153,6 +270,7 @@ namespace Example_Raylib
 			DebugLog.Init();
 			DebugLog.Log("Application starting");
 
+			RaylibDevice Dev = null;
 			try
 			{
 				Stopwatch SWatch = Stopwatch.StartNew();
@@ -164,15 +282,12 @@ namespace Example_Raylib
 				DebugLog.Log("Raylib window initialized");
 
 				DebugLog.Log("Creating RaylibDevice");
-				RaylibDevice Dev = new RaylibDevice();
+				Dev = new RaylibDevice();
 				DebugLog.Log("RaylibDevice created, calling Shared.Init");
 				Shared.Init(Dev);
 				DebugLog.Log("Shared.Init completed");
 
 				float Dt = 0.1f;
-
-				int LastMouseX = 0;
-				int LastMouseY = 0;
 
 				DebugLog.Log("Entering main loop");
 				NuklearAPI.QueueForceUpdate();
@@ -182,19 +297,7 @@ namespace Example_Raylib
 				{
 					loopCount++;
 
-					Vector2 MousePos = Raylib.GetMousePosition();
-					if (LastMouseX != (int)MousePos.X || LastMouseY != (int)MousePos.Y)
-					{
-						LastMouseX = (int)MousePos.X;
-						LastMouseY = (int)MousePos.Y;
-						Dev.OnMouseMove(LastMouseX, LastMouseY);
-					}
-
-					if (Raylib.IsMouseButtonPressed(MouseButton.Left))
-						Dev.OnMouseButton(NuklearEvent.MouseButton.Left, LastMouseX, LastMouseY, true);
-
-					if (Raylib.IsMouseButtonReleased(MouseButton.Left))
-						Dev.OnMouseButton(NuklearEvent.MouseButton.Left, LastMouseX, LastMouseY, false);
+					Dev.PollInput();
 
 					Raylib.BeginDrawing();
 					Raylib.ClearBackground(Color.Black);
@@ -221,10 +324,19 @@ namespace Example_Raylib
 			finally
 			{
 				DebugLog.Log("Application shutting down");
+				try
+				{
+					NuklearAPI.Shutdown();
+				}
+				catch (Exception ex)
+				{
+					DebugLog.Error("Nuklear shutdown failed", ex);
+				}
+
+				if (Raylib.IsWindowReady())
+					Raylib.CloseWindow();
 				DebugLog.Flush();
 			}
-
-			Environment.Exit(0);
 		}
 	}
 }

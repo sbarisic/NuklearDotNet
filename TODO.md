@@ -70,19 +70,7 @@ A list of planned features, improvements, and tasks for this project.
 
 ### Active Bugs
 
-- [ ] **CPX 4** - Window dragging broken: window stays in place, only clip zone moves
-  - **Root Cause**: C# struct field offsets don't match native due to size mismatches
-  - **Mismatches Found**:
-    - `nk_context`: C#=18360 vs native=19064 (704 bytes difference)
-    - `nk_style`: C#=8640 vs native=9336 (696 bytes difference)  
-    - `nk_input`: C#=856 vs native=864 (8 bytes difference)
-    - `nk_context.draw_list` offset: C#=12528 vs native=13232
-  - **Workaround Applied**: Allocate native sizes for structs (fixes nk_convert crash)
-  - **Remaining Issue**: Direct C# field access reads wrong memory locations
-  - **Fix Options**:
-    1. Correct nk_input and nk_style struct definitions in C# (CPX 5)
-    2. Add P/Invoke getter functions for commonly accessed fields (CPX 3)
-    3. Add padding fields to align C# structs with native layout (CPX 4)
+*No active bugs*
 
 ### Uncategorized (Analyze and create TODO entries in above appropriate sections with priority. Do not fix or implement them just yet. Assign complexity points where applicable. Do not delete this section when you are done, just empty it)
 
@@ -121,10 +109,12 @@ NuklearDotNet is a C# binding library for the Nuklear immediate-mode GUI library
 
 - [x] **CPX 3** - Created Raylib backend using raylib_cs NuGet package (v6.1.1), removed legacy bundled bindings
 - [x] **CPX 4** - Full Nuklear2 multi-file build: enabled nk_knob_*, nk_nine_slice_*, nk_widget_disable_*, nk_spacer, nk_rule_horizontal, scroll functions, and 48 more exports
+- [x] **CPX 4** - Added versioned native ABI queries and a .NET validation executable covering layouts, enum values, offsets, and exported P/Invoke entry points
+- [x] **CPX 4** - Completed Raylib input, clipboard, indexed-triangle and font-atlas rendering, clipping, framebuffer resize, and resource shutdown handling
 
 ### Fixed Bugs
 
-- [x] **CPX 4** - Demo crashes at nk_convert: struct size mismatches (nk_context 704 bytes too small in C#); fixed by allocating native sizes via debug helpers
+- [x] **CPX 5** - Corrected Nuklear2 layouts for input, styles, property/window/page state, fixing `nk_convert`, direct field offsets, and window dragging; added fail-fast ABI validation
 - [x] **CPX 3** - Demo crashes at startup: switched to nk_init_default, nk_font_atlas_init_default, nk_buffer_init_default; fixed Group method to only call nk_group_end when begin succeeded
 - [x] **CPX 2** - Updated Example_Raylib.cs to raylib_cs v6.x API (PascalCase properties/enums)
 - [x] **CPX 1** - Added Example_Raylib project to solution (was already present)

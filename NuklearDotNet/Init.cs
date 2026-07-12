@@ -46,6 +46,15 @@ namespace NuklearDotNet {
 		NK_SYMBOL_TRIANGLE_RIGHT,
 		NK_SYMBOL_PLUS,
 		NK_SYMBOL_MINUS,
+		NK_SYMBOL_TRIANGLE_UP_OUTLINE,
+		NK_SYMBOL_TRIANGLE_DOWN_OUTLINE,
+		NK_SYMBOL_TRIANGLE_LEFT_OUTLINE,
+		NK_SYMBOL_TRIANGLE_RIGHT_OUTLINE,
+		NK_SYMBOL_CHEVRON_UP,
+		NK_SYMBOL_CHEVRON_RIGHT,
+		NK_SYMBOL_CHEVRON_DOWN,
+		NK_SYMBOL_CHEVRON_LEFT,
+		NK_SYMBOL_HAMBURGER,
 		NK_SYMBOL_MAX
 	}
 
@@ -332,15 +341,8 @@ namespace NuklearDotNet {
 	public unsafe struct nk_table {
 		public uint seq;
 		public uint size;
-		// nk_hash keys[(((((sizeof(struct nk_window)) < (sizeof(struct nk_panel)) ? (sizeof(struct nk_panel)) : (sizeof(struct nk_window))) / sizeof(nk_uint))) / 2)];
-		// nk_window: c# size 472, C size 472
-		// nk_panel: c# size 448, C size 448
-		// => nk_hash keys[(((472 < 448 ? 448 : 472) / 4) / 2)]
-		// => nk_hash keys[((472 / 4) / 2)]
-		// => nk_hash keys[472 / 8]
-		public fixed uint keys_nkhash[472 / 8];
-		// nk_uint values[(((((sizeof(struct nk_window)) < (sizeof(struct nk_panel)) ? (sizeof(struct nk_panel)) : (sizeof(struct nk_window))) / sizeof(nk_uint))) / 2)];
-		public fixed uint values[472 / 8];
+		public fixed uint keys_nkhash[Nuklear.NK_VALUE_PAGE_CAPACITY];
+		public fixed uint values[Nuklear.NK_VALUE_PAGE_CAPACITY];
 		public nk_table* next;
 		public nk_table* prev;
 	}
@@ -424,6 +426,9 @@ namespace NuklearDotNet {
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_clear(nk_context* context);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_free(nk_context* context);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_set_user_data(nk_context* context, NkHandle handle);

@@ -284,7 +284,7 @@ namespace ExampleShared
 						{
 							for (int i = 0; i < 10; i++)
 							{
-								float val = (float)Math.Sin(i * 0.5 + DateTime.Now.Millisecond * 0.001) * 0.5f + 0.5f;
+								float val = (float)Math.Sin(i * 0.5) * 0.5f + 0.5f;
 								Nuklear.nk_chart_push(NuklearAPI.Ctx, val);
 							}
 							Nuklear.nk_chart_end(NuklearAPI.Ctx);

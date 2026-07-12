@@ -459,9 +459,6 @@ namespace NuklearDotNet {
 		public static extern void nk_draw_list_setup(nk_draw_list* dl, nk_convert_config* ncc, nk_buffer* cmds, nk_buffer* vertices, nk_buffer* elements, nk_anti_aliasing line_aa, nk_anti_aliasing shape_aa);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
-		public static extern void nk_draw_list_clear(nk_draw_list* dl);
-
-		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern nk_draw_command* nk__draw_list_begin(nk_draw_list* dl, nk_buffer* buf);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]

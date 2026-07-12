@@ -50,15 +50,16 @@ The active native boundary is `Nuklear2.dll`. `Nuklear.DllName` is set to `Nukle
 6. A framebuffer device redraws its off-screen target between `BeginBuffering` and `EndBuffering`, then composites it through `RenderFinal` every frame.
 7. Nuklear command and conversion buffers are cleared for the next frame.
 
-Although the design contains a framebuffer dirty-check path, native-memory comparison is currently disabled. A handled input event is treated as dirty because comparing mismatched managed/native struct layouts was unreliable.
+Framebuffer devices rebuild their cached target when input or an explicit force-update event is queued. They composite the existing target on frames without an invalidation.
 
 ## Repository map
 
 | Path | Purpose |
 | --- | --- |
 | `NuklearDotNet/` | Managed structs, enums, raw P/Invoke functions, device abstractions, and `NuklearAPI`. |
+| `BindingValidation/` | .NET 9 x64 ABI and native-export validation executable. |
 | `Nuklear2/` | Current native DLL project, compilation unit, and export definition for `Nuklear2.dll`. |
-| `nuklear2_c/` | Current upstream Nuklear Git submodule from `Immediate-Mode-UI/Nuklear`. |
+| `nuklear2_c/` | Current upstream Nuklear Git submodule from `Immediate-Mode-UI/Nuklear`, pinned to `974bdb0`. |
 | `Nuklear/` | Legacy native DLL project using the older upstream tree. |
 | `nuklear_c/` | Legacy upstream Nuklear Git submodule from `vurtun/nuklear`. |
 | `ExampleShared/` | Shared demo state and widgets used by renderer examples. |
@@ -135,35 +136,35 @@ Treat a submodule update as an ABI/API change, not only a source refresh:
 3. Update `Nuklear2/Nuklear.c` when implementation files or required compile-time features change.
 4. Compare public functions with `Nuklear2/Nuklear.def`; add or remove exports intentionally.
 5. Update raw P/Invoke declarations, enums, delegates, and structs in `NuklearDotNet/`.
-6. Re-run native-versus-managed size and offset checks before accessing any struct field directly.
-7. Build Debug and Release x64 outputs, then exercise every example backend manually.
+6. Run native-versus-managed size and offset checks before accessing any struct field directly.
+7. Run `BindingValidation` against Debug and Release x64 outputs, then exercise every example backend manually.
 8. Update this document, `README.md`, and `TODO.md` when support or known limitations change.
 
 The native build enables font baking, the default font, vertex-buffer output, command userdata, the default allocator, standard varargs, `NK_ZERO_COMMAND_MEMORY`, `NK_BUTTON_TRIGGER_ON_RELEASE`, and `NK_INPUT_MAX` of 512. The managed definitions must remain consistent with all layout-affecting macros.
 
 The `Nuklear2/Nuklear.c` compilation unit includes the upstream implementation files directly, including newer functions such as knobs and nine-slice support. `Nuklear2/Nuklear.def` controls the exported API independently of what is compiled.
 
-## Known ABI limitation
+## ABI validation
 
-The active C# struct definitions do not currently match the native Nuklear2 layout. The recorded x64 Debug measurements are:
+The managed layouts are synchronized with Nuklear2 commit `974bdb0` and the compile-time options in `Nuklear2/Nuklear.c`. Current x64 values include:
 
-| Structure/field | Managed | Native | Difference |
-| --- | ---: | ---: | ---: |
-| `nk_context` size | 18,360 | 19,064 | 704 bytes |
-| `nk_style` size | 8,640 | 9,336 | 696 bytes |
-| `nk_input` size | 856 | 864 | 8 bytes |
-| `nk_context.draw_list` offset | 12,528 | 13,232 | 704 bytes |
+| Structure/field | Managed | Native |
+| --- | ---: | ---: |
+| `nk_context` size | 19,216 | 19,216 |
+| `nk_style` size | 9,352 | 9,352 |
+| `nk_input` size | 1,000 | 1,000 |
+| `nk_context.draw_list` offset | 13,384 | 13,384 |
 
-`NuklearAPI.Init` calls debug helper exports and allocates `nk_context` and `nk_font_atlas` using their native sizes. This workaround prevents under-allocation and fixed the prior crash in `nk_convert`, but it does not correct managed field offsets.
+The native library exposes one versioned `nk_debug_abi` query entry point. `Nuklear.ValidateNativeAbi()` compares critical structures, nested style types, offsets, enum maxima, and page-table capacity before `NuklearAPI.Init` accesses native state. `BindingValidation` additionally reflects over every Nuklear2 `DllImport` and verifies that the DLL exports its entry point.
 
-Consequences include:
+Run validation after every native source, macro, struct, enum, export-list, or toolchain change:
 
-- Window dragging is broken: the visible window remains in place while its clip region moves.
-- Direct C# access to fields after the first mismatched nested structure can read or write the wrong native memory.
-- Code that takes addresses of nested fields, including draw-list cleanup, must be treated as unsafe until layouts are corrected or replaced by native accessor functions.
-- Memory comparison cannot safely be used as the framebuffer dirty detector in the current state.
+```powershell
+dotnet run --project BindingValidation/BindingValidation.csproj --configuration Debug
+dotnet run --project BindingValidation/BindingValidation.csproj --configuration Release
+```
 
-Do not remove the native-size allocation workaround until all affected structs and offsets have been verified. Candidate fixes and active status are tracked in [TODO.md](TODO.md#active-bugs).
+Do not bypass a validation failure by allocating the larger native size. Correct the managed definition or pair it with the matching native DLL so field offsets remain safe.
 
 ## Diagnostics and operational notes
 
@@ -171,19 +172,20 @@ Do not remove the native-size allocation workaround until all affected structs a
 
 Native assertions are configured to force an access violation so failures cross the native boundary visibly. This is useful during debugging but means invalid native state may terminate the process rather than produce a recoverable managed exception.
 
-Allocator and free delegates are pinned for the process lifetime. Core native allocations are marked for future cleanup and currently have no matching public shutdown lifecycle.
+`NuklearAPI.Shutdown()` frees conversion buffers, font-atlas and context state, managed native blocks, clipboard delegates, and renderer resources through `NuklearDevice.Shutdown()`. It is idempotent and resets the static API for a later initialization.
 
 ## Verification snapshot
 
-Verification performed on 2026-07-13 used .NET SDK 10.0.301 while building the repository's .NET 9 targets.
+Verification performed on 2026-07-13 used .NET SDK 10.0.301 and Visual Studio 2022 MSBuild 17.14 while building the repository's .NET 9 targets.
 
-- `NuklearDotNetDotnet.csproj` compiled successfully with one unused-field warning for `LastMemory`.
-- Raylib, SFML, MonoGame, and Windows Forms managed projects compiled individually.
+- The full .NET 9 solution built successfully in Debug x64 with a local `v143` platform-toolset override.
+- Raylib, SFML, MonoGame, Windows Forms, and the validation executable compiled successfully.
+- The .NET Framework 4.8 binding compiled successfully with an isolated intermediate-output directory.
+- Debug and Release x64 `Nuklear2.dll` builds passed all ABI and export checks.
 - SFML produced a `NETSDK1206` runtime-identifier warning from CSFML.
 - Windows Forms produced platform-compatibility analyzer warnings.
-- The complete solution did not build through `dotnet build` because the .NET SDK does not provide Visual C++ project targets.
-- Full Visual Studio MSBuild reached the native projects but reported `MSB8020` because their configured `v145` toolset was not installed in the verification environment.
-- No automated tests or CI workflow were present.
-- Interactive runtime behavior was not certified by this documentation pass.
+- The .NET SDK alone still cannot build `.vcxproj` files; full MSBuild is required for the solution.
+- `v145` remains configured and was unavailable locally, so native verification used `/p:PlatformToolset=v143` without retargeting project files.
+- User-supplied Raylib screenshots confirmed startup, window dragging/resizing, scrolling, clipping, text entry, widgets, and correctly textured font rendering on Windows x64.
 
 This snapshot records observed state, not a promise that all future environments will produce identical warnings. Update it after material toolchain, project, or ABI changes.

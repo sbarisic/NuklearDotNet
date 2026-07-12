@@ -22,8 +22,10 @@ namespace NuklearDotNet {
 		Left,
 		Right,
 
-		InserMode,
-		ReplaceMode,
+		InsertMode,
+		[Obsolete("Use InsertMode.")]
+		InserMode = InsertMode,
+		ReplaceMode = InsertMode + 1,
 		ResetMode,
 		LineStart,
 		LineEnd,
@@ -39,6 +41,19 @@ namespace NuklearDotNet {
 		ScrollEnd,
 		ScrollDown,
 		ScrollUp,
+		Alt,
+		F1,
+		F2,
+		F3,
+		F4,
+		F5,
+		F6,
+		F7,
+		F8,
+		F9,
+		F10,
+		F11,
+		F12,
 		NK_KEY_MAX
 	}
 
@@ -47,6 +62,8 @@ namespace NuklearDotNet {
 		NK_BUTTON_MIDDLE,
 		NK_BUTTON_RIGHT,
 		NK_BUTTON_DOUBLE,
+		NK_BUTTON_X1,
+		NK_BUTTON_X2,
 		NK_BUTTON_MAX
 	}
 
@@ -64,8 +81,11 @@ namespace NuklearDotNet {
 		public nk_mouse_button buttonMiddle;
 		public nk_mouse_button buttonRight;
 		public nk_mouse_button buttonDouble;
+		public nk_mouse_button buttonX1;
+		public nk_mouse_button buttonX2;
 
 		public nk_vec2 pos;
+		public nk_vec2 down_pos;
 		public nk_vec2 prev;
 		public nk_vec2 delta;
 		public nk_vec2 scroll_delta;
@@ -147,6 +167,18 @@ namespace NuklearDotNet {
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_input_is_mouse_hovering_rect(nk_input* inp, NkRect r);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_input_is_mouse_hovering_still_rect(nk_input* inp, NkRect r);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_input_is_mouse_hovering_delay_rect(nk_context* ctx, NkRect r, float* timer, float delay);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_input_is_mouse_hovering_still_delay_rect(nk_context* ctx, NkRect r, float* timer, float delay);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_input_is_mouse_hovering_still_delay_clicked_rect(nk_context* ctx, NkRect r, float* timer, float delay, int* clicked);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_input_mouse_clicked(nk_input* inp, nk_buttons buttons, NkRect r);

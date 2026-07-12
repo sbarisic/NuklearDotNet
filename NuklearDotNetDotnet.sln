@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example_MonoGameDotnet", "E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example_RaylibDotnet", "Example_Raylib\Example_RaylibDotnet.csproj", "{6ABAE643-8107-6AAA-CE85-318CDB8CD4D1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BindingValidation", "BindingValidation\BindingValidation.csproj", "{ADF3C16E-B56E-4F2D-9317-A1BC8F2376E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -133,6 +135,18 @@ Global
 		{6ABAE643-8107-6AAA-CE85-318CDB8CD4D1}.Release|x64.Build.0 = Release|Any CPU
 		{6ABAE643-8107-6AAA-CE85-318CDB8CD4D1}.Release|x86.ActiveCfg = Release|Any CPU
 		{6ABAE643-8107-6AAA-CE85-318CDB8CD4D1}.Release|x86.Build.0 = Release|Any CPU
+		{ADF3C16E-B56E-4F2D-9317-A1BC8F2376E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADF3C16E-B56E-4F2D-9317-A1BC8F2376E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADF3C16E-B56E-4F2D-9317-A1BC8F2376E4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ADF3C16E-B56E-4F2D-9317-A1BC8F2376E4}.Debug|x64.Build.0 = Debug|Any CPU
+		{ADF3C16E-B56E-4F2D-9317-A1BC8F2376E4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ADF3C16E-B56E-4F2D-9317-A1BC8F2376E4}.Debug|x86.Build.0 = Debug|Any CPU
+		{ADF3C16E-B56E-4F2D-9317-A1BC8F2376E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADF3C16E-B56E-4F2D-9317-A1BC8F2376E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADF3C16E-B56E-4F2D-9317-A1BC8F2376E4}.Release|x64.ActiveCfg = Release|Any CPU
+		{ADF3C16E-B56E-4F2D-9317-A1BC8F2376E4}.Release|x64.Build.0 = Release|Any CPU
+		{ADF3C16E-B56E-4F2D-9317-A1BC8F2376E4}.Release|x86.ActiveCfg = Release|Any CPU
+		{ADF3C16E-B56E-4F2D-9317-A1BC8F2376E4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
