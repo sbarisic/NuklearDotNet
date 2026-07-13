@@ -7,6 +7,10 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     <NoWarn>$(NoWarn);CA1416</NoWarn>
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputPath Condition="'$(Configuration)' == 'Debug'">..\bin_dbg\</OutputPath>
+    <OutputPath Condition="'$(Configuration)' == 'Release'">..\bin\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\bin_dbg\Nuklear2.dll" Link="Nuklear2.dll" Condition="'$(Configuration)' == 'Debug'">
