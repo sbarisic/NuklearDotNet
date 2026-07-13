@@ -51,6 +51,13 @@
     <Compile Include="Layout.cs" />
     <Compile Include="Macros.cs" />
     <Compile Include="NuklearAPI.cs" />
+    <Compile Include="NuklearAPI.Interop.cs" />
+    <Compile Include="NuklearAPI.Input.cs" />
+    <Compile Include="NuklearAPI.Windows.cs" />
+    <Compile Include="NuklearAPI.Layout.cs" />
+    <Compile Include="NuklearAPI.Widgets.cs" />
+    <Compile Include="NuklearAPI.Scopes.cs" />
+    <Compile Include="NuklearAPI.Clipboard.cs" />
     <Compile Include="Style.cs" />
     <Compile Include="Widget.cs" />
     <Compile Include="Text.cs" />

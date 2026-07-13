@@ -11,6 +11,23 @@ For repository architecture and native maintenance, see [INFO.md](INFO.md). For 
 
 For a larger working application, `ExampleShared.CommonDemoSuite` drives the same managed ports of Nuklear's common demos through the Raylib, SFML.Net, MonoGame, and Windows Forms backends. It demonstrates mixing convenience helpers with raw canvas, input, layout-space, chart, tree, and style APIs.
 
+## Source organization
+
+`NuklearAPI` is one static partial class split by responsibility:
+
+| Source file | Responsibility |
+| --- | --- |
+| `NuklearAPI.cs` | Context lifecycle, frame processing, conversion, and renderer dispatch. |
+| `NuklearAPI.Interop.cs` | Native allocation, font-atlas setup, initialization guards, and UTF-8 helpers. |
+| `NuklearAPI.Input.cs` | Device-event draining and key/mouse queries. |
+| `NuklearAPI.Windows.cs` | Windows, groups, state, positioning, visibility, and scrolling. |
+| `NuklearAPI.Layout.cs` | Dynamic/static rows, manual/template rows, and layout-space helpers. |
+| `NuklearAPI.Widgets.cs` | Labels, buttons, editing, common values, pickers, and widget queries. |
+| `NuklearAPI.Scopes.cs` | Exception-safe tree, chart, popup, contextual, combo, and tooltip helpers. |
+| `NuklearAPI.Clipboard.cs` | Managed/native clipboard callback bridge. |
+
+This layout does not create separate API objects. All calls remain `NuklearAPI.Member(...)`. Context-dependent helpers throw `InvalidOperationException` before initialization instead of accessing a null native context.
+
 ## Requirements and build order
 
 The primary configuration is .NET 9 on Windows x64. Managed code loads `Nuklear2.dll`, so build the native project before running an application.
@@ -177,6 +194,29 @@ NuklearAPI.LayoutRowStatic(height: 24, itemWidth: 90, cols: 3);
 NuklearAPI.Label("One");
 NuklearAPI.Label("Two");
 NuklearAPI.Label("Three");
+```
+
+Manual and template layouts are available when equal rows are insufficient:
+
+```csharp
+NuklearAPI.LayoutRowBegin(nk_layout_format.NK_DYNAMIC, 30, 2);
+try
+{
+    NuklearAPI.LayoutRowPush(0.30f);
+    NuklearAPI.Label("Name");
+    NuklearAPI.LayoutRowPush(0.70f);
+    NuklearAPI.EditString(NkEditTypes.Field, name);
+}
+finally
+{
+    NuklearAPI.LayoutRowEnd();
+}
+
+NuklearAPI.LayoutSpace(nk_layout_format.NK_STATIC, 100, 1, () =>
+{
+    NuklearAPI.LayoutSpacePush(new NkRect(10, 10, 120, 30));
+    NuklearAPI.ButtonLabel("Placed widget");
+});
 ```
 
 Call a layout helper again whenever row height, width policy, or column count changes.
@@ -392,6 +432,7 @@ When the host window or render target changes size:
 | Member | Behavior |
 | --- | --- |
 | `Init(NuklearDevice)` | Validates the ABI, allocates the native context/buffers, initializes the device and font atlas, and rejects duplicate initialization. |
+| `IsInitialized` | Reports whether a native context is currently active. |
 | `Shutdown()` | Idempotently releases native and backend resources and resets the static API. |
 | `Frame(Action)` | Processes input, conditionally builds UI, converts/draws commands, and composites a cached target. Throws before initialization. |
 | `SetDeltaTime(float)` | Sets native frame delta time in seconds when a context exists. |
@@ -409,9 +450,16 @@ When the host window or render target changes size:
 | `WindowIsHidden(name)` | Queries the named window's hidden state. |
 | `WindowIsCollapsed(name)` | Queries the named window's collapsed state. |
 | `WindowClose(name)` | Requests closure of the named window. |
+| `WindowShow/WindowHide(name)` | Changes named-window visibility. |
+| `WindowCollapse/WindowExpand(name)` | Changes named-window collapsed state. |
+| `WindowSetBounds/Position/Size/Focus(...)` | Updates named-window state using explicit UTF-8 identifiers. |
 | `WindowGetBounds()` | Returns the current window bounds; call inside an active window scope. |
+| `WindowGetPosition/Size/ContentRegion()` | Returns geometry for the active window. |
+| `WindowGetScroll/WindowSetScroll(...)` | Reads or updates active-window scrolling. |
+| `WindowIsActive/WindowIsHovered/WindowIsAnyHovered(...)` | Queries current window interaction state. |
 | `Group(name, title, flags, callback)` | Builds a titled nested group and returns whether content ran. |
 | `Group(name, flags, callback)` | Uses the name as both group identity and title. |
+| `GroupGetScroll/GroupSetScroll(...)` | Reads or updates named-group scrolling. |
 
 ### Layouts and widgets
 
@@ -419,15 +467,28 @@ When the host window or render target changes size:
 | --- | --- |
 | `LayoutRowDynamic(height, cols)` | Creates a row whose columns share available width. Defaults to height `0` and one column. |
 | `LayoutRowStatic(height, itemWidth, cols)` | Creates a row with fixed-width columns. |
+| `LayoutRowBegin/Push/End(...)` | Builds a manual static or dynamic row. Always balance begin/end. |
+| `LayoutTemplateBegin/Push*/End(...)` | Builds a mixed fixed, variable, and dynamic template row. |
+| `LayoutSpace(format, height, count, callback)` | Runs an exception-safe free-placement layout scope. |
+| `LayoutSpacePush/Bounds/ToScreen/ToLocal(...)` | Places widgets and converts layout-space coordinates. |
 | `ButtonLabel(label)` | Draws a label button and returns `true` when activated. |
 | `ButtonText(text)` / `ButtonText(char)` | Draws a text button and returns `true` when activated. |
+| `ButtonColor/ButtonSymbol/ButtonImage(...)` | Draws non-text buttons, with symbol/image-label overloads. |
 | `Label(text, alignment)` | Draws a label; alignment defaults to middle-left. |
 | `LabelWrap(text)` | Draws a wrapping label. |
 | `LabelColored(text, color, alignment)` | Draws a colored label from `NkColor` or RGBA bytes. |
 | `LabelColoredWrap(text, color)` | Draws a colored wrapping label from `NkColor` or RGBA bytes. |
 | `EditString(type, buffer, filter)` | Edits a bounded `StringBuilder`, returning `NkEditEvents`; the filter returns nonzero to accept a rune. |
 | `EditString(type, buffer)` | Edits with an accept-all filter. |
-| `IsKeyPressed(key)` | Queries whether a Nuklear key was pressed in the current input frame. |
+| `Checkbox/Option/Selectable(...)` | Provides managed boolean wrappers for common selection widgets. |
+| `Slider/Knob/Progress/Property(...)` | Updates managed numeric values through typed overloads. |
+| `ColorPicker(color, format)` | Returns the updated floating-point color. |
+| `Tree/Chart/Popup/Contextual(...)` | Runs balanced native begin/end scopes through callbacks. |
+| `Combo(items, selected, ...)` | Displays a UTF-8 string combo and returns the selected index. |
+| `Tooltip(text)` | Displays a tooltip for the current widget. |
+| `IsKeyPressed/Released/Down(key)` | Queries key state in the current Nuklear input frame. |
+| `IsMouseDown/Pressed/Released(...)` | Queries mapped mouse-button state. |
+| `WidgetBounds/WidgetIsHovered/WidgetIsMouseClicked(...)` | Queries the most recently allocated widget. |
 
 ### Clipboard and exposed state
 

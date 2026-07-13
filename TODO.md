@@ -116,6 +116,7 @@ NuklearDotNet is a C# binding library for the Nuklear immediate-mode GUI library
 - [x] **CPX 5** - Replaced the Windows Forms outline/thread placeholder with a framebuffer-cached UI-thread CPU triangle rasterizer supporting textures, interpolated color, clipping, input, clipboard, resize, and shutdown
 - [x] **CPX 2** - Made framebuffer caching opt-in so devices only require `IFrameBuffered` when explicitly enabled
 - [x] **CPX 5** - Ported Nuklear's common calculator, canvas, overview, node editor, style configurator, and ten themes into a shared .NET 9 demo suite used by all four modern backends
+- [x] **CPX 5** - Split `NuklearAPI` into responsibility-based partial files, added guarded UTF-8 convenience wrappers and scoped APIs, normalized the managed assembly name, and prepared the validated 1.1.0 Windows x64 release
 
 ### Fixed Bugs
 

@@ -40,6 +40,8 @@ The active native boundary is `Nuklear2.dll`. `Nuklear.DllName` is set to `Nukle
 
 `NuklearAPI` is global and stateful: `Ctx`, `Dev`, conversion buffers, the font atlas, and initialization state are static. It supports one active context per process; idempotent `Shutdown` releases that context and allows a later initialization.
 
+`NuklearAPI` is implemented as one public partial class. `NuklearAPI.cs` retains lifecycle, conversion, and renderer dispatch; responsibility files cover interop/allocation, input, windows/groups, layouts, widgets, balanced scopes, and clipboard integration. The split is organizational only: consumers still use the single `NuklearAPI` type. Context-dependent helpers call a shared initialization guard and string-taking raw calls use explicit UTF-8 marshalling.
+
 ### Frame behavior
 
 1. A backend translates platform events into calls on its `NuklearDevice`.
@@ -89,6 +91,8 @@ Both solutions include the current and legacy native projects. The managed bindi
 | Windows Forms example | `net9.0-windows` | UI-thread CPU rasterizer cached until input or resize invalidates the frame. |
 
 The SDK-style binding also references `Microsoft.CSharp` 4.7.0 and `System.Data.DataSetExtensions` 4.5.0. There is no NuGet packaging project.
+
+The .NET 9 project emits `NuklearDotNet.dll` with assembly/file version `1.1.0.0`. This intentionally replaces the previously unshipped `NuklearDotNetDotnet` assembly identity and aligns modern, legacy, and GitHub release naming.
 
 ## Building and outputs
 
@@ -172,6 +176,12 @@ dotnet run --project BindingValidation/BindingValidation.csproj --configuration 
 
 Do not bypass a validation failure by allocating the larger native size. Correct the managed definition or pair it with the matching native DLL so field offsets remain safe.
 
+`BindingValidation` also initializes a headless device and submits a representative convenience-API frame. This checks initialization guards, common widgets, balanced layout/tree/chart scopes, conversion, and idempotent shutdown without opening a desktop window.
+
+## Publishing a Windows release
+
+Release 1.1.0 uses the configured `v145` toolset through Visual Studio 18 MSBuild. Build Debug and Release x64 native DLLs, run both validator configurations, and build the .NET 9 binding in Release before tagging. The stable GitHub release attaches only the matching optimized `bin/Nuklear2.dll` and managed `NuklearDotNet.dll`; Debug binaries, PDBs, import libraries, and example executables are not release assets.
+
 ## Diagnostics and operational notes
 
 `NuklearAPI` writes initialization and rendering diagnostics to `nuklear_debug.txt` in the process working directory. `ExampleShared.DebugLog` provides additional example-level logging. These logs may be created during normal execution and are not a stable public interface.
@@ -191,7 +201,7 @@ Verification performed on 2026-07-13 used .NET SDK 10.0.301 and Visual Studio 20
 - SFML produced a `NETSDK1206` runtime-identifier warning from CSFML.
 - MonoGame and Windows Forms compiled successfully in Debug and Release x64 with matching native-DLL deployment after clean builds.
 - The .NET SDK alone still cannot build `.vcxproj` files; full MSBuild is required for the solution.
-- `v145` remains configured and was unavailable locally, so native verification used `/p:PlatformToolset=v143` without retargeting project files.
+- `v145` remains configured and is available through Visual Studio 18; the 1.1.0 native release candidate was built without a toolset override.
 - User-supplied Raylib screenshots confirmed startup, window dragging/resizing, scrolling, clipping, text entry, widgets, and correctly textured font rendering on Windows x64.
 - The repaired SFML.Net example compiled successfully in Debug and Release x64, including configuration-specific `Nuklear2.dll` deployment; interactive verification remains pending user-supplied screenshots.
 - The repaired MonoGame and Windows Forms examples passed non-interactive build/deployment checks; rendering, input, resize, clipboard, and shutdown verification remains pending user-supplied screenshots.

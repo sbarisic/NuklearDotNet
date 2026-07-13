@@ -8,20 +8,12 @@ internal static unsafe class DemoUi
 {
     internal static bool Checkbox(string label, ref bool value)
     {
-        int active = value ? 1 : 0;
-        byte[] bytes = Encoding.UTF8.GetBytes(label + "\0");
-        fixed (byte* text = bytes)
-            Nuklear.nk_checkbox_label(NuklearAPI.Ctx, text, &active);
-        bool changed = value != (active != 0);
-        value = active != 0;
-        return changed;
+        return NuklearAPI.Checkbox(label, ref value);
     }
 
     internal static bool Option(string label, bool active)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(label + "\0");
-        fixed (byte* text = bytes)
-            return Nuklear.nk_option_label(NuklearAPI.Ctx, text, active ? 1 : 0) != 0;
+        return NuklearAPI.Option(label, active);
     }
 
     internal static void CheckboxAligned(string label, ref bool value, uint widgetAlignment, uint textAlignment)
@@ -62,8 +54,7 @@ internal static unsafe class DemoUi
 
     internal static void ShowWindow(string name)
     {
-        byte[] bytes=Encoding.UTF8.GetBytes(name+"\0");
-        fixed(byte* text=bytes) Nuklear.nk_window_show(NuklearAPI.Ctx,text,nk_show_states.NK_SHOWN);
+        NuklearAPI.WindowShow(name);
     }
 
     internal static void Property(string name, float* value, float min = 0, float max = 64, float step = 0.25f)

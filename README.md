@@ -4,6 +4,12 @@ NuklearDotNet is an unsafe C# binding and renderer abstraction for [Nuklear](htt
 
 The primary development path targets .NET 9 on Windows. The repository also retains .NET Framework 4.8 projects as a legacy compatibility path.
 
+## Release 1.1.0
+
+The Windows x64 release publishes the optimized native `Nuklear2.dll` and the .NET 9 managed `NuklearDotNet.dll` from the same validated commit. Download both assets from the [1.1.0 GitHub release](https://github.com/sbarisic/NuklearDotNet/releases/tag/1.1.0) and place them together beside your executable. Do not mix either file with a DLL from an older release or another architecture.
+
+The modern binding assembly is now consistently named `NuklearDotNet.dll`, matching its namespace, product name, legacy assembly, and historical release asset.
+
 > [!NOTE]
 > The managed binding validates critical sizes, offsets, enum values, and native exports before initialization. A mismatched or stale `Nuklear2.dll` fails fast with a detailed `BadImageFormatException`; see [ABI validation](INFO.md#abi-validation).
 
@@ -15,6 +21,7 @@ The primary development path targets .NET 9 on Windows. The repository also reta
 - Primary managed target: .NET 9
 - Platform: Windows; examples are configured primarily for x64
 - API layers: raw unsafe `Nuklear` bindings and the convenience-oriented `NuklearAPI`
+- Current release: 1.1.0 (`NuklearDotNet.dll` assembly version 1.1.0.0)
 - Included renderer examples: Raylib, SFML.Net, MonoGame DesktopGL, and Windows Forms
 - Packaging: source projects and native DLLs; no NuGet package is currently published
 - Testing: a native ABI/export validation executable is included; no CI workflow is currently configured
