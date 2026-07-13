@@ -293,6 +293,24 @@ namespace NuklearDotNet
 	}
 
 	[Flags]
+	public enum NkWidgetAlign
+	{
+		Left = 0x01,
+		Centered = 0x02,
+		Right = 0x04,
+		Top = 0x08,
+		Middle = 0x10,
+		Bottom = 0x20
+	}
+
+	public enum NkWidgetAlignment
+	{
+		Left = NkWidgetAlign.Middle | NkWidgetAlign.Left,
+		Centered = NkWidgetAlign.Middle | NkWidgetAlign.Centered,
+		Right = NkWidgetAlign.Middle | NkWidgetAlign.Right
+	}
+
+	[Flags]
 	public enum NkEditFlags
 	{ // nk_edit_flags
 		Default = 0,
@@ -474,6 +492,12 @@ namespace NuklearDotNet
 		public static extern int nk_tree_image_push_hashed(nk_context* ctx, nk_tree_type tree_type, nk_image img, byte* title, nk_collapse_states initial_state, byte* hash, int len, int seed);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_tree_element_push_hashed(nk_context* ctx, nk_tree_type tree_type, byte* title, nk_collapse_states initial_state, int* selected, byte* hash, int len, int seed);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_tree_element_pop(nk_context* ctx);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern void nk_tree_pop(nk_context* ctx);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
@@ -651,6 +675,9 @@ namespace NuklearDotNet
 		public static extern int nk_checkbox_label(nk_context* ctx, byte* s, int* active);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_checkbox_label_align(nk_context* ctx, byte* s, int* active, uint widget_alignment, uint text_alignment);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_checkbox_text(nk_context* ctx, byte* s, int i, int* active);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
@@ -667,6 +694,9 @@ namespace NuklearDotNet
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_option_label(nk_context* ctx, byte* s, int active);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern int nk_option_label_align(nk_context* ctx, byte* s, int active, uint widget_alignment, uint text_alignment);
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern int nk_option_text(nk_context* ctx, byte* s, int i, int active);

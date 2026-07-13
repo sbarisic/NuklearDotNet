@@ -271,6 +271,7 @@ namespace Example_Raylib
 			DebugLog.Log("Application starting");
 
 			RaylibDevice Dev = null;
+			CommonDemoSuite demos = null;
 			try
 			{
 				Stopwatch SWatch = Stopwatch.StartNew();
@@ -283,9 +284,10 @@ namespace Example_Raylib
 
 				DebugLog.Log("Creating RaylibDevice");
 				Dev = new RaylibDevice();
-				DebugLog.Log("RaylibDevice created, calling Shared.Init");
-				Shared.Init(Dev);
-				DebugLog.Log("Shared.Init completed");
+				DebugLog.Log("RaylibDevice created, initializing common demos");
+				demos = new CommonDemoSuite();
+				demos.Initialize(Dev);
+				DebugLog.Log("Common demos initialized");
 
 				float Dt = 0.1f;
 
@@ -301,7 +303,7 @@ namespace Example_Raylib
 
 					Raylib.BeginDrawing();
 					Raylib.ClearBackground(Color.Black);
-					Shared.DrawLoop(Dt);
+					demos.Frame(Dt);
 					Raylib.EndDrawing();
 
 					Dt = SWatch.ElapsedMilliseconds / 1000.0f;
@@ -326,7 +328,7 @@ namespace Example_Raylib
 				DebugLog.Log("Application shutting down");
 				try
 				{
-					NuklearAPI.Shutdown();
+					demos?.Shutdown();
 				}
 				catch (Exception ex)
 				{

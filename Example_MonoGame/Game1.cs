@@ -13,6 +13,7 @@ namespace Example_MonoGame
         readonly Dictionary<NkKeys, bool> KeyStates = new Dictionary<NkKeys, bool>();
 
         MonoGameDevice Device;
+        CommonDemoSuite Demos;
         MouseState PreviousMouse;
         char? PendingHighSurrogate;
 
@@ -34,7 +35,8 @@ namespace Example_MonoGame
             PreviousMouse = Mouse.GetState();
             Window.TextInput += OnTextInput;
             Window.ClientSizeChanged += OnClientSizeChanged;
-            Shared.Init(Device);
+            Demos = new CommonDemoSuite();
+            Demos.Initialize(Device);
         }
 
         void OnClientSizeChanged(object sender, EventArgs eventArgs)
@@ -179,7 +181,7 @@ namespace Example_MonoGame
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            Shared.DrawLoop((float)gameTime.ElapsedGameTime.TotalSeconds);
+            Demos.Frame((float)gameTime.ElapsedGameTime.TotalSeconds);
             base.Draw(gameTime);
         }
 
@@ -187,7 +189,7 @@ namespace Example_MonoGame
         {
             Window.TextInput -= OnTextInput;
             Window.ClientSizeChanged -= OnClientSizeChanged;
-            NuklearAPI.Shutdown();
+            Demos?.Shutdown();
             DebugLog.Flush();
             base.UnloadContent();
         }

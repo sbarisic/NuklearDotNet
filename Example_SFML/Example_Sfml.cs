@@ -331,6 +331,7 @@ namespace Example_SFML
             DebugLog.Log("SFML application starting");
 
             RenderWindow window = null;
+            CommonDemoSuite demos = null;
             SFMLDevice device = null;
             try
             {
@@ -369,7 +370,8 @@ namespace Example_SFML
                         device.OnText(eventArgs.Unicode);
                 };
 
-                Shared.Init(device);
+                demos = new CommonDemoSuite();
+                demos.Initialize(device);
                 NuklearAPI.QueueForceUpdate();
                 while (window.IsOpen)
                 {
@@ -379,7 +381,7 @@ namespace Example_SFML
 
                     float deltaTime = (float)stopwatch.Elapsed.TotalSeconds;
                     stopwatch.Restart();
-                    Shared.DrawLoop(deltaTime);
+                    demos.Frame(deltaTime);
 
                     window.Display();
                 }
@@ -393,7 +395,7 @@ namespace Example_SFML
             {
                 try
                 {
-                    NuklearAPI.Shutdown();
+                    demos?.Shutdown();
                 }
                 catch (Exception ex)
                 {

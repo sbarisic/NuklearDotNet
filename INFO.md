@@ -62,7 +62,7 @@ Framebuffer devices rebuild their cached target when input or an explicit force-
 | `nuklear2_c/` | Current upstream Nuklear Git submodule from `Immediate-Mode-UI/Nuklear`, pinned to `974bdb0`. |
 | `Nuklear/` | Legacy native DLL project using the older upstream tree. |
 | `nuklear_c/` | Legacy upstream Nuklear Git submodule from `vurtun/nuklear`. |
-| `ExampleShared/` | Shared demo state and widgets used by renderer examples. |
+| `ExampleShared/` | .NET 9 shared port of Nuklear's calculator, canvas, overview, node editor, style configurator, and theme helper. |
 | `Example_Raylib/` | Raylib-cs renderer and primary interactive example. |
 | `Example_SFML/` | SFML.Net framebuffered renderer example and native CSFML dependencies. |
 | `Example_MonoGame/` | MonoGame DesktopGL indexed-triangle renderer and content configuration. |
@@ -122,6 +122,12 @@ A renderer backend is responsible for:
 - Recreating and invalidating framebuffer resources on resize if it implements `IFrameBuffered`.
 
 `NuklearDeviceTex<T>` reserves texture index zero and assigns positive integer handles to textures. A raw `NuklearDevice` implementation must provide an equivalent integer-handle mapping itself.
+
+### Shared common-demo suite
+
+The four modern backends instantiate `ExampleShared.CommonDemoSuite`. The suite owns all managed demo state, initializes the single global `NuklearAPI` context, submits the launcher and enabled demos from `Frame`, and shuts the context down idempotently. Overview starts enabled; the launcher can independently show or hide Calculator, Canvas, Node Editor, and Style Configurator and select any theme ported from upstream `style.c`.
+
+The port uses managed objects and collections for persistent calculator and node-editor state, while canvas drawing, input inspection, and style configuration intentionally use the raw unsafe binding. Macro-only native helpers such as `nk_tree_push` are represented by managed calls to the exported hashed variants with stable identifiers. The platform-dependent native file browser and its OpenGL/STB image loader are intentionally excluded.
 
 `FontStash(IntPtr atlas)` may add fonts between native atlas begin and bake. The default font is baked even when the backend does not override this hook.
 
@@ -189,5 +195,6 @@ Verification performed on 2026-07-13 used .NET SDK 10.0.301 and Visual Studio 20
 - User-supplied Raylib screenshots confirmed startup, window dragging/resizing, scrolling, clipping, text entry, widgets, and correctly textured font rendering on Windows x64.
 - The repaired SFML.Net example compiled successfully in Debug and Release x64, including configuration-specific `Nuklear2.dll` deployment; interactive verification remains pending user-supplied screenshots.
 - The repaired MonoGame and Windows Forms examples passed non-interactive build/deployment checks; rendering, input, resize, clipboard, and shutdown verification remains pending user-supplied screenshots.
+- The shared common-demo suite and all four modern backends compiled successfully in Debug and Release x64. Debug and Release ABI/export validation also passed with the additional raw functions required by the demos; interactive demo verification remains pending user-supplied screenshots.
 
 This snapshot records observed state, not a promise that all future environments will produce identical warnings. Update it after material toolchain, project, or ABI changes.

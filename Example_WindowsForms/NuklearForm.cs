@@ -296,6 +296,7 @@ namespace Example_WindowsForms
         readonly Stopwatch FrameTimer = Stopwatch.StartNew();
 
         FormDevice Device;
+        CommonDemoSuite Demos;
         char? PendingHighSurrogate;
         bool IsClosing;
 
@@ -320,7 +321,8 @@ namespace Example_WindowsForms
         void NuklearForm_Load(object sender, EventArgs eventArgs)
         {
             Device = new FormDevice(ClientSize.Width, ClientSize.Height);
-            Shared.Init(Device);
+            Demos = new CommonDemoSuite();
+            Demos.Initialize(Device);
             FrameTimer.Restart();
             RenderTimer.Start();
         }
@@ -333,7 +335,7 @@ namespace Example_WindowsForms
             PollKeyboard();
             float deltaTime = (float)FrameTimer.Elapsed.TotalSeconds;
             FrameTimer.Restart();
-            Shared.DrawLoop(deltaTime);
+            Demos.Frame(deltaTime);
             Invalidate();
         }
 
@@ -501,7 +503,7 @@ namespace Example_WindowsForms
             RenderTimer.Stop();
             try
             {
-                NuklearAPI.Shutdown();
+                Demos?.Shutdown();
             }
             finally
             {

@@ -8,6 +8,10 @@
     <Copyright>Copyright ©  2018</Copyright>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath Condition="'$(Configuration)' == 'Debug'">..\bin_dbg\</OutputPath>
+    <OutputPath Condition="'$(Configuration)' == 'Release'">..\bin\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\bin_dbg\</OutputPath>
@@ -21,6 +25,9 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\NuklearDotNet\NuklearDotNetDotnet.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Shared.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

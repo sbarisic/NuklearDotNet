@@ -276,5 +276,17 @@ namespace NuklearDotNet {
 
 		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
 		public static extern nk_vec2 nk_rect_size(NkRect r);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern NkColor nk_rgb_cf(nk_colorf color);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern nk_colorf nk_color_cf(NkColor color);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern nk_colorf nk_hsva_colorfv(float* hsva);
+
+		[DllImport(DllName, CallingConvention = CConv, CharSet = CSet)]
+		public static extern void nk_colorf_hsva_fv(float* hsva, nk_colorf color);
 	}
 }

@@ -21,6 +21,8 @@ The primary development path targets .NET 9 on Windows. The repository also reta
 
 For architecture, maintenance procedures, and verified project details, see [INFO.md](INFO.md). Planned work and active defects are tracked in [TODO.md](TODO.md).
 
+All four modern renderer examples run the same .NET port of Nuklear's native `demo/common` showcase. A launcher opens with Overview enabled and can show Calculator, Canvas, Node Editor, and the Style Configurator; it also exposes all ten bundled themes. The native file-browser demo is not included.
+
 ## Prerequisites
 
 - Windows
@@ -91,6 +93,8 @@ If MSBuild reports `MSB8020`, install the configured `v145` toolset or explicitl
 | `Example_WindowsForms` | Windows Forms/System.Drawing | `net9.0-windows` | Cached CPU triangle rasterizer with textured/color-interpolated output, full input, clipboard, resize, and shutdown handling. |
 
 These projects are implementation examples rather than a compatibility guarantee. Their managed projects compile as of the verification recorded in [INFO.md](INFO.md#verification-snapshot); the Raylib example was also interactively verified on Windows x64.
+
+The shared showcase is implemented by `ExampleShared.CommonDemoSuite`. Backends create one suite after their graphics device, call `Frame(deltaSeconds)` from the render loop, and call `Shutdown()` before destroying the window or graphics context.
 
 ## API overview
 
