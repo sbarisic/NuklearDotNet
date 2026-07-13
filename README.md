@@ -98,6 +98,8 @@ These projects are implementation examples rather than a compatibility guarantee
 
 `NuklearAPI` owns the current context, queues input, builds a frame, converts Nuklear commands to vertices and indices, and dispatches draw commands to a `NuklearDevice` implementation.
 
+See [NUKLEAR_API.md](NUKLEAR_API.md) for the complete application guide, renderer-backend contract, API reference, and troubleshooting notes.
+
 ### Implementing a renderer
 
 Use `NuklearDeviceTex<T>` when the backend has its own texture type. It converts Nuklear integer handles to backend texture objects for you:
