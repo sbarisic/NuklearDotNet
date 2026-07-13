@@ -64,17 +64,19 @@ Framebuffer devices rebuild their cached target when input or an explicit force-
 | `nuklear2_c/` | Current upstream Nuklear Git submodule from `Immediate-Mode-UI/Nuklear`, pinned to `974bdb0`. |
 | `Nuklear/` | Legacy native DLL project using the older upstream tree. |
 | `nuklear_c/` | Legacy upstream Nuklear Git submodule from `vurtun/nuklear`. |
+| `FishGfx/` | FishGfx Git submodule used by the .NET 10 OpenGL backend example, pinned to `72093f4`. |
 | `ExampleShared/` | .NET 9 shared port of Nuklear's calculator, canvas, overview, node editor, style configurator, and theme helper. |
 | `Example_Raylib/` | Raylib-cs renderer and primary interactive example. |
 | `Example_SFML/` | SFML.Net framebuffered renderer example and native CSFML dependencies. |
 | `Example_MonoGame/` | MonoGame DesktopGL indexed-triangle renderer and content configuration. |
 | `Example_WindowsForms/` | Windows Forms/System.Drawing framebuffer-cached CPU triangle renderer. |
+| `Example_FishGfx/` | FishGfx direct indexed-triangle OpenGL renderer. |
 | `bin/`, `bin_dbg/` | Release and Debug native/shared output locations; mostly ignored build output. |
 | `binaries/` | Small set of tracked historical/prebuilt binaries. |
 
 Two solution families coexist:
 
-- `NuklearDotNetDotnet.sln` is the primary solution. Its managed projects target .NET 9.
+- `NuklearDotNetDotnet.sln` is the primary solution. The binding, validator, shared demos, and four original examples target .NET 9; the FishGfx project and example target .NET 10.
 - `NuklearDotNet.sln` contains legacy .NET Framework 4.8 managed projects.
 
 Both solutions include the current and legacy native projects. The managed binding itself loads `Nuklear2.dll`, not `Nuklear.dll`.
@@ -89,6 +91,7 @@ Both solutions include the current and legacy native projects. The managed bindi
 | SFML example | `net9.0`, SFML.Net 2.5.1 | Example configurations select x64; includes native audio/window libraries. |
 | MonoGame example | `net9.0-windows`, MonoGame 3.8.1.303 | DesktopGL GPU renderer; restores local MonoGame content tools. |
 | Windows Forms example | `net9.0-windows` | UI-thread CPU rasterizer cached until input or resize invalidates the frame. |
+| FishGfx example | `net10.0-windows`, FishGfx submodule | Direct OpenGL renderer; Windows x64 and the .NET 10 SDK are required. |
 
 The SDK-style binding also references `Microsoft.CSharp` 4.7.0 and `System.Data.DataSetExtensions` 4.5.0. There is no NuGet packaging project.
 
@@ -96,7 +99,7 @@ The .NET 9 project emits `NuklearDotNet.dll` with assembly/file version `1.1.0.0
 
 ## Building and outputs
 
-The primary solution has native project dependencies so that the C DLLs are built before the managed binding. Use Visual Studio or full MSBuild with the C++ workload:
+The primary solution has native project dependencies so that the C DLLs are built before the managed binding. Because the solution now also contains the .NET 10 FishGfx projects, a complete solution build requires Visual Studio 18/MSBuild with the C++ workload:
 
 ```powershell
 msbuild NuklearDotNetDotnet.sln /m /p:Configuration=Debug /p:Platform=x64
@@ -111,7 +114,7 @@ Expected native outputs are:
 - Debug: `bin_dbg/Nuklear2.dll`
 - Release: `bin/Nuklear2.dll`
 
-Managed projects append their target framework to their configured output paths in most cases. The Raylib project explicitly copies the Debug `Nuklear2.dll`; the modern SFML, MonoGame, and Windows Forms projects copy the matching Debug or Release DLL into their outputs. When changing output conventions, verify native DLL resolution for every example rather than relying on a previously built copy.
+Managed projects append their target framework to their configured output paths in most cases. The Raylib project explicitly copies the Debug `Nuklear2.dll`; the modern SFML, MonoGame, Windows Forms, and FishGfx projects copy the matching Debug or Release DLL into their outputs. FishGfx also deploys `glfw3.dll` and its shader/data directory. When changing output conventions, verify native DLL resolution for every example rather than relying on a previously built copy.
 
 ## Renderer extension contract
 
@@ -129,7 +132,7 @@ A renderer backend is responsible for:
 
 ### Shared common-demo suite
 
-The four modern backends instantiate `ExampleShared.CommonDemoSuite`. The suite owns all managed demo state, initializes the single global `NuklearAPI` context, submits the launcher and enabled demos from `Frame`, and shuts the context down idempotently. Overview starts enabled; the launcher can independently show or hide Calculator, Canvas, Node Editor, and Style Configurator and select any theme ported from upstream `style.c`.
+The five modern backends instantiate `ExampleShared.CommonDemoSuite`. The suite owns all managed demo state, initializes the single global `NuklearAPI` context, submits the launcher and enabled demos from `Frame`, and shuts the context down idempotently. Overview starts enabled; the launcher can independently show or hide Calculator, Canvas, Node Editor, and Style Configurator and select any theme ported from upstream `style.c`.
 
 The port uses managed objects and collections for persistent calculator and node-editor state, while canvas drawing, input inspection, and style configuration intentionally use the raw unsafe binding. Macro-only native helpers such as `nk_tree_push` are represented by managed calls to the exported hashed variants with stable identifiers. The platform-dependent native file browser and its OpenGL/STB image loader are intentionally excluded.
 
@@ -194,7 +197,7 @@ Native assertions are configured to force an access violation so failures cross 
 
 Verification performed on 2026-07-13 used .NET SDK 10.0.301 and Visual Studio 2022 MSBuild 17.14 while building the repository's .NET 9 targets.
 
-- The full .NET 9 solution built successfully in Debug x64 with a local `v143` platform-toolset override.
+- Visual Studio 2022 MSBuild built the native and .NET 9 projects with a local `v143` platform-toolset override, but its solution build correctly stopped at `NETSDK1045` for the .NET 10 FishGfx projects. Those projects built successfully through .NET SDK 10.0.301; a complete mixed solution build requires Visual Studio 18/MSBuild.
 - Raylib, SFML, MonoGame, Windows Forms, and the validation executable compiled successfully.
 - The .NET Framework 4.8 binding compiled successfully with an isolated intermediate-output directory.
 - Debug and Release x64 `Nuklear2.dll` builds passed all ABI and export checks.
@@ -205,6 +208,7 @@ Verification performed on 2026-07-13 used .NET SDK 10.0.301 and Visual Studio 20
 - User-supplied Raylib screenshots confirmed startup, window dragging/resizing, scrolling, clipping, text entry, widgets, and correctly textured font rendering on Windows x64.
 - The repaired SFML.Net example compiled successfully in Debug and Release x64, including configuration-specific `Nuklear2.dll` deployment; interactive verification remains pending user-supplied screenshots.
 - The repaired MonoGame and Windows Forms examples passed non-interactive build/deployment checks; rendering, input, resize, clipboard, and shutdown verification remains pending user-supplied screenshots.
-- The shared common-demo suite and all four modern backends compiled successfully in Debug and Release x64. Debug and Release ABI/export validation also passed with the additional raw functions required by the demos; interactive demo verification remains pending user-supplied screenshots.
+- The shared common-demo suite and all five modern backends compiled successfully in Debug and Release x64. Debug and Release ABI/export validation also passed with the additional raw functions required by the demos; interactive demo verification remains pending user-supplied screenshots.
+- FishGfx commit `72093f4` removed its obsolete nested NuklearDotNet adapter and test, and `FishGfx.Modern.sln` built successfully before and after that cleanup. The new direct-rendered FishGfx example compiled successfully in Debug and Release x64 with its native DLL, GLFW runtime, and shaders deployed; interactive verification remains pending user-supplied screenshots.
 
 This snapshot records observed state, not a promise that all future environments will produce identical warnings. Update it after material toolchain, project, or ABI changes.

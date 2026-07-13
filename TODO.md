@@ -82,7 +82,7 @@ A list of planned features, improvements, and tasks for this project.
 ## Notes
 
 - Try to edit files and use tools WITHOUT POWERSHELL where possible, shell scripts get stuck and then manually terminate
-- C# projects should target .NET 9
+- Core C# projects should target .NET 9; the FishGfx example follows its upstream .NET 10 target
 - Nuklear2 is the latest version of the original native GUI library Nuklear
 - Keep small project summary as a separate section here (Summary) and up to date to keep track
 
@@ -95,6 +95,7 @@ NuklearDotNet is a C# binding library for the Nuklear immediate-mode GUI library
 - **Example_SFML/** - SFML backend example  
 - **Example_MonoGame/** - MonoGame backend example
 - **Example_WindowsForms/** - WinForms backend example
+- **Example_FishGfx/** - FishGfx/OpenGL backend example
 - **ExampleShared/** - Shared example UI code
 
 ---
@@ -115,8 +116,9 @@ NuklearDotNet is a C# binding library for the Nuklear immediate-mode GUI library
 - [x] **CPX 4** - Repaired MonoGame with safe GPU vertices, clipped indexed rendering, complete input/clipboard handling, state restoration, resize, and resource shutdown
 - [x] **CPX 5** - Replaced the Windows Forms outline/thread placeholder with a framebuffer-cached UI-thread CPU triangle rasterizer supporting textures, interpolated color, clipping, input, clipboard, resize, and shutdown
 - [x] **CPX 2** - Made framebuffer caching opt-in so devices only require `IFrameBuffered` when explicitly enabled
-- [x] **CPX 5** - Ported Nuklear's common calculator, canvas, overview, node editor, style configurator, and ten themes into a shared .NET 9 demo suite used by all four modern backends
+- [x] **CPX 5** - Ported Nuklear's common calculator, canvas, overview, node editor, style configurator, and ten themes into a shared .NET 9 demo suite used by all five modern backends
 - [x] **CPX 5** - Split `NuklearAPI` into responsibility-based partial files, added guarded UTF-8 convenience wrappers and scoped APIs, normalized the managed assembly name, and prepared the validated 1.1.0 Windows x64 release
+- [x] **CPX 4** - Added FishGfx as a pinned submodule and implemented a .NET 10 direct OpenGL backend with textured indexed triangles, clipping, input, clipboard, resize, shared demos, and deterministic shutdown
 
 ### Fixed Bugs
 

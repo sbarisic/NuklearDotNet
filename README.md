@@ -22,27 +22,28 @@ The modern binding assembly is now consistently named `NuklearDotNet.dll`, match
 - Platform: Windows; examples are configured primarily for x64
 - API layers: raw unsafe `Nuklear` bindings and the convenience-oriented `NuklearAPI`
 - Current release: 1.1.0 (`NuklearDotNet.dll` assembly version 1.1.0.0)
-- Included renderer examples: Raylib, SFML.Net, MonoGame DesktopGL, and Windows Forms
+- Included renderer examples: Raylib, SFML.Net, MonoGame DesktopGL, Windows Forms, and FishGfx
 - Packaging: source projects and native DLLs; no NuGet package is currently published
 - Testing: a native ABI/export validation executable is included; no CI workflow is currently configured
 
 For architecture, maintenance procedures, and verified project details, see [INFO.md](INFO.md). Planned work and active defects are tracked in [TODO.md](TODO.md).
 
-All four modern renderer examples run the same .NET port of Nuklear's native `demo/common` showcase. A launcher opens with Overview enabled and can show Calculator, Canvas, Node Editor, and the Style Configurator; it also exposes all ten bundled themes. The native file-browser demo is not included.
+All five modern renderer examples run the same .NET port of Nuklear's native `demo/common` showcase. A launcher opens with Overview enabled and can show Calculator, Canvas, Node Editor, and the Style Configurator; it also exposes all ten bundled themes. The native file-browser demo is not included.
 
 ## Prerequisites
 
 - Windows
 - Git with submodule support
-- .NET 9 SDK
-- Visual Studio/MSBuild with the Desktop development with C++ workload and a Windows SDK
+- .NET 9 SDK for the binding and existing examples
+- .NET 10 SDK for the FishGfx example and the complete modern solution
+- Visual Studio 18/MSBuild with the Desktop development with C++ workload and a Windows SDK for the complete mixed .NET 9/.NET 10 solution
 - The `v145` C++ platform toolset currently selected by both native projects, or an intentional local retarget to an installed toolset
 
 The native projects are `.vcxproj` files. The `dotnet` CLI by itself cannot build the complete solution; use Visual Studio or its full MSBuild installation for the native build.
 
 ## Clone and build
 
-Clone both Nuklear source submodules with the repository:
+Clone the two Nuklear source trees and the FishGfx backend dependency with the repository:
 
 ```powershell
 git clone --recurse-submodules https://github.com/sbarisic/NuklearDotNet.git
@@ -55,7 +56,7 @@ If the repository was cloned without submodules:
 git submodule update --init --recursive
 ```
 
-Open `NuklearDotNetDotnet.sln` in Visual Studio, select `Debug` and `x64`, and build the solution. This builds the native libraries before the managed binding and examples. The active binding loads `Nuklear2.dll`; a Debug native build places it in `bin_dbg` and the example projects copy it beside their managed output.
+Open `NuklearDotNetDotnet.sln` in Visual Studio 18, select `Debug` and `x64`, and build the solution. This builds the native libraries before the managed binding and examples. Visual Studio 2022 MSBuild selects an older .NET SDK for solution builds and cannot target the FishGfx projects' .NET 10 framework; it can still build the native projects with an installed compatible toolset. The active binding loads `Nuklear2.dll`; a Debug native build places it in `bin_dbg` and the example projects copy it beside their managed output.
 
 The equivalent command from a Visual Studio Developer PowerShell is:
 
@@ -82,6 +83,12 @@ dotnet run --project Example_MonoGame/Example_MonoGameDotnet.csproj --configurat
 dotnet run --project Example_WindowsForms/Example_WindowsFormsDotnet.csproj --configuration Debug --no-build
 ```
 
+FishGfx follows the same native-first order but targets .NET 10:
+
+```powershell
+dotnet run --project Example_FishGfx/Example_FishGfxDotnet.csproj --configuration Debug --no-build
+```
+
 Validate the DLL and managed binding without opening a GUI:
 
 ```powershell
@@ -98,6 +105,7 @@ If MSBuild reports `MSB8020`, install the configured `v145` toolset or explicitl
 | `Example_SFML` | SFML.Net 2.5.1 | `net9.0` | Framebuffered indexed-triangle backend with font-atlas texturing, clipping, full input, clipboard, resize, and shutdown handling. |
 | `Example_MonoGame` | MonoGame DesktopGL 3.8.1.303 | `net9.0-windows` | Direct indexed-triangle GPU backend with clipped rendering, full input, SDL clipboard, resize, and shutdown handling. |
 | `Example_WindowsForms` | Windows Forms/System.Drawing | `net9.0-windows` | Cached CPU triangle rasterizer with textured/color-interpolated output, full input, clipboard, resize, and shutdown handling. |
+| `Example_FishGfx` | [FishGfx](https://github.com/sbarisic/FishGfx) | `net10.0-windows` | Direct OpenGL indexed-triangle backend with normalized UVs, clipped rendering, full input, clipboard, resize, and deterministic GPU cleanup. |
 
 These projects are implementation examples rather than a compatibility guarantee. Their managed projects compile as of the verification recorded in [INFO.md](INFO.md#verification-snapshot); the Raylib example was also interactively verified on Windows x64.
 

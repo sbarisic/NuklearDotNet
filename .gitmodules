@@ -4,3 +4,6 @@
 [submodule "nuklear2_c"]
 	path = nuklear2_c
 	url = https://github.com/Immediate-Mode-UI/Nuklear
+[submodule "FishGfx"]
+	path = FishGfx
+	url = https://github.com/sbarisic/FishGfx

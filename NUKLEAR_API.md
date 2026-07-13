@@ -9,7 +9,7 @@ Use this guide for both sides of that boundary:
 
 For repository architecture and native maintenance, see [INFO.md](INFO.md). For raw bindings beyond the convenience helpers, use the `Nuklear` partial class in `NuklearDotNet/`.
 
-For a larger working application, `ExampleShared.CommonDemoSuite` drives the same managed ports of Nuklear's common demos through the Raylib, SFML.Net, MonoGame, and Windows Forms backends. It demonstrates mixing convenience helpers with raw canvas, input, layout-space, chart, tree, and style APIs.
+For a larger working application, `ExampleShared.CommonDemoSuite` drives the same managed ports of Nuklear's common demos through the Raylib, SFML.Net, MonoGame, Windows Forms, and FishGfx backends. It demonstrates mixing convenience helpers with raw canvas, input, layout-space, chart, tree, and style APIs.
 
 ## Source organization
 
@@ -31,6 +31,8 @@ This layout does not create separate API objects. All calls remain `NuklearAPI.M
 ## Requirements and build order
 
 The primary configuration is .NET 9 on Windows x64. Managed code loads `Nuklear2.dll`, so build the native project before running an application.
+
+The FishGfx example is the one exception: its upstream project currently targets .NET 10, so building that example or the complete modern solution also requires the .NET 10 SDK. This does not change the binding's .NET 9 target.
 
 From a Visual Studio Developer PowerShell:
 
@@ -127,6 +129,7 @@ finally
 - [SFML.Net](Example_SFML/Example_Sfml.cs)
 - [MonoGame](Example_MonoGame/Game1.cs)
 - [Windows Forms](Example_WindowsForms/NuklearForm.cs)
+- [FishGfx](Example_FishGfx/FishGfxDevice.cs)
 
 ## Frame behavior
 
