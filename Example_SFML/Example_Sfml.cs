@@ -1,194 +1,415 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SFML;
-using SFML.Graphics;
-using SFML.Window;
-using SFML.System;
-using NuklearDotNet;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
-using System.Threading;
-using System.Reflection;
+using System.Runtime.InteropServices;
 using ExampleShared;
+using NuklearDotNet;
+using SFML.Graphics;
+using SFML.System;
+using SFML.Window;
 
 namespace Example_SFML
 {
-    // Because SFML _still does not have a fucking Scissor function, what the *fuck*_
-    static class OpenGL
+    static unsafe class OpenGL
     {
         const string LibName = "opengl32";
-        public const int GL_SCISSOR_TEST = 0xC11;
+        const int GL_SCISSOR_BOX = 0x0C10;
+        public const int GL_SCISSOR_TEST = 0x0C11;
 
         [DllImport(LibName)]
-        public static extern void glEnable(int Cap);
+        static extern void glEnable(int cap);
 
         [DllImport(LibName)]
-        public static extern void glDisable(int Cap);
+        static extern void glDisable(int cap);
 
         [DllImport(LibName)]
-        public static extern void glScissor(int X, int Y, int W, int H);
+        static extern byte glIsEnabled(int cap);
 
-        public static void glScissor2(int WindH, int X, int Y, int W, int H)
+        [DllImport(LibName)]
+        static extern void glGetIntegerv(int name, int* values);
+
+        [DllImport(LibName)]
+        static extern void glScissor(int x, int y, int width, int height);
+
+        public struct ScissorState
         {
-            glScissor(X, WindH - Y - H, W, H);
+            public bool Enabled;
+            public int X;
+            public int Y;
+            public int Width;
+            public int Height;
+        }
+
+        public static ScissorState CaptureScissor()
+        {
+            int* box = stackalloc int[4];
+            glGetIntegerv(GL_SCISSOR_BOX, box);
+            return new ScissorState
+            {
+                Enabled = glIsEnabled(GL_SCISSOR_TEST) != 0,
+                X = box[0],
+                Y = box[1],
+                Width = box[2],
+                Height = box[3]
+            };
+        }
+
+        public static void SetScissor(int targetHeight, int x, int y, int width, int height)
+        {
+            glEnable(GL_SCISSOR_TEST);
+            glScissor(x, targetHeight - y - height, width, height);
+        }
+
+        public static void RestoreScissor(ScissorState state)
+        {
+            glScissor(state.X, state.Y, state.Width, state.Height);
+            if (state.Enabled)
+                glEnable(GL_SCISSOR_TEST);
+            else
+                glDisable(GL_SCISSOR_TEST);
         }
     }
 
-    unsafe class SFMLDevice : NuklearDeviceTex<Texture>, IFrameBuffered
+    unsafe sealed class SFMLDevice : NuklearDeviceTex<Texture>, IFrameBuffered
     {
-        RenderWindow RWind;
+        readonly RenderWindow Window;
+        readonly List<Texture> Textures = new List<Texture>();
+        readonly Dictionary<NkKeys, bool> KeyStates = new Dictionary<NkKeys, bool>();
 
-        RenderTexture RT;
+        RenderTexture RenderTarget;
         Sprite RenderSprite;
+        NkVertex[] Vertices;
+        ushort[] Indices;
+        bool IsShutdown;
 
-        public SFMLDevice(RenderWindow RWind)
+        public override bool EnableFrameBuffered => true;
+
+        public SFMLDevice(RenderWindow window)
         {
-            this.RWind = RWind;
-
-            RT = new RenderTexture(RWind.Size.X, RWind.Size.Y);
-            RenderSprite = new Sprite(RT.Texture);
+            Window = window ?? throw new ArgumentNullException(nameof(window));
+            Resize(window.Size.X, window.Size.Y);
         }
 
-        public override Texture CreateTexture(int W, int H, IntPtr Data)
+        public override void Init()
         {
-            Image I = new Image((uint)W, (uint)H);
-            for (int y = 0; y < H; y++)
-                for (int x = 0; x < W; x++)
-                {
-                    NkColor C = ((NkColor*)Data)[y * W + x];
-                    I.SetPixel((uint)x, (uint)y, new Color(C.R, C.G, C.B, C.A));
-                }
+            NuklearAPI.SetClipboardCallback(
+                text => Clipboard.Contents = text,
+                () => Clipboard.Contents ?? string.Empty);
+        }
 
-            Texture T = new Texture(I);
-            T.Smooth = true;
-            return T;
+        public override Texture CreateTexture(int width, int height, IntPtr data)
+        {
+            byte[] pixels = new byte[checked(width * height * 4)];
+            Marshal.Copy(data, pixels, 0, pixels.Length);
+
+            Image image = new Image((uint)width, (uint)height, pixels);
+            Texture texture;
+            try
+            {
+                texture = new Texture(image) { Smooth = true };
+            }
+            finally
+            {
+                image.Dispose();
+            }
+
+            Textures.Add(texture);
+            return texture;
+        }
+
+        public void Resize(uint width, uint height)
+        {
+            if (width == 0 || height == 0 || IsShutdown)
+                return;
+
+            RenderTexture newTarget = new RenderTexture(width, height);
+            Sprite newSprite = new Sprite(newTarget.Texture);
+
+            RenderSprite?.Dispose();
+            RenderTarget?.Dispose();
+            RenderTarget = newTarget;
+            RenderSprite = newSprite;
+
+            View view = new View(new FloatRect(0, 0, width, height));
+            try
+            {
+                Window.SetView(view);
+            }
+            finally
+            {
+                view.Dispose();
+            }
+
+            NuklearAPI.QueueForceUpdate();
         }
 
         public void BeginBuffering()
         {
-            Console.WriteLine("BeginBuffering");
-            RT.Clear(Color.Transparent);
+            if (RenderTarget == null)
+                throw new InvalidOperationException("The SFML render target is not available.");
+
+            RenderTarget.SetActive(true);
+            RenderTarget.Clear(Color.Transparent);
         }
 
-        NkVertex[] Verts;
-        ushort[] Inds;
-
-        public override void SetBuffer(NkVertex[] VertexBuffer, ushort[] IndexBuffer)
+        public override void SetBuffer(NkVertex[] vertexBuffer, ushort[] indexBuffer)
         {
-            Verts = VertexBuffer;
-            Inds = IndexBuffer;
+            Vertices = vertexBuffer;
+            Indices = indexBuffer;
         }
 
-        public override void Render(NkHandle Userdata, Texture Texture, NkRect ClipRect, uint Offset, uint Count)
+        public override void Render(NkHandle userdata, Texture texture, NkRect clipRect, uint offset, uint count)
         {
-            Vertex[] SfmlVerts = new Vertex[Count];
+            if (count == 0)
+                return;
+            if (count % 3 != 0)
+                throw new InvalidOperationException("Nuklear returned a non-triangular index count.");
 
-            for (int i = 0; i < Count; i++)
+            int targetWidth = (int)RenderTarget.Size.X;
+            int targetHeight = (int)RenderTarget.Size.Y;
+            int clipX = Math.Max(0, (int)Math.Floor(clipRect.X));
+            int clipY = Math.Max(0, (int)Math.Floor(clipRect.Y));
+            int clipRight = Math.Min(targetWidth, (int)Math.Ceiling(clipRect.X + clipRect.W));
+            int clipBottom = Math.Min(targetHeight, (int)Math.Ceiling(clipRect.Y + clipRect.H));
+            if (clipRight <= clipX || clipBottom <= clipY)
+                return;
+
+            Vertex[] sfmlVertices = new Vertex[checked((int)count)];
+            Vector2u textureSize = texture.Size;
+            for (uint i = 0; i < count; i++)
             {
-                NkVertex V = Verts[Inds[Offset + i]];
-                SfmlVerts[i] = new Vertex(new Vector2f(V.Position.X, V.Position.Y), new Color(V.Color.R, V.Color.G, V.Color.B, V.Color.A), new Vector2f(V.UV.X, V.UV.Y));
+                NkVertex vertex = Vertices[Indices[offset + i]];
+                sfmlVertices[i] = new Vertex(
+                    new Vector2f(vertex.Position.X, vertex.Position.Y),
+                    new Color(vertex.Color.R, vertex.Color.G, vertex.Color.B, vertex.Color.A),
+                    new Vector2f(vertex.UV.X * textureSize.X, vertex.UV.Y * textureSize.Y));
             }
 
-            Texture.Bind(Texture);
-
-            OpenGL.glEnable(OpenGL.GL_SCISSOR_TEST);
-            OpenGL.glScissor2((int)RWind.Size.Y, (int)ClipRect.X, (int)ClipRect.Y, (int)ClipRect.W, (int)ClipRect.H);
-
-            //RWind.Draw(SfmlVerts, PrimitiveType.Triangles);
-            RT.Draw(SfmlVerts, PrimitiveType.Triangles);
-
-            OpenGL.glDisable(OpenGL.GL_SCISSOR_TEST);
+            RenderTarget.SetActive(true);
+            OpenGL.ScissorState oldScissor = OpenGL.CaptureScissor();
+            try
+            {
+                OpenGL.SetScissor(targetHeight, clipX, clipY, clipRight - clipX, clipBottom - clipY);
+                RenderTarget.Draw(sfmlVertices, PrimitiveType.Triangles, new RenderStates(texture));
+            }
+            finally
+            {
+                OpenGL.RestoreScissor(oldScissor);
+            }
         }
 
         public void EndBuffering()
         {
-            RT.Display();
+            RenderTarget.Display();
+            RenderTarget.SetActive(false);
         }
 
         public void RenderFinal()
         {
-            RWind.Draw(RenderSprite);
+            if (RenderSprite != null)
+                Window.Draw(RenderSprite);
+        }
+
+        void SetKey(NkKeys key, bool down)
+        {
+            bool previous;
+            if (KeyStates.TryGetValue(key, out previous) && previous == down)
+                return;
+
+            KeyStates[key] = down;
+            OnKey(key, down);
+        }
+
+        public void PollKeys()
+        {
+            bool shift = IsKeyDown(Keyboard.Key.LShift, Keyboard.Key.RShift);
+            bool ctrl = IsKeyDown(Keyboard.Key.LControl, Keyboard.Key.RControl);
+            bool alt = IsKeyDown(Keyboard.Key.LAlt, Keyboard.Key.RAlt);
+            bool home = Keyboard.IsKeyPressed(Keyboard.Key.Home);
+            bool end = Keyboard.IsKeyPressed(Keyboard.Key.End);
+            bool left = Keyboard.IsKeyPressed(Keyboard.Key.Left);
+            bool right = Keyboard.IsKeyPressed(Keyboard.Key.Right);
+
+            SetKey(NkKeys.Shift, shift);
+            SetKey(NkKeys.Ctrl, ctrl);
+            SetKey(NkKeys.Alt, alt);
+            SetKey(NkKeys.Del, Keyboard.IsKeyPressed(Keyboard.Key.Delete));
+            SetKey(NkKeys.Enter, Keyboard.IsKeyPressed(Keyboard.Key.Enter));
+            SetKey(NkKeys.Tab, Keyboard.IsKeyPressed(Keyboard.Key.Tab));
+            SetKey(NkKeys.Backspace, Keyboard.IsKeyPressed(Keyboard.Key.Backspace));
+            SetKey(NkKeys.Up, Keyboard.IsKeyPressed(Keyboard.Key.Up));
+            SetKey(NkKeys.Down, Keyboard.IsKeyPressed(Keyboard.Key.Down));
+            SetKey(NkKeys.Left, left && !ctrl);
+            SetKey(NkKeys.Right, right && !ctrl);
+            SetKey(NkKeys.InsertMode, Keyboard.IsKeyPressed(Keyboard.Key.Insert));
+            SetKey(NkKeys.TextStart, home);
+            SetKey(NkKeys.TextEnd, end);
+            SetKey(NkKeys.ScrollStart, home);
+            SetKey(NkKeys.ScrollEnd, end);
+            SetKey(NkKeys.ScrollUp, Keyboard.IsKeyPressed(Keyboard.Key.PageUp));
+            SetKey(NkKeys.ScrollDown, Keyboard.IsKeyPressed(Keyboard.Key.PageDown));
+            SetKey(NkKeys.TextWordLeft, ctrl && left);
+            SetKey(NkKeys.TextWordRight, ctrl && right);
+            SetKey(NkKeys.LineStart, ctrl && Keyboard.IsKeyPressed(Keyboard.Key.B));
+            SetKey(NkKeys.LineEnd, ctrl && Keyboard.IsKeyPressed(Keyboard.Key.E));
+            SetKey(NkKeys.TextSelectAll, ctrl && Keyboard.IsKeyPressed(Keyboard.Key.A));
+            SetKey(NkKeys.TextUndo, ctrl && Keyboard.IsKeyPressed(Keyboard.Key.Z));
+            SetKey(NkKeys.TextRedo, ctrl && Keyboard.IsKeyPressed(Keyboard.Key.Y));
+            SetKey(NkKeys.Copy, ctrl && Keyboard.IsKeyPressed(Keyboard.Key.C));
+            SetKey(NkKeys.Cut, ctrl && Keyboard.IsKeyPressed(Keyboard.Key.X));
+            SetKey(NkKeys.Paste, ctrl && Keyboard.IsKeyPressed(Keyboard.Key.V));
+
+            SetKey(NkKeys.F1, Keyboard.IsKeyPressed(Keyboard.Key.F1));
+            SetKey(NkKeys.F2, Keyboard.IsKeyPressed(Keyboard.Key.F2));
+            SetKey(NkKeys.F3, Keyboard.IsKeyPressed(Keyboard.Key.F3));
+            SetKey(NkKeys.F4, Keyboard.IsKeyPressed(Keyboard.Key.F4));
+            SetKey(NkKeys.F5, Keyboard.IsKeyPressed(Keyboard.Key.F5));
+            SetKey(NkKeys.F6, Keyboard.IsKeyPressed(Keyboard.Key.F6));
+            SetKey(NkKeys.F7, Keyboard.IsKeyPressed(Keyboard.Key.F7));
+            SetKey(NkKeys.F8, Keyboard.IsKeyPressed(Keyboard.Key.F8));
+            SetKey(NkKeys.F9, Keyboard.IsKeyPressed(Keyboard.Key.F9));
+            SetKey(NkKeys.F10, Keyboard.IsKeyPressed(Keyboard.Key.F10));
+            SetKey(NkKeys.F11, Keyboard.IsKeyPressed(Keyboard.Key.F11));
+            SetKey(NkKeys.F12, Keyboard.IsKeyPressed(Keyboard.Key.F12));
+        }
+
+        static bool IsKeyDown(Keyboard.Key first, Keyboard.Key second)
+        {
+            return Keyboard.IsKeyPressed(first) || Keyboard.IsKeyPressed(second);
+        }
+
+        public override void Shutdown()
+        {
+            if (IsShutdown)
+                return;
+
+            IsShutdown = true;
+            foreach (Texture texture in Textures)
+                texture.Dispose();
+            Textures.Clear();
+
+            RenderSprite?.Dispose();
+            RenderTarget?.Dispose();
+            RenderSprite = null;
+            RenderTarget = null;
+            Vertices = null;
+            Indices = null;
+            KeyStates.Clear();
         }
     }
 
-    class Program
+    static class Program
     {
-        static void OnKey(SFMLDevice Dev, KeyEventArgs E, bool Down)
+        static bool TryMapMouseButton(Mouse.Button button, out NuklearEvent.MouseButton mapped)
         {
-            if (E.Code == Keyboard.Key.LShift || E.Code == Keyboard.Key.RShift)
-                Dev.OnKey(NkKeys.Shift, Down);
-            else if (E.Code == Keyboard.Key.LControl || E.Code == Keyboard.Key.RControl)
-                Dev.OnKey(NkKeys.Ctrl, Down);
-            else if (E.Code == Keyboard.Key.Delete)
-                Dev.OnKey(NkKeys.Del, Down);
-            else if (E.Code == Keyboard.Key.Enter)
-                Dev.OnKey(NkKeys.Enter, Down);
-            else if (E.Code == Keyboard.Key.Tab)
-                Dev.OnKey(NkKeys.Tab, Down);
-            else if (E.Code == Keyboard.Key.Backspace)
-                Dev.OnKey(NkKeys.Backspace, Down);
-            else if (E.Code == Keyboard.Key.Up)
-                Dev.OnKey(NkKeys.Up, Down);
-            else if (E.Code == Keyboard.Key.Down)
-                Dev.OnKey(NkKeys.Down, Down);
-            else if (E.Code == Keyboard.Key.Left)
-                Dev.OnKey(NkKeys.Left, Down);
-            else if (E.Code == Keyboard.Key.Right)
-                Dev.OnKey(NkKeys.Right, Down);
-            else if (E.Code == Keyboard.Key.Home)
-                Dev.OnKey(NkKeys.ScrollStart, Down);
-            else if (E.Code == Keyboard.Key.End)
-                Dev.OnKey(NkKeys.ScrollEnd, Down);
-            else if (E.Code == Keyboard.Key.PageDown)
-                Dev.OnKey(NkKeys.ScrollDown, Down);
-            else if (E.Code == Keyboard.Key.PageUp)
-                Dev.OnKey(NkKeys.ScrollUp, Down);
+            switch (button)
+            {
+                case Mouse.Button.Left:
+                    mapped = NuklearEvent.MouseButton.Left;
+                    return true;
+                case Mouse.Button.Right:
+                    mapped = NuklearEvent.MouseButton.Right;
+                    return true;
+                case Mouse.Button.Middle:
+                    mapped = NuklearEvent.MouseButton.Middle;
+                    return true;
+                case Mouse.Button.XButton1:
+                    mapped = NuklearEvent.MouseButton.X1;
+                    return true;
+                case Mouse.Button.XButton2:
+                    mapped = NuklearEvent.MouseButton.X2;
+                    return true;
+                default:
+                    mapped = default(NuklearEvent.MouseButton);
+                    return false;
+            }
         }
 
         static void Main(string[] args)
         {
-            Console.Title = "Nuklear SFML .NET";
+            DebugLog.Init();
+            DebugLog.Log("SFML application starting");
 
-            Stopwatch SWatch = Stopwatch.StartNew();
-            Color ClearColor = new Color(50, 50, 50);
-            VideoMode VMode = new VideoMode(1366, 768);
-
-            RenderWindow RWind = new RenderWindow(VMode, "Nuklear SFML .NET", Styles.Close);
-            RWind.SetKeyRepeatEnabled(true);
-
-            SFMLDevice Dev = new SFMLDevice(RWind);
-            RWind.Closed += (S, E) => RWind.Close();
-            RWind.MouseButtonPressed += (S, E) => Dev.OnMouseButton((NuklearEvent.MouseButton)E.Button, E.X, E.Y, true);
-            RWind.MouseButtonReleased += (S, E) => Dev.OnMouseButton((NuklearEvent.MouseButton)E.Button, E.X, E.Y, false);
-            RWind.MouseMoved += (S, E) => Dev.OnMouseMove(E.X, E.Y);
-            RWind.MouseWheelScrolled += (S, E) => Dev.OnScroll(0, E.Delta);
-            RWind.KeyPressed += (S, E) => OnKey(Dev, E, true);
-            RWind.KeyReleased += (S, E) => OnKey(Dev, E, false);
-            RWind.TextEntered += (S, E) => Dev.OnText(E.Unicode);
-
-            Shared.Init(Dev);
-
-            float Dt = 0.1f;
-
-            NuklearAPI.QueueForceUpdate();
-            while (RWind.IsOpen)
+            RenderWindow window = null;
+            SFMLDevice device = null;
+            try
             {
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                Color clearColor = new Color(50, 50, 50);
+                window = new RenderWindow(new VideoMode(1280, 800), "NuklearDotNet - SFML.Net Example", Styles.Default);
+                window.SetKeyRepeatEnabled(false);
+                window.SetVerticalSyncEnabled(true);
 
-                RWind.DispatchEvents();
-                RWind.Clear(ClearColor);
+                device = new SFMLDevice(window);
+                window.Closed += (sender, eventArgs) => window.Close();
+                window.Resized += (sender, eventArgs) => device.Resize(eventArgs.Width, eventArgs.Height);
+                window.MouseButtonPressed += (sender, eventArgs) =>
+                {
+                    NuklearEvent.MouseButton button;
+                    if (TryMapMouseButton(eventArgs.Button, out button))
+                        device.OnMouseButton(button, eventArgs.X, eventArgs.Y, true);
+                };
+                window.MouseButtonReleased += (sender, eventArgs) =>
+                {
+                    NuklearEvent.MouseButton button;
+                    if (TryMapMouseButton(eventArgs.Button, out button))
+                        device.OnMouseButton(button, eventArgs.X, eventArgs.Y, false);
+                };
+                window.MouseMoved += (sender, eventArgs) => device.OnMouseMove(eventArgs.X, eventArgs.Y);
+                window.MouseWheelScrolled += (sender, eventArgs) =>
+                {
+                    if (eventArgs.Wheel == Mouse.Wheel.HorizontalWheel)
+                        device.OnScroll(eventArgs.Delta, 0);
+                    else
+                        device.OnScroll(0, eventArgs.Delta);
+                };
+                window.TextEntered += (sender, eventArgs) =>
+                {
+                    if (!string.IsNullOrEmpty(eventArgs.Unicode))
+                        device.OnText(eventArgs.Unicode);
+                };
 
-                Shared.DrawLoop(Dt);
+                Shared.Init(device);
+                NuklearAPI.QueueForceUpdate();
+                while (window.IsOpen)
+                {
+                    window.DispatchEvents();
+                    device.PollKeys();
+                    window.Clear(clearColor);
 
-                RWind.Display();
+                    float deltaTime = (float)stopwatch.Elapsed.TotalSeconds;
+                    stopwatch.Restart();
+                    Shared.DrawLoop(deltaTime);
 
-                Dt = SWatch.ElapsedMilliseconds / 1000.0f;
-                SWatch.Restart();
+                    window.Display();
+                }
             }
+            catch (Exception ex)
+            {
+                DebugLog.Error("SFML application failed", ex);
+                throw;
+            }
+            finally
+            {
+                try
+                {
+                    NuklearAPI.Shutdown();
+                }
+                catch (Exception ex)
+                {
+                    DebugLog.Error("Nuklear shutdown failed", ex);
+                }
 
-            Environment.Exit(0);
+                if (window != null)
+                {
+                    if (window.IsOpen)
+                        window.Close();
+                    window.Dispose();
+                }
+
+                DebugLog.Log("SFML application stopped");
+                DebugLog.Flush();
+            }
         }
     }
 }

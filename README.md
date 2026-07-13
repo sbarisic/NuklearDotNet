@@ -60,6 +60,19 @@ After a successful solution build, run the Raylib example from Visual Studio or 
 dotnet run --project Example_Raylib/Example_RaylibDotnet.csproj --configuration Debug --no-build
 ```
 
+The SFML.Net example uses the same native-first build order and can then be run with:
+
+```powershell
+dotnet run --project Example_SFML/Example_SFMLDotnet.csproj --configuration Debug --no-build
+```
+
+The MonoGame and Windows Forms examples follow the same pattern:
+
+```powershell
+dotnet run --project Example_MonoGame/Example_MonoGameDotnet.csproj --configuration Debug --no-build
+dotnet run --project Example_WindowsForms/Example_WindowsFormsDotnet.csproj --configuration Debug --no-build
+```
+
 Validate the DLL and managed binding without opening a GUI:
 
 ```powershell
@@ -73,9 +86,9 @@ If MSBuild reports `MSB8020`, install the configured `v145` toolset or explicitl
 | Project | Backend | Managed target | Notes |
 | --- | --- | --- | --- |
 | `Example_Raylib` | Raylib-cs 6.1.1 | `net9.0` | Primary example; manually verified with indexed triangles, font-atlas texturing, clipping, input, and a cached render texture. |
-| `Example_SFML` | SFML.Net 2.5.1 | `net9.0` | Includes the CSFML/OpenAL native runtime files used by the example. |
-| `Example_MonoGame` | MonoGame DesktopGL 3.8.1.303 | `net9.0-windows` | Uses the MonoGame content tool manifest; framebuffer support is not implemented. |
-| `Example_WindowsForms` | Windows Forms/System.Drawing | `net9.0-windows` | Software-oriented Windows backend. |
+| `Example_SFML` | SFML.Net 2.5.1 | `net9.0` | Framebuffered indexed-triangle backend with font-atlas texturing, clipping, full input, clipboard, resize, and shutdown handling. |
+| `Example_MonoGame` | MonoGame DesktopGL 3.8.1.303 | `net9.0-windows` | Direct indexed-triangle GPU backend with clipped rendering, full input, SDL clipboard, resize, and shutdown handling. |
+| `Example_WindowsForms` | Windows Forms/System.Drawing | `net9.0-windows` | Cached CPU triangle rasterizer with textured/color-interpolated output, full input, clipboard, resize, and shutdown handling. |
 
 These projects are implementation examples rather than a compatibility guarantee. Their managed projects compile as of the verification recorded in [INFO.md](INFO.md#verification-snapshot); the Raylib example was also interactively verified on Windows x64.
 
@@ -119,7 +132,7 @@ sealed class Device : NuklearDeviceTex<Texture>
 
 Alternatively, derive from `NuklearDevice` and manage integer texture handles directly. Backends may also override `Init`, `FontStash`, `BeginRender`, and `EndRender`.
 
-For cached rendering, return `true` from `EnableFrameBuffered` and implement `IFrameBuffered`:
+Framebuffer caching is opt-in: `NuklearDevice.EnableFrameBuffered` defaults to `false`. For cached rendering, override it to return `true` and implement `IFrameBuffered`:
 
 ```csharp
 interface IFrameBuffered

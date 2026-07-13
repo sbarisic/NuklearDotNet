@@ -609,7 +609,7 @@ namespace NuklearDotNet {
 
         public virtual bool EnableFrameBuffered {
             get {
-                return true;
+                return false;
             }
         }
 

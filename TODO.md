@@ -111,6 +111,10 @@ NuklearDotNet is a C# binding library for the Nuklear immediate-mode GUI library
 - [x] **CPX 4** - Full Nuklear2 multi-file build: enabled nk_knob_*, nk_nine_slice_*, nk_widget_disable_*, nk_spacer, nk_rule_horizontal, scroll functions, and 48 more exports
 - [x] **CPX 4** - Added versioned native ABI queries and a .NET validation executable covering layouts, enum values, offsets, and exported P/Invoke entry points
 - [x] **CPX 4** - Completed Raylib input, clipboard, indexed-triangle and font-atlas rendering, clipping, framebuffer resize, and resource shutdown handling
+- [x] **CPX 4** - Repaired the SFML.Net backend with textured indexed triangles, clipped framebuffer rendering, full input and clipboard integration, resize handling, and deterministic shutdown
+- [x] **CPX 4** - Repaired MonoGame with safe GPU vertices, clipped indexed rendering, complete input/clipboard handling, state restoration, resize, and resource shutdown
+- [x] **CPX 5** - Replaced the Windows Forms outline/thread placeholder with a framebuffer-cached UI-thread CPU triangle rasterizer supporting textures, interpolated color, clipping, input, clipboard, resize, and shutdown
+- [x] **CPX 2** - Made framebuffer caching opt-in so devices only require `IFrameBuffered` when explicitly enabled
 
 ### Fixed Bugs
 

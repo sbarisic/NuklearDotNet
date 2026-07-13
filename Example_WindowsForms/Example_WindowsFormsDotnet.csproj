@@ -6,7 +6,16 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\bin_dbg\Nuklear2.dll" Link="Nuklear2.dll" Condition="'$(Configuration)' == 'Debug'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\bin\Nuklear2.dll" Link="Nuklear2.dll" Condition="'$(Configuration)' == 'Release'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>..\bin_dbg\</OutputPath>

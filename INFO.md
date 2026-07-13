@@ -36,9 +36,9 @@ The active native boundary is `Nuklear2.dll`. `Nuklear.DllName` is set to `Nukle
 - `NuklearAPI` is a higher-level, single-context facade. It allocates native state, initializes the font atlas, queues input, invokes the application's immediate-mode callback, converts commands, and dispatches render batches.
 - `NuklearDevice` defines integer texture handles and the renderer lifecycle.
 - `NuklearDeviceTex<T>` maintains a managed texture table and presents backend texture objects to the renderer.
-- `IFrameBuffered` adds `BeginBuffering`, `EndBuffering`, and `RenderFinal` for backends that cache the GUI in an off-screen target.
+- `IFrameBuffered` adds `BeginBuffering`, `EndBuffering`, and `RenderFinal` for backends that explicitly opt into GUI caching by overriding `EnableFrameBuffered` to `true`; the device default is `false`.
 
-`NuklearAPI` is global and stateful: `Ctx`, `Dev`, conversion buffers, the font atlas, and initialization state are static. It supports one initialization and one active context per process. There is no shutdown/disposal API for its unmanaged allocations yet.
+`NuklearAPI` is global and stateful: `Ctx`, `Dev`, conversion buffers, the font atlas, and initialization state are static. It supports one active context per process; idempotent `Shutdown` releases that context and allows a later initialization.
 
 ### Frame behavior
 
@@ -64,9 +64,9 @@ Framebuffer devices rebuild their cached target when input or an explicit force-
 | `nuklear_c/` | Legacy upstream Nuklear Git submodule from `vurtun/nuklear`. |
 | `ExampleShared/` | Shared demo state and widgets used by renderer examples. |
 | `Example_Raylib/` | Raylib-cs renderer and primary interactive example. |
-| `Example_SFML/` | SFML.Net renderer example and native CSFML dependencies. |
-| `Example_MonoGame/` | MonoGame DesktopGL renderer example and content configuration. |
-| `Example_WindowsForms/` | Windows Forms/System.Drawing renderer example. |
+| `Example_SFML/` | SFML.Net framebuffered renderer example and native CSFML dependencies. |
+| `Example_MonoGame/` | MonoGame DesktopGL indexed-triangle renderer and content configuration. |
+| `Example_WindowsForms/` | Windows Forms/System.Drawing framebuffer-cached CPU triangle renderer. |
 | `bin/`, `bin_dbg/` | Release and Debug native/shared output locations; mostly ignored build output. |
 | `binaries/` | Small set of tracked historical/prebuilt binaries. |
 
@@ -85,8 +85,8 @@ Both solutions include the current and legacy native projects. The managed bindi
 | Native libraries | MSVC dynamic-library projects | Win32 and x64 configurations; Cdecl exports. |
 | Raylib example | `net9.0`, Raylib-cs 6.1.1 | Example configurations select x64. |
 | SFML example | `net9.0`, SFML.Net 2.5.1 | Example configurations select x64; includes native audio/window libraries. |
-| MonoGame example | `net9.0-windows`, MonoGame 3.8.1.303 | DesktopGL; restores local MonoGame content tools. |
-| Windows Forms example | `net9.0-windows` | Windows Forms and System.Drawing APIs. |
+| MonoGame example | `net9.0-windows`, MonoGame 3.8.1.303 | DesktopGL GPU renderer; restores local MonoGame content tools. |
+| Windows Forms example | `net9.0-windows` | UI-thread CPU rasterizer cached until input or resize invalidates the frame. |
 
 The SDK-style binding also references `Microsoft.CSharp` 4.7.0 and `System.Data.DataSetExtensions` 4.5.0. There is no NuGet packaging project.
 
@@ -107,7 +107,7 @@ Expected native outputs are:
 - Debug: `bin_dbg/Nuklear2.dll`
 - Release: `bin/Nuklear2.dll`
 
-Managed projects append their target framework to their configured output paths in most cases. The Raylib project explicitly copies the Debug `Nuklear2.dll` into its output. When changing output conventions, verify native DLL resolution for every example rather than relying on a previously built copy.
+Managed projects append their target framework to their configured output paths in most cases. The Raylib project explicitly copies the Debug `Nuklear2.dll`; the modern SFML, MonoGame, and Windows Forms projects copy the matching Debug or Release DLL into their outputs. When changing output conventions, verify native DLL resolution for every example rather than relying on a previously built copy.
 
 ## Renderer extension contract
 
@@ -183,9 +183,11 @@ Verification performed on 2026-07-13 used .NET SDK 10.0.301 and Visual Studio 20
 - The .NET Framework 4.8 binding compiled successfully with an isolated intermediate-output directory.
 - Debug and Release x64 `Nuklear2.dll` builds passed all ABI and export checks.
 - SFML produced a `NETSDK1206` runtime-identifier warning from CSFML.
-- Windows Forms produced platform-compatibility analyzer warnings.
+- MonoGame and Windows Forms compiled successfully in Debug and Release x64 with matching native-DLL deployment after clean builds.
 - The .NET SDK alone still cannot build `.vcxproj` files; full MSBuild is required for the solution.
 - `v145` remains configured and was unavailable locally, so native verification used `/p:PlatformToolset=v143` without retargeting project files.
 - User-supplied Raylib screenshots confirmed startup, window dragging/resizing, scrolling, clipping, text entry, widgets, and correctly textured font rendering on Windows x64.
+- The repaired SFML.Net example compiled successfully in Debug and Release x64, including configuration-specific `Nuklear2.dll` deployment; interactive verification remains pending user-supplied screenshots.
+- The repaired MonoGame and Windows Forms examples passed non-interactive build/deployment checks; rendering, input, resize, clipboard, and shutdown verification remains pending user-supplied screenshots.
 
 This snapshot records observed state, not a promise that all future environments will produce identical warnings. Update it after material toolchain, project, or ABI changes.
