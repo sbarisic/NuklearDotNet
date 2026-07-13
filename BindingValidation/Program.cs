@@ -126,7 +126,12 @@ internal static class Program
     private sealed class HeadlessDevice : NuklearDevice
     {
         public override int CreateTextureHandle(int width, int height, IntPtr data) => 1;
-        public override void SetBuffer(NkVertex[] vertices, ushort[] indices) { }
-        public override void Render(NkHandle userdata, int texture, NkRect clipRect, uint offset, uint count) { }
+        public override void SetBuffer(NkVertex[] vertices, ushort[] indices)
+        {
+        }
+
+        public override void Render(NkHandle userdata, int texture, NkRect clipRect, uint offset, uint count)
+        {
+        }
     }
 }

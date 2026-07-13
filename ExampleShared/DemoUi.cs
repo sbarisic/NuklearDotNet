@@ -18,15 +18,16 @@ internal static unsafe class DemoUi
 
     internal static void CheckboxAligned(string label, ref bool value, uint widgetAlignment, uint textAlignment)
     {
-        int active=value?1:0; byte[] bytes=Encoding.UTF8.GetBytes(label+"\0");
-        fixed(byte* text=bytes) Nuklear.nk_checkbox_label_align(NuklearAPI.Ctx,text,&active,widgetAlignment,textAlignment);
-        value=active!=0;
+        int active = value ? 1 : 0;
+        byte[] bytes = Encoding.UTF8.GetBytes(label + "\0");
+        fixed (byte* text = bytes) Nuklear.nk_checkbox_label_align(NuklearAPI.Ctx, text, &active, widgetAlignment, textAlignment);
+        value = active != 0;
     }
 
     internal static bool OptionAligned(string label, bool active, uint widgetAlignment, uint textAlignment)
     {
-        byte[] bytes=Encoding.UTF8.GetBytes(label+"\0");
-        fixed(byte* text=bytes) return Nuklear.nk_option_label_align(NuklearAPI.Ctx,text,active?1:0,widgetAlignment,textAlignment)!=0;
+        byte[] bytes = Encoding.UTF8.GetBytes(label + "\0");
+        fixed (byte* text = bytes) return Nuklear.nk_option_label_align(NuklearAPI.Ctx, text, active ? 1 : 0, widgetAlignment, textAlignment) != 0;
     }
 
     internal static bool Tree(string title, nk_collapse_states initial, int id)
@@ -43,11 +44,14 @@ internal static unsafe class DemoUi
 
     internal static bool TreeElement(string title, ref bool selected, int id)
     {
-        int value=selected?1:0; byte[] textBytes=Encoding.UTF8.GetBytes(title+"\0"); byte[] hashBytes=Encoding.UTF8.GetBytes("ExampleShared.TreeElements\0");
+        int value = selected ? 1 : 0;
+        byte[] textBytes = Encoding.UTF8.GetBytes(title + "\0");
+        byte[] hashBytes = Encoding.UTF8.GetBytes("ExampleShared.TreeElements\0");
         int open;
-        fixed(byte* text=textBytes) fixed(byte* hash=hashBytes)
-            open=Nuklear.nk_tree_element_push_hashed(NuklearAPI.Ctx,nk_tree_type.NK_TREE_NODE,text,nk_collapse_states.NK_MINIMIZED,&value,hash,hashBytes.Length-1,id);
-        selected=value!=0; return open!=0;
+        fixed (byte* text = textBytes) fixed (byte* hash = hashBytes)
+            open = Nuklear.nk_tree_element_push_hashed(NuklearAPI.Ctx, nk_tree_type.NK_TREE_NODE, text, nk_collapse_states.NK_MINIMIZED, &value, hash, hashBytes.Length - 1, id);
+        selected = value != 0;
+        return open != 0;
     }
 
     internal static void TreeElementPop() => Nuklear.nk_tree_element_pop(NuklearAPI.Ctx);
